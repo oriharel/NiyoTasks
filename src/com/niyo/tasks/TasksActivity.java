@@ -126,7 +126,8 @@ public class TasksActivity extends NiyoAbstractActivity implements OnItemClickLi
 				JSONObject task = tasks.getJSONObject(i);
 				
 				if (task.get("category").equals(category)){
-					result.put(task);
+					result = task.getJSONArray("tasks");
+					return result;
 				}
 				
 			} catch (JSONException e) {

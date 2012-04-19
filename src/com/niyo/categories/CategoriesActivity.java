@@ -60,7 +60,7 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
         URL url= null;
         
 		try {
-			url = new URL("http://niyoapi.appspot.com/categories");
+			url = new URL("http://niyoapi.appspot.com/tasks");
 		} catch (MalformedURLException e) {
 			ClientLog.e(LOG_TAG, "Error!", e);
 			return;
@@ -139,7 +139,7 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 					JSONObject categoriesData = (JSONObject)data;
 					JSONArray categories = null;
 					try {
-						categories = categoriesData.getJSONArray("categories");
+						categories = categoriesData.getJSONArray("tasks");
 					} catch (JSONException e) {
 						ClientLog.e(LOG_TAG, "Error!", e);
 					}
@@ -263,9 +263,12 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 		else
 		{
 			JSONObject json = (JSONObject) adapterView.getItemAtPosition(position);
+			
 			try {
-				Intent intent = TasksActivity.getCreationIntent(this, json.getString("name"));
-				startActivity(intent);
+				if (json.getJSONArray("tasks").length() > 0){
+					Intent intent = TasksActivity.getCreationIntent(this, json.getString("category"));
+					startActivity(intent);
+				}
 			} catch (JSONException e) {
 				ClientLog.e(LOG_TAG, "Error!", e);
 			}

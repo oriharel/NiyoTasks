@@ -96,6 +96,7 @@ public class CategoriesListAdapter extends BaseAdapter {
 					convertView = getActivity().getLayoutInflater().inflate(R.layout.category_list_item, null);
 					holder = new CategoryHolder();
 					holder.categoryName = (TextView)convertView.findViewById(R.id.categoryName);
+					holder.numOfTasks = (TextView)convertView.findViewById(R.id.numOfTasks);
 					convertView.setTag(holder);
 				}
 				else
@@ -104,7 +105,15 @@ public class CategoriesListAdapter extends BaseAdapter {
 				}
 				
 				try {
-					holder.categoryName.setText(getItem(position).getString("name"));
+					holder.categoryName.setText(getItem(position).getString("category"));
+					JSONArray tasks = getItem(position).getJSONArray("tasks");
+					if (tasks.length() > 0){
+						holder.numOfTasks.setVisibility(View.VISIBLE);
+						holder.numOfTasks.setText(Integer.toString(tasks.length()));
+					}
+					else{
+						holder.numOfTasks.setVisibility(View.GONE);
+					}
 				} catch (JSONException e) {
 					ClientLog.e(LOG_TAG, "Error!", e);
 				}
@@ -124,6 +133,7 @@ public class CategoriesListAdapter extends BaseAdapter {
 	
 	static class CategoryHolder{
 		TextView categoryName;
+		TextView numOfTasks;
 	}
 
 }
