@@ -21,12 +21,12 @@ public class Constants {
     /**
      * Account type string.
      */
-    public static final String ACCOUNT_TYPE = "com.example.android.samplesync";
+    public static final String ACCOUNT_TYPE = "com.niyo.account";
 
     /**
      * Authtoken type string.
      */
     public static final String AUTHTOKEN_TYPE =
-        "com.example.android.samplesync";
+        "com.niyo";
 
 }

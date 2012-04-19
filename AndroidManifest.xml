@@ -55,6 +55,7 @@
                 someone who explicitly knows the class name
             -->
         </activity>
+        <activity android:name=".tasks.AddTaskActivity"></activity>
         <service android:name=".data.JsonFetchIntentService"></service>
         <service 
             android:name=".data.SyncService"
@@ -81,6 +82,7 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator"/>
         </service>
+        
     </application>
 
 </manifest>

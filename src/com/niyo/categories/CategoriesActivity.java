@@ -13,10 +13,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.accounts.Account;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.PeriodicSync;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
@@ -78,6 +81,12 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 		setUri(uri);
         getContentResolver().registerContentObserver(uri, false, mObserver);
         getContentResolver().update(uri, null, null, null);
+        Account account = new Account("ori", "1234");
+        Bundle extras = new Bundle();
+        extras.putString("a", "1");
+        int period = 1000;
+        PeriodicSync sync = new PeriodicSync(account, "com.niyo.provider", extras, period);
+		ContentResolver.addPeriodicSync(sync.account, sync.authority, extras, sync.period);
         getCategories();
     }
     
@@ -265,10 +274,8 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 			JSONObject json = (JSONObject) adapterView.getItemAtPosition(position);
 			
 			try {
-				if (json.getJSONArray("tasks").length() > 0){
-					Intent intent = TasksActivity.getCreationIntent(this, json.getString("category"));
-					startActivity(intent);
-				}
+				Intent intent = TasksActivity.getCreationIntent(this, json.getString("category"));
+				startActivity(intent);
 			} catch (JSONException e) {
 				ClientLog.e(LOG_TAG, "Error!", e);
 			}

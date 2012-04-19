@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
@@ -34,7 +35,9 @@ public class TasksActivity extends NiyoAbstractActivity implements OnItemClickLi
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.tasks_list_layout);
+        TextView categoryTitle = (TextView)findViewById(R.id.categoryTitle);
+        categoryTitle.setText(getIntent().getStringExtra(CATEGORY_EXTRA));
         getList().setOnItemClickListener(this);
         registerForContextMenu(getList());
         URL url= null;
@@ -59,6 +62,11 @@ public class TasksActivity extends NiyoAbstractActivity implements OnItemClickLi
         getContentResolver().registerContentObserver(uri, false, mObserver);
         getContentResolver().update(uri, null, null, null);
         getTasks();
+	}
+	
+	public void addTask(View v){
+		Intent intent = AddTaskActivity.getCreationIntent(this, getIntent().getStringExtra(CATEGORY_EXTRA));
+		startActivityForResult(intent, 0);
 	}
 	
 	public static Intent getCreationIntent(Activity activity, String category){
@@ -151,7 +159,7 @@ public class TasksActivity extends NiyoAbstractActivity implements OnItemClickLi
 	
 	private ListView getList() {
 		
-		return (ListView)findViewById(R.id.categoriesList);
+		return (ListView)findViewById(R.id.tasksList);
 	}
 
 	@Override

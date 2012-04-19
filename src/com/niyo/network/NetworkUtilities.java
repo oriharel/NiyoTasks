@@ -50,7 +50,7 @@ public class NetworkUtilities {
     public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
     public static final String BASE_URL =
-        "https://samplesyncadapter.appspot.com";
+        "https://niyo.appspot.com";
     public static final String AUTH_URI = BASE_URL + "/auth";
     public static final String FETCH_FRIEND_UPDATES_URI =
         BASE_URL + "/fetch_friend_updates";
@@ -121,33 +121,36 @@ public class NetworkUtilities {
         post.addHeader(entity.getContentType());
         post.setEntity(entity);
         maybeCreateHttpClient();
+        
+        sendResult(true, handler, context);
+        return true;
 
-        try {
-            resp = mHttpClient.execute(post);
-            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                    Log.v(TAG, "Successful authentication");
-                }
-                sendResult(true, handler, context);
-                return true;
-            } else {
-                if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                    Log.v(TAG, "Error authenticating" + resp.getStatusLine());
-                }
-                sendResult(false, handler, context);
-                return false;
-            }
-        } catch (final IOException e) {
-            if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                Log.v(TAG, "IOException when getting authtoken", e);
-            }
-            sendResult(false, handler, context);
-            return false;
-        } finally {
-            if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                Log.v(TAG, "getAuthtoken completing");
-            }
-        }
+//        try {
+//            resp = mHttpClient.execute(post);
+//            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+//                if (Log.isLoggable(TAG, Log.VERBOSE)) {
+//                    Log.v(TAG, "Successful authentication");
+//                }
+//                sendResult(true, handler, context);
+//                return true;
+//            } else {
+//                if (Log.isLoggable(TAG, Log.VERBOSE)) {
+//                    Log.v(TAG, "Error authenticating" + resp.getStatusLine());
+//                }
+//                sendResult(false, handler, context);
+//                return false;
+//            }
+//        } catch (final IOException e) {
+//            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+//                Log.v(TAG, "IOException when getting authtoken", e);
+//            }
+//            sendResult(false, handler, context);
+//            return false;
+//        } finally {
+//            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+//                Log.v(TAG, "getAuthtoken completing");
+//            }
+//        }
     }
 
     /**

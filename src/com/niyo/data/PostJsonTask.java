@@ -3,11 +3,11 @@ package com.niyo.data;
 import java.io.IOException;
 import java.net.URL;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
@@ -15,17 +15,24 @@ import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.niyo.ClientLog;
+import com.niyo.ServiceCaller;
 
 public class PostJsonTask extends AsyncTask<URL, Void, Integer> {
 
 	private static final String LOG_TAG = PostJsonTask.class.getSimpleName();
-	private StringEntity mEntity;
+	private HttpEntity mEntity;
 	private Context mContext;
-	
-	public PostJsonTask(StringEntity entity, Context context)
+	private ServiceCaller mCaller;
+	public PostJsonTask(HttpEntity entity, Context context)
 	{
 		setEntity(entity);
 		setContext(context);
+	}
+	
+	public PostJsonTask(HttpEntity entity, Context context, ServiceCaller caller)
+	{
+		this(entity, context);
+		mCaller = caller;
 	}
 	
 	@Override
@@ -37,9 +44,8 @@ public class PostJsonTask extends AsyncTask<URL, Void, Integer> {
 		post.setEntity(getEntity());
 		try {
 			ClientLog.d(LOG_TAG, "entity is "+GetJSONTask.readString(getEntity().getContent()));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (IOException e) {
+			ClientLog.e(LOG_TAG, "Error!", e);
 		}
 		Integer result = null;
 		try {
@@ -61,11 +67,11 @@ public class PostJsonTask extends AsyncTask<URL, Void, Integer> {
 		return result;
 	}
 
-	public StringEntity getEntity() {
+	public HttpEntity getEntity() {
 		return mEntity;
 	}
 
-	public void setEntity(StringEntity entity) {
+	public void setEntity(HttpEntity entity) {
 		mEntity = entity;
 	}
 
@@ -76,5 +82,18 @@ public class PostJsonTask extends AsyncTask<URL, Void, Integer> {
 	public void setContext(Context context) {
 		mContext = context;
 	}
+	
+	@Override
+	protected void onPostExecute(Integer result) {
+		
+		if (mCaller != null){
+			if (result == HttpStatus.SC_OK){
+	        	mCaller.success(result);
+	        }
+	        else{
+	        	mCaller.failure(result, "failed");
+	        }
+		}
+    } 
 
 }
