@@ -104,7 +104,7 @@ public class TasksListAdapter extends BaseAdapter {
 				}
 				
 				try {
-					holder.taskName.setText(getItem(position).getString("name"));
+					holder.taskName.setText(getItem(position).getString("content"));
 				} catch (JSONException e) {
 					ClientLog.e(LOG_TAG, "Error!", e);
 				}

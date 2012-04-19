@@ -102,17 +102,39 @@ public class TasksActivity extends NiyoAbstractActivity implements OnItemClickLi
 	}
 	
 	private void setTasks(JSONArray tasks) {
+		JSONArray categoryTasks = getCategoryTasks(tasks);
 		if (getAdapter() != null)
 		{
-			getAdapter().setList(tasks);
+			getAdapter().setList(categoryTasks);
 			getAdapter().notifyDataSetChanged();
 		}
 		else
 		{
 			setAdapter(new TasksListAdapter(this));
-			getAdapter().setList(tasks);
+			getAdapter().setList(categoryTasks);
 			getList().setAdapter(getAdapter());
 		}
+	}
+
+	private JSONArray getCategoryTasks(JSONArray tasks) {
+		
+		String category = getIntent().getStringExtra(CATEGORY_EXTRA);
+		JSONArray result = new JSONArray();
+		for (int i = 0; i < tasks.length(); i++){
+			
+			try {
+				JSONObject task = tasks.getJSONObject(i);
+				
+				if (task.get("category").equals(category)){
+					result.put(task);
+				}
+				
+			} catch (JSONException e) {
+				ClientLog.e(LOG_TAG, "Error!", e);
+			}
+		}
+		
+		return result;
 	}
 
 	private void setUri(Uri uri)
