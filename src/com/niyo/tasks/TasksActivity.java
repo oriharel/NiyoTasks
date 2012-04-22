@@ -76,8 +76,21 @@ public class TasksActivity extends NiyoAbstractActivity {
 	}
 	
 	private OnItemClickListener getOnCrossedTasksItemClicked() {
-		// TODO Auto-generated method stub
-		return null;
+
+		OnItemClickListener result = new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
+
+				JSONObject task = (JSONObject)adapterView.getItemAtPosition(position);
+				removeFromCrossTasks(task);
+				getOpenTasks().add(task);
+				populateDoneTasks();
+				populateOpenTasks();
+			}
+			
+		};
+		return result;
 	}
 
 	private OnItemClickListener getOnOpenTasksItemClicked() {
@@ -92,8 +105,8 @@ public class TasksActivity extends NiyoAbstractActivity {
 				}
 				else
 				{
-					JSONObject task = (JSONObject)adapterView.getSelectedItem();
-					getOpenTasks().remove(task);
+					JSONObject task = (JSONObject)adapterView.getItemAtPosition(position);
+					removeFromOpenTasks(task);
 					getCrossedTasks().add(task);
 					populateDoneTasks();
 					populateOpenTasks();
@@ -102,6 +115,30 @@ public class TasksActivity extends NiyoAbstractActivity {
 			
 		};
 		return result;
+	}
+
+	protected void removeFromOpenTasks(JSONObject task) {
+		List<JSONObject> openTasks = new ArrayList<JSONObject>(getOpenTasks());
+		
+		for (JSONObject jsonObject : openTasks) {
+			if (task.toString().equals(jsonObject.toString())){
+				boolean isDelete = getOpenTasks().remove(jsonObject);
+				ClientLog.d(LOG_TAG, "success remove? "+isDelete);
+			}
+		}
+		
+	}
+	
+	protected void removeFromCrossTasks(JSONObject task) {
+		List<JSONObject> crossedTasks = new ArrayList<JSONObject>(getCrossedTasks());
+		
+		for (JSONObject jsonObject : crossedTasks) {
+			if (task.toString().equals(jsonObject.toString())){
+				boolean isDelete = getCrossedTasks().remove(jsonObject);
+				ClientLog.d(LOG_TAG, "success remove? "+isDelete);
+			}
+		}
+		
 	}
 
 	public void addTask(View v){
@@ -157,13 +194,38 @@ public class TasksActivity extends NiyoAbstractActivity {
 	private JSONArray extractOpenTasks(JSONArray tasks) {
 
 		JSONArray result = new JSONArray();
-
-		for (int i = 0; i < tasks.length(); i ++){
+		String category = getIntent().getStringExtra(CATEGORY_EXTRA);
+		
+		JSONArray categoryTasks = getCategoryTasks(tasks, category);
+		for (int i = 0; i < categoryTasks.length(); i ++){
 			try {
-				if (tasks.getJSONObject(i).isNull("done") || !tasks.getJSONObject(i).getBoolean("done")){
-						result.put(tasks.get(i));
+				JSONObject currObj = categoryTasks.getJSONObject(i);
+
+				if (currObj.isNull("done") || !currObj.getBoolean("done")){
+					result.put(categoryTasks.get(i));
 				}
-				
+			}
+			catch (JSONException e) {
+				ClientLog.w(LOG_TAG, "Error!", e);
+			}
+		}
+
+		return result;
+	}
+	
+	private JSONArray extractDoneTasks(JSONArray tasks) {
+
+		JSONArray result = new JSONArray();
+		String category = getIntent().getStringExtra(CATEGORY_EXTRA);
+		
+		JSONArray categoryTasks = getCategoryTasks(tasks, category);
+		for (int i = 0; i < categoryTasks.length(); i ++){
+			try {
+				JSONObject currObj = categoryTasks.getJSONObject(i);
+
+				if (!currObj.isNull("done") && currObj.getBoolean("done")){
+					result.put(categoryTasks.get(i));
+				}
 			}
 			catch (JSONException e) {
 				ClientLog.w(LOG_TAG, "Error!", e);
@@ -174,32 +236,27 @@ public class TasksActivity extends NiyoAbstractActivity {
 	}
 	
 	
-	private JSONArray extractDoneTasks(JSONArray tasks) {
-
-		JSONArray result = new JSONArray();
-
-		for (int i = 0; i < tasks.length(); i ++){
-			try {
-				ClientLog.d(LOG_TAG, "in extractDoneTasks curr task is "+tasks.getJSONObject(i));	
-				if (!tasks.getJSONObject(i).isNull("done")){
-					if (tasks.getJSONObject(i).getBoolean("done")){
-						ClientLog.d(LOG_TAG, "putting done!");
-						result.put(tasks.get(i));
-					}
+	private JSONArray getCategoryTasks(JSONArray tasks, String category) {
+		try {
+			for (int i = 0; i < tasks.length(); i++){
+				JSONObject currObj = tasks.getJSONObject(i);
+				if (currObj.getString("category").equals(category)){
+					return currObj.getJSONArray("tasks");
 				}
-
-			} catch (JSONException e) {
-				ClientLog.e(LOG_TAG, "Error!", e);
 			}
 		}
+		catch (JSONException e) {
+			ClientLog.w(LOG_TAG, "Error!", e);
+		}
 
-		return result;
+		return null;
 	}
+
+	
 
 	private void populateDoneTasks() {
 		
-		String category = getIntent().getStringExtra(CATEGORY_EXTRA);
-		JSONArray categoryTasks = getCategoryTasks(getCrossedTasks(), category);
+		List<JSONObject> categoryTasks = getCrossedTasks();
 		
 		if (getCrossedAdapter() != null){
 			getCrossedAdapter().setList(categoryTasks);
@@ -215,8 +272,7 @@ public class TasksActivity extends NiyoAbstractActivity {
 	
 	private void populateOpenTasks() {
 		
-		String category = getIntent().getStringExtra(CATEGORY_EXTRA);
-		JSONArray categoryTasks = getCategoryTasks(getOpenTasks(), category);
+		List<JSONObject> categoryTasks = getOpenTasks();
 		if (getAdapter() != null){
 			getAdapter().setList(categoryTasks);
 			getAdapter().notifyDataSetChanged();
@@ -228,26 +284,26 @@ public class TasksActivity extends NiyoAbstractActivity {
 		}
 	}
 
-	private JSONArray getCategoryTasks(List<JSONObject> tasks, String category) {
-
-		JSONArray result = new JSONArray();
-		ClientLog.d(LOG_TAG, "tasks is "+StringUtils.printList(tasks));
-		for (JSONObject task : tasks) {
-			
-			ClientLog.d(LOG_TAG, "task is "+task);
-			try {
-				if (task.get("category").equals(category)){
-					result = task.getJSONArray("tasks");
-					return result;
-				}
-
-			} catch (JSONException e) {
-				ClientLog.e(LOG_TAG, "Error!", e);
-			}
-		}
-
-		return result;
-	}
+//	private JSONArray getCategoryTasks(List<JSONObject> tasks, String category) {
+//
+//		JSONArray result = new JSONArray();
+//		ClientLog.d(LOG_TAG, "tasks is "+StringUtils.printList(tasks));
+//		for (JSONObject task : tasks) {
+//			
+//			ClientLog.d(LOG_TAG, "task is "+task);
+//			try {
+//				if (task.get("category").equals(category)){
+//					result = task.getJSONArray("tasks");
+//					return result;
+//				}
+//
+//			} catch (JSONException e) {
+//				ClientLog.e(LOG_TAG, "Error!", e);
+//			}
+//		}
+//
+//		return result;
+//	}
 
 	private void setUri(Uri uri)
 	{

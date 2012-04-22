@@ -1,5 +1,7 @@
 package com.niyo.tasks;
 
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,50 +19,49 @@ public class TasksListAdapter extends BaseAdapter {
 
 	private static final String LOG_TAG = TasksListAdapter.class.getSimpleName();
 	private Activity mActivity;
-	private JSONArray mTasks;
-	protected static final int ADD_TASK_TYPE = 0;
-	public static final int ADD_TASK_ITEM_ID = 6367;
-	protected static final int REGULAR_TASK_TYPE = 1;
+	private List<JSONObject> mTasks;
+//	protected static final int ADD_TASK_TYPE = 0;
+//	public static final int ADD_TASK_ITEM_ID = 6367;
+//	protected static final int REGULAR_TASK_TYPE = 1;
 	
 	public TasksListAdapter(Activity activity){
 		setActivity(activity);
 	}
 	
-	public void setList(JSONArray tasks){
+	public void setList(List<JSONObject> tasks){
 		
 		mTasks = tasks;
-		mTasks.put(0);
 	}
 	
-	@Override
-	public int getViewTypeCount()
-	{
-		return 2;
-	}
-	
-	@Override
-	public int getItemViewType (int position)
-	{
-		if (getCount() == 0 || position == getCount()-1)
-		{
-			return ADD_TASK_TYPE;
-		}
-		else
-		{
-			return REGULAR_TASK_TYPE;
-		}
-	}
+//	@Override
+//	public int getViewTypeCount()
+//	{
+//		return 2;
+//	}
+//	
+//	@Override
+//	public int getItemViewType (int position)
+//	{
+//		if (getCount() == 0 || position == getCount()-1)
+//		{
+//			return ADD_TASK_TYPE;
+//		}
+//		else
+//		{
+//			return REGULAR_TASK_TYPE;
+//		}
+//	}
 	
 	@Override
 	public int getCount() {
-		return mTasks.length();
+		return mTasks.size();
 	}
 
 	@Override
-	public JSONObject getItem(int position) {
+	public Object getItem(int position) {
 		try {
-			return (JSONObject)mTasks.get(position);
-		} catch (JSONException e) {
+			return mTasks.get(position);
+		} catch (Exception e) {
 			ClientLog.e(LOG_TAG, "Error!", e);
 		}
 		
@@ -69,12 +70,12 @@ public class TasksListAdapter extends BaseAdapter {
 
 	@Override
 	public long getItemId(int position) {
-		if (getCount() == 0 || position == getCount()-1){
-			return ADD_TASK_ITEM_ID;
-		}
-		else{
+//		if (getCount() == 0 || position == getCount()-1){
+//			return ADD_TASK_ITEM_ID;
+//		}
+//		else{
 			return position;
-		}
+//		}
 		
 	}
 
@@ -82,16 +83,16 @@ public class TasksListAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
 		TaskHolder holder;
-		int type = getItemViewType(position);
-		switch (type) 
-		{
-			case ADD_TASK_TYPE:
-			{
-				convertView = getActivity().getLayoutInflater().inflate(R.layout.add_new_task_item, null);
-				return convertView;
-			}
-			default:
-			{
+//		int type = getItemViewType(position);
+//		switch (type) 
+//		{
+//			case ADD_TASK_TYPE:
+//			{
+//				convertView = getActivity().getLayoutInflater().inflate(R.layout.add_new_task_item, null);
+//				return convertView;
+//			}
+//			default:
+//			{
 				if (convertView == null)
 				{
 					convertView = getActivity().getLayoutInflater().inflate(R.layout.task_list_item, null);
@@ -105,12 +106,16 @@ public class TasksListAdapter extends BaseAdapter {
 				}
 				
 				try {
-					holder.taskName.setText(getItem(position).getString("content"));
+					if (getItem(position) instanceof JSONObject){
+						JSONObject jsonObj = (JSONObject)getItem(position);
+						holder.taskName.setText(jsonObj.getString("content"));
+					}
+					
 				} catch (JSONException e) {
 					ClientLog.e(LOG_TAG, "Error!", e);
 				}
-			}
-		}
+//			}
+//		}
 		
 		
 		return convertView;

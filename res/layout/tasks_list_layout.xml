@@ -29,30 +29,18 @@
         android:layout_height="wrap_content" >
         <!-- Preview: listitem=@layout/category_list_item -->
     </ListView>
-    
-    <FrameLayout
-        android:id="@+id/crossedOffLayout"
+
+    <TextView
+        android:id="@+id/crossedOffLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#808080" >
+        android:background="#808080"
+        android:text="@string/crossedOff" />
 
-
-
-        <TextView
-            android:id="@+id/crossedOffLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/crossedOff" />
-
-
-        <ListView
-            android:id="@+id/crossedOffList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-        </ListView>
-
-    </FrameLayout>
+    <ListView
+        android:id="@+id/crossedOffList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
 
 </LinearLayout>

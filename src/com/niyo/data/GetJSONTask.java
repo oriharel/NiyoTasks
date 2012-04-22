@@ -39,7 +39,7 @@ public class GetJSONTask extends AsyncTask<URL, Void, String> {
 			HttpEntity entity = response.getEntity();
 			InputStream is = entity.getContent();
 			String json = readString(is);
-			ClientLog.d(LOG_TAG, "json is "+json);
+			ClientLog.d(LOG_TAG, "json of url "+url+" is "+json);
 			ContentValues values = new ContentValues();
 			values.put(JSONTableColumns.ELEMENT_URL, url.getPath());
 			values.put(JSONTableColumns.ELEMENT_JSON, json);
@@ -48,6 +48,9 @@ public class GetJSONTask extends AsyncTask<URL, Void, String> {
 			ClientLog.d(LOG_TAG, "uri is "+uri);
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
 				mApp.getContentResolver().insert(uri, values);
+			}
+			else{
+				ClientLog.w(LOG_TAG, "received "+response.getStatusLine().getStatusCode()+" for url "+url);
 			}
 			
 			

@@ -1,5 +1,7 @@
 package com.niyo.tasks;
 
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,13 +19,13 @@ public class CrossedTasksListAdapter extends BaseAdapter {
 
 	private static final String LOG_TAG = CrossedTasksListAdapter.class.getSimpleName();
 	private Activity mActivity;
-	private JSONArray mTasks;
+	private List<JSONObject> mTasks;
 	
 	public CrossedTasksListAdapter(Activity activity){
 		setActivity(activity);
 	}
 	
-	public void setList(JSONArray tasks){
+	public void setList(List<JSONObject> tasks){
 		
 		mTasks = tasks;
 	}
@@ -31,14 +33,14 @@ public class CrossedTasksListAdapter extends BaseAdapter {
 	
 	@Override
 	public int getCount() {
-		return mTasks.length();
+		return mTasks.size();
 	}
 
 	@Override
 	public JSONObject getItem(int position) {
 		try {
 			return (JSONObject)mTasks.get(position);
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			ClientLog.e(LOG_TAG, "Error!", e);
 		}
 		

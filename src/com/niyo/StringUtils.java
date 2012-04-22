@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.niyo.categories.CategoryJsonObject;
 import com.niyo.tasks.TaskJsonObject;
 
 public class StringUtils {
@@ -40,12 +41,30 @@ public class StringUtils {
 	
 	
 	public static List<TaskJsonObject> toTasksList(JSONArray tasks) {
-
+		
 		List<TaskJsonObject> result = new ArrayList<TaskJsonObject>();
-
+		
 		for (int i = 0; i < tasks.length(); i++){
 			try {
 				TaskJsonObject obj = new TaskJsonObject(tasks.getJSONObject(i));
+				result.add(obj);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
+	
+	
+	public static List<CategoryJsonObject> toCategoriesList(JSONArray tasks) {
+
+		List<CategoryJsonObject> result = new ArrayList<CategoryJsonObject>();
+
+		for (int i = 0; i < tasks.length(); i++){
+			try {
+				CategoryJsonObject obj = new CategoryJsonObject(tasks.getJSONObject(i));
 				result.add(obj);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
