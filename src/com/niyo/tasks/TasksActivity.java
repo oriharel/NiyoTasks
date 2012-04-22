@@ -180,8 +180,10 @@ public class TasksActivity extends NiyoAbstractActivity {
 
 		for (int i = 0; i < tasks.length(); i ++){
 			try {
+				ClientLog.d(LOG_TAG, "in extractDoneTasks curr task is "+tasks.getJSONObject(i));	
 				if (!tasks.getJSONObject(i).isNull("done")){
 					if (tasks.getJSONObject(i).getBoolean("done")){
+						ClientLog.d(LOG_TAG, "putting done!");
 						result.put(tasks.get(i));
 					}
 				}
@@ -229,8 +231,10 @@ public class TasksActivity extends NiyoAbstractActivity {
 	private JSONArray getCategoryTasks(List<JSONObject> tasks, String category) {
 
 		JSONArray result = new JSONArray();
+		ClientLog.d(LOG_TAG, "tasks is "+StringUtils.printList(tasks));
 		for (JSONObject task : tasks) {
-
+			
+			ClientLog.d(LOG_TAG, "task is "+task);
 			try {
 				if (task.get("category").equals(category)){
 					result = task.getJSONArray("tasks");

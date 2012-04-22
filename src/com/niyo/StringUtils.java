@@ -55,4 +55,17 @@ public class StringUtils {
 
 		return result;
 	}
+
+	public static String printList(List<JSONObject> tasks) {
+		
+		StringBuffer result = new StringBuffer();
+		
+		for (Object object : tasks) {
+			result.append(object);
+			result.append(", ");
+		}
+		
+		return result.toString();
+		
+	}
 }
