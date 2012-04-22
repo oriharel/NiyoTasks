@@ -145,6 +145,7 @@ public class NiyoContentProvider extends ContentProvider {
 		try {
 			urls.add("http://niyoapi.appspot.com/categories");
 			urls.add("http://niyoapi.appspot.com/tasks");
+			urls.add("http://niyoapi.appspot.com/getFlatTasks");
 			
 			Intent intent = new Intent(getContext(), JsonFetchIntentService.class);
 			intent.putStringArrayListExtra(JsonFetchIntentService.URLS_EXTRA, urls);

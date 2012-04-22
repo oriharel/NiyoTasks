@@ -2,47 +2,167 @@ package com.niyo.tasks;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.ServiceCaller;
+import com.niyo.StringUtils;
+import com.niyo.data.DBJsonFetchTask;
+import com.niyo.data.NiyoContentProvider;
 import com.niyo.data.PostJsonTask;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
-
-public class AddTaskActivity extends NiyoAbstractActivity {
+public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClickListener {
 	
 	private static final String LOG_TAG = AddTaskActivity.class.getSimpleName();
 	private static final String CATEGORY_EXTRA = "category";
+	private ContentObserver mObserver;
+	private SuggestionsTasksListAdapter mAdapter;
+	
+	private Uri mUri;
+	
+	private TextWatcher filterTextWatcher = new TextWatcher() {
+
+	    public void afterTextChanged(Editable s) {
+	    }
+
+	    public void beforeTextChanged(CharSequence s, int start, int count,
+	            int after) {
+	    }
+
+	    public void onTextChanged(CharSequence s, int start, int before,
+	            int count) {
+
+	         if (getAdapter()==null) {
+	             return;
+	         }
+
+	         getAdapter().getFilter().filter(s);
+
+	         ClientLog.d(LOG_TAG, "OnTextChange: " + s + " start: " + start +
+	         " before: " + before + " count: " + count + " adapter: " + getAdapter().getCount());    
+
+	    }
+	};
 	
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_task_layout);
+		setContentView(R.layout.add_task_layout);
+		getList().setOnItemClickListener(this);
+		getList().setTextFilterEnabled(true);
+		EditText addItemEdit = (EditText)findViewById(R.id.taskNameEdit);
+		addItemEdit.addTextChangedListener(filterTextWatcher);
+		mObserver = new ContentObserver(getHandler()) {
+			public void onChange(boolean selfChange) 
+			{
+				ClientLog.d(LOG_TAG, "onChange started");
+				getSuggestions();
+			}
+		};
+
+		URL url= null;
+		
+		try {
+			url = new URL("http://niyoapi.appspot.com/getFlatTasks");
+		} catch (MalformedURLException e) {
+			ClientLog.e(LOG_TAG, "Error!", e);
+			return;
+		}
+		
+		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
+		setUri(uri);
+		
+		
+		getContentResolver().registerContentObserver(uri, false, mObserver);
+		
+		getSuggestions();
 	}
 	
+	protected void getSuggestions() {
+		ServiceCaller caller = new ServiceCaller() {
+
+			@Override
+			public void success(Object data) {
+
+				if (data != null){
+					JSONObject tasksData = (JSONObject)data;
+					JSONArray tasks = null;
+					try {
+						tasks = tasksData.getJSONArray("tasks");
+					} catch (JSONException e) {
+						ClientLog.e(LOG_TAG, "Error!", e);
+					}
+					setSuggestions(tasks);
+				}
+				else{
+					ClientLog.d(LOG_TAG, "categories list is empty in activity");
+				}
+			}
+
+			@Override
+			public void failure(Object data, String description) {
+				ClientLog.e(LOG_TAG, "Error in service caller");
+
+			}
+		};
+
+		DBJsonFetchTask task = new DBJsonFetchTask(this, caller);
+		task.execute(getUri());
+
+	}
+
+	protected void setSuggestions(JSONArray tasks) {
+		if (getAdapter() != null)
+		{
+			getAdapter().notifyDataSetChanged();
+		}
+		else
+		{
+			setAdapter(new SuggestionsTasksListAdapter(this, R.layout.task_suggestion_item_layout, R.id.taskSuggestionName, StringUtils.toTasksList(tasks)));
+			getList().setAdapter(getAdapter());
+		}
+	}
+	
+	
+	
+	private ListView getList() {
+
+		return (ListView)findViewById(R.id.tasksSuggestionsList);
+	}
+
 	public static Intent getCreationIntent(Activity activity, String category){
 		
 		Intent result = new Intent(activity, AddTaskActivity.class);
 		result.putExtra(CATEGORY_EXTRA, category);
 		return result;
+	}
+	
+	@Override
+	public void onDestroy(){
+		getContentResolver().unregisterContentObserver(mObserver);
 	}
 	
 	public void addTask(View v){
@@ -93,6 +213,28 @@ public class AddTaskActivity extends NiyoAbstractActivity {
 		};
 		
 		return result;
+	}
+
+	public Uri getUri() {
+		return mUri;
+	}
+
+	public void setUri(Uri uri) {
+		mUri = uri;
+	}
+
+	public SuggestionsTasksListAdapter getAdapter() {
+		return mAdapter;
+	}
+
+	public void setAdapter(SuggestionsTasksListAdapter adapter) {
+		mAdapter = adapter;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 

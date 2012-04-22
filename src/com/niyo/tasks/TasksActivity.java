@@ -22,6 +22,7 @@ import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.ServiceCaller;
+import com.niyo.categories.CategoriesListAdapter;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
 
@@ -163,8 +164,15 @@ public class TasksActivity extends NiyoAbstractActivity implements OnItemClickLi
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		// TODO Auto-generated method stub
+	public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
+		
+		if (adapterView.getItemIdAtPosition(position) == CategoriesListAdapter.ADD_CATEGORY_ITEM_ID){
+			addTask(arg1);
+		}
+		else
+		{
+			//move to crossed list
+		}
 		
 	}
 	
