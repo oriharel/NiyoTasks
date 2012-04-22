@@ -162,6 +162,7 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClick
 	
 	@Override
 	public void onDestroy(){
+		super.onDestroy();
 		getContentResolver().unregisterContentObserver(mObserver);
 	}
 	

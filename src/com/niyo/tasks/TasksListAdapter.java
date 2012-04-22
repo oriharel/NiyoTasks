@@ -27,6 +27,7 @@ public class TasksListAdapter extends BaseAdapter {
 	}
 	
 	public void setList(JSONArray tasks){
+		
 		mTasks = tasks;
 		mTasks.put(0);
 	}
