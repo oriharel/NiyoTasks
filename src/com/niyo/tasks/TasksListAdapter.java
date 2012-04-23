@@ -25,6 +25,7 @@ public class TasksListAdapter extends BaseAdapter {
 	public static final int OPEN_TASK_TYPE = 1;
 	public static final int CROSS_TASK_TYPE = 2;
 	public static final int CROSS_TASKS_LABEL_TYPE = 3;
+	public static final int DELETE_ALL_CROSSED_TYPE = 4;
 	
 	
 	public TasksListAdapter(Activity activity){
@@ -40,7 +41,7 @@ public class TasksListAdapter extends BaseAdapter {
 	@Override
 	public int getViewTypeCount()
 	{
-		return 4;
+		return 5;
 	}
 	
 	@Override
@@ -58,6 +59,9 @@ public class TasksListAdapter extends BaseAdapter {
 		else if (isCrossTaskPosition(position)){
 			return CROSS_TASK_TYPE;
 		}
+		else if (isDeleteAllItemPosition(position)){
+			return DELETE_ALL_CROSSED_TYPE;
+		}
 		
 		ClientLog.e(LOG_TAG, "ERROR! can't find type for position "+position+
 				" while mOpenTasks.size()="+mOpenTasks.size()+" mCrossedTasks.size()="+mCrossedTasks.size());
@@ -65,7 +69,11 @@ public class TasksListAdapter extends BaseAdapter {
 	}
 	
 	private boolean isCrossTaskPosition(int position) {
-		return position >= mOpenTasks.size()+2;
+		return position >= mOpenTasks.size()+3;
+	}
+	
+	private boolean isDeleteAllItemPosition(int position){
+		return position == mOpenTasks.size()+2;
 	}
 
 	private boolean isCrossLabelPosition(int position) {
@@ -143,6 +151,10 @@ public class TasksListAdapter extends BaseAdapter {
 			
 			case ADD_TASK_TYPE:{
 				convertView = getActivity().getLayoutInflater().inflate(R.layout.add_new_task_item, null);
+				return convertView;
+			}
+			case DELETE_ALL_CROSSED_TYPE:{
+				convertView = getActivity().getLayoutInflater().inflate(R.layout.delete_all_cross_item, null);
 				return convertView;
 			}
 			case OPEN_TASK_TYPE:{

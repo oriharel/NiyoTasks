@@ -13,8 +13,8 @@
         android:id="@+id/taskSuggestionName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="@string/someText"
         android:textColor="#ffffff"
-        android:textSize="24sp" android:focusable="false"/>
+        android:textSize="24sp" />
 
 </LinearLayout>

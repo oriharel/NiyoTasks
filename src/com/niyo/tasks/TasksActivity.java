@@ -30,6 +30,7 @@ import com.niyo.ServiceCaller;
 import com.niyo.StringUtils;
 import com.niyo.Utils;
 import com.niyo.data.DBJsonFetchTask;
+import com.niyo.data.DeleteHttpTask;
 import com.niyo.data.NiyoContentProvider;
 import com.niyo.data.PutJsonTask;
 
@@ -77,24 +78,6 @@ public class TasksActivity extends NiyoAbstractActivity {
         getTasks();
 	}
 	
-//	private OnItemClickListener getOnCrossedTasksItemClicked() {
-//
-//		OnItemClickListener result = new OnItemClickListener() {
-//
-//			@Override
-//			public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
-//
-//				JSONObject task = (JSONObject)adapterView.getItemAtPosition(position);
-//				removeFromCrossTasks(task);
-//				getOpenTasks().add(task);
-//				populateTasks();
-//				finishTasksToServer();
-//			}
-//			
-//		};
-//		return result;
-//	}
-
 	private OnItemClickListener getOnOpenTasksItemClicked() {
 		
 		OnItemClickListener result = new OnItemClickListener() {
@@ -104,6 +87,9 @@ public class TasksActivity extends NiyoAbstractActivity {
 				
 				if (adapterView.getItemIdAtPosition(position) == TasksListAdapter.ADD_TASK_TYPE){
 					addTask(null);
+				}
+				else if (adapterView.getItemIdAtPosition(position) == TasksListAdapter.DELETE_ALL_CROSSED_TYPE){
+					deleteAllCrossed();
 				}
 				else if (adapterView.getItemIdAtPosition(position) == TasksListAdapter.OPEN_TASK_TYPE){
 					
@@ -125,6 +111,38 @@ public class TasksActivity extends NiyoAbstractActivity {
 			
 		};
 		return result;
+	}
+
+	protected void deleteAllCrossed() {
+		
+		String finishTaskIds = getCrossedTasksIds();
+		JSONArray finishTaskIdsArray;
+		JSONObject jsonObj = null;
+		try {
+			finishTaskIdsArray = new JSONArray(finishTaskIds);
+			jsonObj = new JSONObject();
+
+			jsonObj.put("taskIds", finishTaskIdsArray);
+		} catch (JSONException e) {
+			ClientLog.e(LOG_TAG, "Error!", e);
+		}
+
+		HttpEntity entity = null;
+
+		try {
+			entity = new StringEntity(jsonObj.toString(), HTTP.UTF_8);
+			PutJsonTask task = new PutJsonTask(entity, this, getServiceCaller());
+			try {
+				URL url = new URL("http://niyoapi.appspot.com/deleteTasksFromList");
+				task.execute(url);
+			} catch (Exception e) {
+				ClientLog.e(LOG_TAG, "Error!", e);
+			}
+
+		} catch (Exception e) {
+			ClientLog.e(LOG_TAG, "Error!", e);
+		}
+		
 	}
 
 	protected void removeFromOpenTasks(JSONObject task) {

@@ -78,5 +78,7 @@
     <string name="findOrAdd">Find or add task</string>
     <string name="add">Add</string>
     <string name="crossedOff">Crossed off</string>
+    <string name="deleteAll">Delete all crossed-off items</string>
+    <string name="someText">someText</string>
 
 </resources>

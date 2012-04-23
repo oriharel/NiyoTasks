@@ -20,6 +20,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,7 +36,7 @@ import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
 import com.niyo.data.PostJsonTask;
 
-public class AddTaskActivity extends NiyoAbstractActivity implements OnClickListener {
+public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClickListener {
 	
 	private static final String LOG_TAG = AddTaskActivity.class.getSimpleName();
 	private static final String CATEGORY_EXTRA = "category";
@@ -72,6 +74,9 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnClickList
 		super.onCreate(savedInstanceState);
 		ClientLog.d(LOG_TAG, "onCreate called");
 		setContentView(R.layout.add_task_layout);
+		getList().setOnItemClickListener(this);
+		
+		
 		getList().setTextFilterEnabled(true);
 		EditText addItemEdit = (EditText)findViewById(R.id.taskNameEdit);
 		addItemEdit.addTextChangedListener(filterTextWatcher);
@@ -141,7 +146,8 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnClickList
 		}
 		else
 		{
-			setAdapter(new SuggestionsTasksListAdapter(this, R.layout.task_suggestion_item_layout, R.id.taskSuggestionName, StringUtils.toTasksList(tasks)));
+			setAdapter(new SuggestionsTasksListAdapter(this, R.layout.task_suggestion_item_layout,
+					R.id.taskSuggestionName, StringUtils.toTasksList(tasks)));
 			getList().setAdapter(getAdapter());
 		}
 	}
@@ -242,8 +248,7 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnClickList
 	}
 
 	@Override
-	public void onClick(View itemLayout) {
-		
+	public void onItemClick(AdapterView<?> arg0, View itemLayout, int arg2, long arg3) {
 		ClientLog.d(LOG_TAG, "item clicked");
 		TextView nameView = (TextView)itemLayout.findViewById(R.id.taskSuggestionName);
 		addTaskFromView(nameView);

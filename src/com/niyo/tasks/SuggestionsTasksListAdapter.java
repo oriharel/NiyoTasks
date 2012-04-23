@@ -33,7 +33,6 @@ public class SuggestionsTasksListAdapter extends ArrayAdapter<TaskJsonObject> {
 		{
 			holder = new TaskHolder();
 			holder.taskName = (TextView)convertView.findViewById(R.id.taskSuggestionName);
-			convertView.setOnClickListener(getActivity());
 			convertView.setTag(holder);
 		}
 
