@@ -5,6 +5,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,9 +28,12 @@ import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.ServiceCaller;
 import com.niyo.StringUtils;
+import com.niyo.Utils;
 import com.niyo.categories.CategoriesListAdapter;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
+import com.niyo.data.PostJsonTask;
+import com.niyo.data.PutJsonTask;
 
 public class TasksActivity extends NiyoAbstractActivity {
 	
@@ -87,6 +93,7 @@ public class TasksActivity extends NiyoAbstractActivity {
 				getOpenTasks().add(task);
 				populateDoneTasks();
 				populateOpenTasks();
+				finishTasksToServer();
 			}
 			
 		};
@@ -110,6 +117,7 @@ public class TasksActivity extends NiyoAbstractActivity {
 					getCrossedTasks().add(task);
 					populateDoneTasks();
 					populateOpenTasks();
+					finishTasksToServer();
 				}
 			}
 			
@@ -123,7 +131,6 @@ public class TasksActivity extends NiyoAbstractActivity {
 		for (JSONObject jsonObject : openTasks) {
 			if (task.toString().equals(jsonObject.toString())){
 				boolean isDelete = getOpenTasks().remove(jsonObject);
-				ClientLog.d(LOG_TAG, "success remove? "+isDelete);
 			}
 		}
 		
@@ -251,12 +258,113 @@ public class TasksActivity extends NiyoAbstractActivity {
 
 		return null;
 	}
-
 	
+	private void finishTasksToServer() {
+		
+		String finishTaskIds = getCrossedTasksIds();
+		String unFinishTaskIds = getOpenTasksIds();
+		JSONArray finishTaskIdsArray;
+		JSONArray unFinishTaskIdsArray;
+		JSONObject jsonObj = null;
+		try {
+			finishTaskIdsArray = new JSONArray(finishTaskIds);
+			unFinishTaskIdsArray = new JSONArray(unFinishTaskIds);
+			jsonObj = new JSONObject();
+
+			jsonObj.put("finishTaskIds", finishTaskIdsArray);
+			jsonObj.put("unFinishTaskIds", unFinishTaskIdsArray);
+		} catch (JSONException e) {
+			ClientLog.e(LOG_TAG, "Error!", e);
+		}
+
+		HttpEntity entity = null;
+
+		try {
+			entity = new StringEntity(jsonObj.toString(), HTTP.UTF_8);
+			PutJsonTask task = new PutJsonTask(entity, this, getServiceCaller());
+			try {
+				URL url = new URL("http://niyoapi.appspot.com/finishTasks");
+				task.execute(url);
+			} catch (Exception e) {
+				ClientLog.e(LOG_TAG, "Error!", e);
+			}
+
+		} catch (Exception e) {
+			ClientLog.e(LOG_TAG, "Error!", e);
+		}
+	}
+
+	private String getOpenTasksIds() {
+
+		List<JSONObject> openTasks = getOpenTasks();
+		
+		StringBuffer result = new StringBuffer();
+		result.append("[");
+		
+		for (int i = 0; i < openTasks.size(); i++) {
+			try {
+				result.append(openTasks.get(i).getString("taskId"));
+			} catch (JSONException e) {
+				ClientLog.e(LOG_TAG, "Error!", e);
+			}
+			
+			if (i < openTasks.size()-1){
+				result.append(",");
+			}
+		}
+		
+		result.append("]");
+		
+		ClientLog.d(LOG_TAG, "preparing finish tasks with "+result);
+		
+		return result.toString();
+	}
+
+	private String getCrossedTasksIds() {
+		
+		List<JSONObject> crossedTasks = getCrossedTasks();
+		
+		StringBuffer result = new StringBuffer();
+		result.append("[");
+		
+		for (int i = 0; i < crossedTasks.size(); i++) {
+			try {
+				result.append(crossedTasks.get(i).getString("taskId"));
+			} catch (JSONException e) {
+				ClientLog.e(LOG_TAG, "Error!", e);
+			}
+			
+			if (i < crossedTasks.size()-1){
+				result.append(",");
+			}
+		}
+		
+		result.append("]");
+		
+		ClientLog.d(LOG_TAG, "preparing finish tasks with "+result);
+		
+		return result.toString();
+	}
+
+	private ServiceCaller getServiceCaller() {
+		
+		return new ServiceCaller() {
+			
+			@Override
+			public void success(Object data) {
+				ClientLog.d(LOG_TAG, "successfully finished tasks");
+			}
+			
+			@Override
+			public void failure(Object data, String description) {
+				ClientLog.d(LOG_TAG, "failed to finish tasks");
+			}
+		};
+	}
 
 	private void populateDoneTasks() {
 		
-		List<JSONObject> categoryTasks = getCrossedTasks();
+		List<JSONObject> categoryTasks = StringUtils.sort(getCrossedTasks(), Utils.getTaskJSONComparator());
 		
 		if (getCrossedAdapter() != null){
 			getCrossedAdapter().setList(categoryTasks);
@@ -272,7 +380,7 @@ public class TasksActivity extends NiyoAbstractActivity {
 	
 	private void populateOpenTasks() {
 		
-		List<JSONObject> categoryTasks = getOpenTasks();
+		List<JSONObject> categoryTasks = StringUtils.sort(getOpenTasks(), Utils.getTaskJSONComparator());
 		if (getAdapter() != null){
 			getAdapter().setList(categoryTasks);
 			getAdapter().notifyDataSetChanged();

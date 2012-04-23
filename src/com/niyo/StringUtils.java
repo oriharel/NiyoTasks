@@ -1,6 +1,8 @@
 package com.niyo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -86,5 +88,23 @@ public class StringUtils {
 		
 		return result.toString();
 		
+	}
+
+	public static List<JSONObject> sort(List<JSONObject> list, Comparator<JSONObject> comparator) {
+		
+		JSONObject[] asArray = (JSONObject[])list.toArray(new JSONObject[list.size()]);
+		Arrays.sort(asArray, comparator);
+		return toList(asArray);
+	}
+
+	private static List<JSONObject> toList(JSONObject[] asArray) {
+		
+		List<JSONObject> result = new ArrayList<JSONObject>();
+		
+		for (JSONObject jsonObject : asArray) {
+			result.add(jsonObject);
+		}
+		
+		return result;
 	}
 }

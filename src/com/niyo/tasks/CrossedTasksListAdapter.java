@@ -2,11 +2,11 @@ package com.niyo.tasks;
 
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.graphics.Paint;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -59,9 +59,10 @@ public class CrossedTasksListAdapter extends BaseAdapter {
 		TaskHolder holder;
 		if (convertView == null)
 		{
-			convertView = getActivity().getLayoutInflater().inflate(R.layout.task_list_item, null);
+			convertView = getActivity().getLayoutInflater().inflate(R.layout.crossed_task_list_item, null);
 			holder = new TaskHolder();
-			holder.taskName = (TextView)convertView.findViewById(R.id.taskName);
+			holder.taskName = (TextView)convertView.findViewById(R.id.crossedTaskName);
+			holder.taskName.setPaintFlags(holder.taskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 			convertView.setTag(holder);
 		}
 		else
