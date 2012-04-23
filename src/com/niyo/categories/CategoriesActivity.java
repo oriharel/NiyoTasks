@@ -104,7 +104,7 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 				{
 					JSONObject bean = (JSONObject)item;
 					try {
-						menu.setHeaderTitle(bean.getString("name"));
+						menu.setHeaderTitle(bean.getString("category"));
 					} catch (JSONException e) {
 						ClientLog.e(LOG_TAG, "Error!", e);
 					}
@@ -128,7 +128,7 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 			JSONObject bean = (JSONObject)selectedItem;
 			DeleteHttpTask task = new DeleteHttpTask(this);
 			try {
-				task.execute(new URL("http://niyoapi.appspot.com/deleteCategory?name="+bean.getString("name")));
+				task.execute(new URL("http://niyoapi.appspot.com/deleteCategory?name="+bean.getString("category")));
 			} catch (Exception e) {
 				ClientLog.e(LOG_TAG, "Errro!", e);
 			}
