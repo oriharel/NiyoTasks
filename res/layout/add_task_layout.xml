@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="@string/findOrAdd" >
+            android:hint="@string/findOrAdd" android:focusable="true">
 
             <requestFocus />
         </EditText>
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="addTask"
+            android:onClick="addClicked"
             android:text="@string/add" />
 
     </LinearLayout>
@@ -42,7 +42,8 @@
     <ListView
         android:id="@+id/tasksSuggestionsList"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
+        <!-- Preview: listitem=@layout/task_suggestion_item_layout -->
 
     </ListView>
 

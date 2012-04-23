@@ -29,10 +29,8 @@ import com.niyo.R;
 import com.niyo.ServiceCaller;
 import com.niyo.StringUtils;
 import com.niyo.Utils;
-import com.niyo.categories.CategoriesListAdapter;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
-import com.niyo.data.PostJsonTask;
 import com.niyo.data.PutJsonTask;
 
 public class TasksActivity extends NiyoAbstractActivity {
@@ -40,7 +38,6 @@ public class TasksActivity extends NiyoAbstractActivity {
 	private static final String LOG_TAG = TasksActivity.class.getSimpleName();
 	private ContentObserver mObserver;
 	private TasksListAdapter mAdapter;
-	private CrossedTasksListAdapter mCrossedAdapter;
 	private List<JSONObject> mOpenTasks;
 	private List<JSONObject> mCrossedTasks;
 	private Uri mUri;
@@ -54,7 +51,6 @@ public class TasksActivity extends NiyoAbstractActivity {
         TextView categoryTitle = (TextView)findViewById(R.id.categoryTitle);
         categoryTitle.setText(getIntent().getStringExtra(CATEGORY_EXTRA));
         getListView().setOnItemClickListener(getOnOpenTasksItemClicked());
-        getCrossedListView().setOnItemClickListener(getOnCrossedTasksItemClicked());
         setCrossedTasks(new ArrayList<JSONObject>());
         registerForContextMenu(getListView());
         URL url= null;
@@ -81,24 +77,23 @@ public class TasksActivity extends NiyoAbstractActivity {
         getTasks();
 	}
 	
-	private OnItemClickListener getOnCrossedTasksItemClicked() {
-
-		OnItemClickListener result = new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
-
-				JSONObject task = (JSONObject)adapterView.getItemAtPosition(position);
-				removeFromCrossTasks(task);
-				getOpenTasks().add(task);
-				populateDoneTasks();
-				populateOpenTasks();
-				finishTasksToServer();
-			}
-			
-		};
-		return result;
-	}
+//	private OnItemClickListener getOnCrossedTasksItemClicked() {
+//
+//		OnItemClickListener result = new OnItemClickListener() {
+//
+//			@Override
+//			public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
+//
+//				JSONObject task = (JSONObject)adapterView.getItemAtPosition(position);
+//				removeFromCrossTasks(task);
+//				getOpenTasks().add(task);
+//				populateTasks();
+//				finishTasksToServer();
+//			}
+//			
+//		};
+//		return result;
+//	}
 
 	private OnItemClickListener getOnOpenTasksItemClicked() {
 		
@@ -107,17 +102,24 @@ public class TasksActivity extends NiyoAbstractActivity {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
 				
-				if (adapterView.getItemIdAtPosition(position) == CategoriesListAdapter.ADD_CATEGORY_ITEM_ID){
+				if (adapterView.getItemIdAtPosition(position) == TasksListAdapter.ADD_TASK_TYPE){
 					addTask(null);
 				}
-				else
-				{
+				else if (adapterView.getItemIdAtPosition(position) == TasksListAdapter.OPEN_TASK_TYPE){
+					
 					JSONObject task = (JSONObject)adapterView.getItemAtPosition(position);
 					removeFromOpenTasks(task);
 					getCrossedTasks().add(task);
-					populateDoneTasks();
-					populateOpenTasks();
+					populateTasks();
 					finishTasksToServer();
+				}
+				else if (adapterView.getItemIdAtPosition(position) == TasksListAdapter.CROSS_TASK_TYPE){
+					JSONObject task = (JSONObject)adapterView.getItemAtPosition(position);
+					removeFromCrossTasks(task);
+					getOpenTasks().add(task);
+					populateTasks();
+					finishTasksToServer();
+					
 				}
 			}
 			
@@ -179,8 +181,7 @@ public class TasksActivity extends NiyoAbstractActivity {
 					setOpenTasks(StringUtils.toList(extractOpenTasks(tasks)));
 					setCrossedTasks(StringUtils.toList(extractDoneTasks(tasks)));
 					
-					populateDoneTasks();
-					populateOpenTasks();
+					populateTasks();
 				}
 				else{
 					ClientLog.d(LOG_TAG, "tasks list is empty in activity");
@@ -362,32 +363,17 @@ public class TasksActivity extends NiyoAbstractActivity {
 		};
 	}
 
-	private void populateDoneTasks() {
+	private void populateTasks() {
 		
-		List<JSONObject> categoryTasks = StringUtils.sort(getCrossedTasks(), Utils.getTaskJSONComparator());
-		
-		if (getCrossedAdapter() != null){
-			getCrossedAdapter().setList(categoryTasks);
-			getCrossedAdapter().notifyDataSetChanged();
-		}
-		else{
-			setCrossedAdapter(new CrossedTasksListAdapter(this));
-			getCrossedAdapter().setList(categoryTasks);
-			getCrossedListView().setAdapter(getCrossedAdapter());
-		}
-	}
-	
-	
-	private void populateOpenTasks() {
-		
-		List<JSONObject> categoryTasks = StringUtils.sort(getOpenTasks(), Utils.getTaskJSONComparator());
+		List<JSONObject> openTasks = StringUtils.sort(getOpenTasks(), Utils.getTaskJSONComparator());
+		List<JSONObject> crossedTasks = StringUtils.sort(getCrossedTasks(), Utils.getTaskJSONComparator());
 		if (getAdapter() != null){
-			getAdapter().setList(categoryTasks);
+			getAdapter().setList(openTasks, crossedTasks);
 			getAdapter().notifyDataSetChanged();
 		}
 		else{
 			setAdapter(new TasksListAdapter(this));
-			getAdapter().setList(categoryTasks);
+			getAdapter().setList(openTasks, crossedTasks);
 			getListView().setAdapter(getAdapter());
 		}
 	}
@@ -429,9 +415,6 @@ public class TasksActivity extends NiyoAbstractActivity {
 		return (ListView)findViewById(R.id.tasksList);
 	}
 	
-	private ListView getCrossedListView(){
-		return (ListView)findViewById(R.id.crossedOffList);
-	}
 
 	@Override
 	public void onDestroy()
@@ -448,13 +431,6 @@ public class TasksActivity extends NiyoAbstractActivity {
 		mAdapter = adapter;
 	}
 
-	public CrossedTasksListAdapter getCrossedAdapter() {
-		return mCrossedAdapter;
-	}
-
-	public void setCrossedAdapter(CrossedTasksListAdapter crossedAdapter) {
-		mCrossedAdapter = crossedAdapter;
-	}
 
 	public List<JSONObject> getCrossedTasks() {
 		return mCrossedTasks;

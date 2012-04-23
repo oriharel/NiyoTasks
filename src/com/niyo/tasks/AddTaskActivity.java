@@ -16,10 +16,10 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,7 +34,7 @@ import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
 import com.niyo.data.PostJsonTask;
 
-public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClickListener {
+public class AddTaskActivity extends NiyoAbstractActivity implements OnClickListener {
 	
 	private static final String LOG_TAG = AddTaskActivity.class.getSimpleName();
 	private static final String CATEGORY_EXTRA = "category";
@@ -70,8 +70,8 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClick
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ClientLog.d(LOG_TAG, "onCreate called");
 		setContentView(R.layout.add_task_layout);
-		getList().setOnItemClickListener(this);
 		getList().setTextFilterEnabled(true);
 		EditText addItemEdit = (EditText)findViewById(R.id.taskNameEdit);
 		addItemEdit.addTextChangedListener(filterTextWatcher);
@@ -166,33 +166,42 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClick
 		getContentResolver().unregisterContentObserver(mObserver);
 	}
 	
-	public void addTask(View v){
+	public void addClicked(View v){
 		
 		TextView taskName = (TextView)findViewById(R.id.taskNameEdit);
-		JSONObject jsonObj = new JSONObject();
-		
-		try {
-			jsonObj.put("category", getIntent().getStringExtra(CATEGORY_EXTRA));
-			jsonObj.put("content", taskName.getText());
-		} catch (JSONException e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
-		}
-		
-		HttpEntity entity = null;
-		
-		try {
-			entity = new StringEntity(jsonObj.toString(), HTTP.UTF_8);
-			PostJsonTask task = new PostJsonTask(entity, this, getServiceCaller());
+		addTaskFromView(taskName);
+	}
+	
+	private void addTaskFromView(TextView taskName){
+
+		if (!TextUtils.isEmpty(taskName.getText())){
+			
+			JSONObject jsonObj = new JSONObject();
+
 			try {
-				URL url = new URL("http://niyoapi.appspot.com/add");
-				task.execute(url);
+				jsonObj.put("category", getIntent().getStringExtra(CATEGORY_EXTRA));
+				jsonObj.put("content", taskName.getText());
+			} catch (JSONException e) {
+				ClientLog.e(LOG_TAG, "Error!", e);
+			}
+
+			HttpEntity entity = null;
+
+			try {
+				entity = new StringEntity(jsonObj.toString(), HTTP.UTF_8);
+				PostJsonTask task = new PostJsonTask(entity, this, getServiceCaller());
+				try {
+					URL url = new URL("http://niyoapi.appspot.com/add");
+					task.execute(url);
+				} catch (Exception e) {
+					ClientLog.e(LOG_TAG, "Error!", e);
+				}
+
 			} catch (Exception e) {
 				ClientLog.e(LOG_TAG, "Error!", e);
 			}
-			
-		} catch (Exception e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
 		}
+		
 	}
 
 	private ServiceCaller getServiceCaller() {
@@ -233,8 +242,11 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClick
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		// TODO Auto-generated method stub
+	public void onClick(View itemLayout) {
+		
+		ClientLog.d(LOG_TAG, "item clicked");
+		TextView nameView = (TextView)itemLayout.findViewById(R.id.taskSuggestionName);
+		addTaskFromView(nameView);
 		
 	}
 	

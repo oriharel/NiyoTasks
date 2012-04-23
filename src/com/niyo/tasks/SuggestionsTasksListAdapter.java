@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.json.JSONException;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +16,12 @@ import com.niyo.R;
 public class SuggestionsTasksListAdapter extends ArrayAdapter<TaskJsonObject> {
 
 	private static final String LOG_TAG = SuggestionsTasksListAdapter.class.getSimpleName();
-	private Activity mActivity;
+	private AddTaskActivity mActivity;
 	
 	public SuggestionsTasksListAdapter(Context context, int resource,
 			int textViewResourceId, List<TaskJsonObject> objects) {
 		super(context, resource, textViewResourceId, objects);
-		setActivity((Activity)context);
+		setActivity((AddTaskActivity)context);
 	}
 
 	@Override
@@ -34,6 +33,7 @@ public class SuggestionsTasksListAdapter extends ArrayAdapter<TaskJsonObject> {
 		{
 			holder = new TaskHolder();
 			holder.taskName = (TextView)convertView.findViewById(R.id.taskSuggestionName);
+			convertView.setOnClickListener(getActivity());
 			convertView.setTag(holder);
 		}
 
@@ -47,10 +47,10 @@ public class SuggestionsTasksListAdapter extends ArrayAdapter<TaskJsonObject> {
 	}
 	
 	
-	public Activity getActivity() {
+	public AddTaskActivity getActivity() {
 		return mActivity;
 	}
-	public void setActivity(Activity activity) {
+	public void setActivity(AddTaskActivity activity) {
 		mActivity = activity;
 	}
 	

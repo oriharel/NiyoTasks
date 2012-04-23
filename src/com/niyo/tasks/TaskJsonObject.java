@@ -16,7 +16,6 @@ public class TaskJsonObject extends JSONObject {
 
 	@Override
 	public String toString(){
-		ClientLog.d(LOG_TAG, "toSTring is called");
 		try {
 			return getString("content");
 		} catch (JSONException e) {
