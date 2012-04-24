@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>       
+    <script type="text/javascript"
+            src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCZy6FUzDXAmV5v6DH9OFK4ZNYO86SqFb0&sensor=true">
+    </script>
+    
+    <script type="text/javascript">
+                
+        function calcRoute(originPtLat, originPtLon, destPtLat, destPtLon) {
+  			
+  			var haight = new google.maps.LatLng(originPtLat, originPtLon);
+  			var oceanBeach = new google.maps.LatLng(destPtLat, destPtLon);
+    		
+    		var request = {
+        			origin: haight,
+        			destination: oceanBeach,
+        			// Note that Javascript allows us to access the constant
+        			// using square brackets and a string value as its
+        			// "property."
+        			travelMode: google.maps.DirectionsTravelMode['DRIVING']
+   		 		};
+   		 	var directionsService = new google.maps.DirectionsService();
+    		directionsService.route(request, function(response, status) {
+      				if (status == google.maps.DirectionsStatus.OK) {
+        				//console.log('response is '+JSON.stringify(response));
+        				Native.setResponse(JSON.stringify(response));
+      				}
+    			});
+  		}
+    </script>
+</head>
+<body>
+
+</body>
+</html>
