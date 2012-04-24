@@ -28,6 +28,7 @@ public class NiyoApplication extends Application {
 			urls.add("http://niyoapi.appspot.com/categories");
 			urls.add("http://niyoapi.appspot.com/tasks");
 			urls.add("http://niyoapi.appspot.com/getFlatTasks");
+			urls.add("https://api.foursquare.com/v2/venues/categories?oauth_token=3MU3QXE3H3KHT33DGG4NMR0KD221DVFMOFQQQ3VOIUQ5DKJY&v=20120424");
 			
 			Intent intent = new Intent(this, JsonFetchIntentService.class);
 			intent.putStringArrayListExtra(JsonFetchIntentService.URLS_EXTRA, urls);
