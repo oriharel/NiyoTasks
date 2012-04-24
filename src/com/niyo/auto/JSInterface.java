@@ -13,7 +13,7 @@ public class JSInterface {
 	
 	private static final String LOG_TAG = JSInterface.class.getSimpleName();
 	
-	public void setResponse(String response){
+	public void setResponse(String response, String fromLat, String fromLon, String toLat, String toLon){
 		Log.d(LOG_TAG, "response is "+response);
 		try {
 			JSONObject directionsJson = new JSONObject(response);
@@ -28,10 +28,14 @@ public class JSInterface {
 			Double distance = new Double(distanceStr.replace("km", "").replace(" ", "").replace("m", ""));
 			Log.d(LOG_TAG, "distance is "+distance*1000);
 			SearchVenuesTask task = new SearchVenuesTask();
-			String[] params = new String[3];
+			String[] params = new String[7];
 			params[0] = Double.toString(distance*1000);
 			params[1] = steps.toString();
 			params[2] = AutoConstants.GROCERY_OR_SUPERMARKET;
+			params[3] = fromLat;
+			params[4] = fromLon;
+			params[5] = toLat;
+			params[6] = toLon;
 	        task.execute(params);
 		} catch (JSONException e) {
 			e.printStackTrace();

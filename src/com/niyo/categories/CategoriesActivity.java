@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,6 +38,7 @@ import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.ServiceCaller;
+import com.niyo.auto.AutoActivity;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.DeleteHttpTask;
 import com.niyo.data.JsonDbInsertTask;
@@ -136,6 +138,28 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 		}
 		
 		return false;
+	}
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) 
+	{
+		ClientLog.d(LOG_TAG, "onCreateOptionsMenu started");
+		try {
+			MenuItem settingsMenuItem = menu.add(0, 0, 0, "Go!");
+			settingsMenuItem.setIcon(R.drawable.ic_menu_directions);
+		} catch (Exception e) 
+		{
+			ClientLog.e(LOG_TAG, "Error!", e);
+		}
+		return true;
+	}
+    
+    @Override
+	public boolean onOptionsItemSelected(MenuItem menuItem) 
+	{
+    	Intent intent = new Intent(this, AutoActivity.class);
+    	startActivity(intent);
+    	return true;
 	}
 
 	private void getCategories() {

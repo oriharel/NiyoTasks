@@ -31,7 +31,7 @@ public class NiyoApplication extends Application {
 			
 			Intent intent = new Intent(this, JsonFetchIntentService.class);
 			intent.putStringArrayListExtra(JsonFetchIntentService.URLS_EXTRA, urls);
-			startService(intent);
+//			startService(intent);
 			
 		} catch (Exception e) {
 			ClientLog.e(LOG_TAG, "Error!", e);

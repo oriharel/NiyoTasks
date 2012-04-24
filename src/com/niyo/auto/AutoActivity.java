@@ -26,6 +26,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import com.niyo.ClientLog;
 import com.niyo.R;
 
 public class AutoActivity extends Activity implements OnInitListener {
@@ -111,6 +112,7 @@ public class AutoActivity extends Activity implements OnInitListener {
 		
 		String provider = LocationManager.GPS_PROVIDER;
 		Location location = locationManager.getLastKnownLocation(provider);
+		ClientLog.d(LOG_TAG, "location is "+location);
 		AutoPoint from = new AutoPoint(location.getLatitude(), location.getLongitude());
 		
 		WebView webView = (WebView)findViewById(R.id.webView1);

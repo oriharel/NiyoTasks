@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -14,6 +15,8 @@ import org.apache.http.util.ByteArrayBuffer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.niyo.ClientLog;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -27,8 +30,9 @@ public class SearchVenuesTask extends AsyncTask<String, Void, List<AutoVenue>> {
 		String stepsJsonStr = params[1];
 		String categoryId = params[2];
 		DefaultHttpClient client = new DefaultHttpClient();
-		String url = "https://api.foursquare.com/v2/venues/search?ll=32.179402,34.858187" +
+		String url = "https://api.foursquare.com/v2/venues/search?ll="+params[3]+","+params[4] +
 				"&categoryId="+categoryId+"&oauth_token=3MU3QXE3H3KHT33DGG4NMR0KD221DVFMOFQQQ3VOIUQ5DKJY&v=20120404&intent=browse&radius="+distance;
+		ClientLog.d(LOG_TAG, "url to foursquare is "+url);
 		HttpGet method = new HttpGet(url);
 		String result = null;
 		List<AutoVenue> listResult = new ArrayList<AutoVenue>();
@@ -36,6 +40,14 @@ public class SearchVenuesTask extends AsyncTask<String, Void, List<AutoVenue>> {
 			HttpResponse response = client.execute(method);
 			InputStream is = response.getEntity().getContent();
 			result = readString(is);
+//			ClientLog.d(LOG_TAG, "result is "+result);
+			int status = getFoursqaureStatus(result);
+			ClientLog.d(LOG_TAG, "status is "+status);
+			if (status != HttpStatus.SC_OK){
+				ClientLog.e(LOG_TAG, "Error!");
+				return new ArrayList<AutoVenue>();
+			}
+			
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 			Log.e(LOG_TAG, "Error!", e);
@@ -49,7 +61,7 @@ public class SearchVenuesTask extends AsyncTask<String, Void, List<AutoVenue>> {
 			
 			JSONObject responseJSon = resultJson.getJSONObject("response");
 			JSONArray venues = responseJSon.getJSONArray("venues");
-			Log.d(LOG_TAG, "stepsJsonStr is "+stepsJsonStr);
+			Log.d(LOG_TAG, "venues is "+venues);
 			JSONArray stepsArray = new JSONArray(stepsJsonStr);
 			
 			for (int i = 0; i < venues.length(); i++)
@@ -86,6 +98,25 @@ public class SearchVenuesTask extends AsyncTask<String, Void, List<AutoVenue>> {
 		return listResult;
 	}
 	
+	private int getFoursqaureStatus(String response) {
+		try {
+			JSONObject json;
+
+			json = new JSONObject(response);
+
+
+			if (json.has("meta")){
+				String code = json.getJSONObject("meta").getString("code");
+				return new Integer(code);
+			}
+		} catch (JSONException e) {
+			ClientLog.e(LOG_TAG, "Error!", e);
+		}
+
+		ClientLog.e(LOG_TAG, "couldn't read meta");
+		return -1;
+	}
+
 	private boolean isVenueClose(AutoVenue autoVenue, JSONArray stepsArray) {
 		
 //		Log.d(LOG_TAG, "stepsArrya is "+stepsArray.length());
@@ -94,8 +125,8 @@ public class SearchVenuesTask extends AsyncTask<String, Void, List<AutoVenue>> {
 		for (int i = 0; i< stepsArray.length(); i++)
 		{
 			try {
-				String stepLat = stepsArray.getJSONObject(i).getJSONObject("end_location").getString("Xa");
-				String stepLon = stepsArray.getJSONObject(i).getJSONObject("end_location").getString("Ya");
+				String stepLat = stepsArray.getJSONObject(i).getJSONObject("end_location").getString("$a");
+				String stepLon = stepsArray.getJSONObject(i).getJSONObject("end_location").getString("ab");
 				
 				AutoPoint fromPoint = new AutoPoint(Double.parseDouble(stepLat), Double.parseDouble(stepLon));
 				
