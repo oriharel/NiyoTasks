@@ -38,7 +38,6 @@ public class DeleteHttpTask extends AsyncTask<URL, Void, Integer> {
 			ClientLog.d(LOG_TAG, "result is "+response.getStatusLine());
 			if (result == HttpStatus.SC_OK){
 				Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
-				getContext().getContentResolver().update(uri, null, null, null);
 			}
 			
 		} catch (ClientProtocolException e) {

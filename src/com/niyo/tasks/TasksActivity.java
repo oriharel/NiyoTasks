@@ -30,7 +30,6 @@ import com.niyo.ServiceCaller;
 import com.niyo.StringUtils;
 import com.niyo.Utils;
 import com.niyo.data.DBJsonFetchTask;
-import com.niyo.data.DeleteHttpTask;
 import com.niyo.data.NiyoContentProvider;
 import com.niyo.data.PutJsonTask;
 
@@ -74,7 +73,6 @@ public class TasksActivity extends NiyoAbstractActivity {
 		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
 		setUri(uri);
         getContentResolver().registerContentObserver(uri, false, mObserver);
-        getContentResolver().update(uri, null, null, null);
         getTasks();
 	}
 	

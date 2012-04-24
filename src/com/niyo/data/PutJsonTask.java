@@ -23,6 +23,7 @@ public class PutJsonTask extends AsyncTask<URL, Void, Integer> {
 	private HttpEntity mEntity;
 	private Context mContext;
 	private ServiceCaller mCaller;
+	private Boolean mShouldUpdate = false;
 	public PutJsonTask(HttpEntity entity, Context context)
 	{
 		setEntity(entity);
@@ -55,7 +56,11 @@ public class PutJsonTask extends AsyncTask<URL, Void, Integer> {
 			ClientLog.d(LOG_TAG, "result is "+response.getStatusLine());
 			if (result == HttpStatus.SC_OK){
 				Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
-				getContext().getContentResolver().update(uri, null, null, null);
+				
+				if (getShouldUpdate()){
+					getContext().getContentResolver().update(uri, null, null, null);
+				}
+				
 			}
 			
 		} catch (ClientProtocolException e) {
@@ -94,6 +99,14 @@ public class PutJsonTask extends AsyncTask<URL, Void, Integer> {
 	        	mCaller.failure(result, "failed");
 	        }
 		}
-    } 
+    }
+
+	public Boolean getShouldUpdate() {
+		return mShouldUpdate;
+	}
+
+	public void setShouldUpdate(Boolean shouldUpdate) {
+		mShouldUpdate = shouldUpdate;
+	} 
 
 }

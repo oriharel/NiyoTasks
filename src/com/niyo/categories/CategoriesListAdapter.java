@@ -31,6 +31,10 @@ public class CategoriesListAdapter extends BaseAdapter {
 		mCategories.put(0);
 	}
 	
+	public JSONArray getList(){
+		return mCategories;
+	}
+	
 	@Override
 	public int getViewTypeCount()
 	{

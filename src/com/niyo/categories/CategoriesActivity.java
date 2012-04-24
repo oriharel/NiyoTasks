@@ -39,6 +39,7 @@ import com.niyo.R;
 import com.niyo.ServiceCaller;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.DeleteHttpTask;
+import com.niyo.data.JsonDbInsertTask;
 import com.niyo.data.NiyoContentProvider;
 import com.niyo.data.PostJsonTask;
 import com.niyo.tasks.TasksActivity;
@@ -178,6 +179,7 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 	}
 
 	private void setCategories(JSONArray categories) {
+		ClientLog.d(LOG_TAG, "setCategories started with "+categories);
 		if (getAdapter() != null)
 		{
 			getAdapter().setList(categories);
@@ -238,6 +240,32 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 		} catch (Exception e) {
 			ClientLog.e(LOG_TAG, "Error!", e);
 		}
+		
+		addCategoryToProvider(name);
+	}
+
+	private void addCategoryToProvider(CharSequence name) {
+		JSONArray oldTasks = getAdapter().getList();
+		try {
+			JSONObject newCategory = new JSONObject("{category:"+name+",\"tasks\":[]}");
+			JSONArray newTasks = new JSONArray();
+			for (int i = 0; i< oldTasks.length(); i++){
+				if (oldTasks.get(i) instanceof JSONObject){
+					newTasks.put(oldTasks.getJSONObject(i));
+				}
+			}
+			
+			newTasks.put(newCategory);
+			
+			JsonDbInsertTask task = new JsonDbInsertTask(this);
+			String[] params = new String[]{NiyoContentProvider.AUTHORITY+"/tasks", "{\"tasks\":"+newTasks.toString()+"}"};
+			
+			task.execute(params);
+			
+		} catch (JSONException e) {
+			ClientLog.e(LOG_TAG, "Error!", e);
+		}
+		
 	}
 
 	private ListView getList() {

@@ -1,20 +1,14 @@
 package com.niyo.data;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.niyo.ClientLog;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+
+import com.niyo.ClientLog;
 
 public class NiyoContentProvider extends ContentProvider {
 
@@ -41,6 +35,7 @@ public class NiyoContentProvider extends ContentProvider {
 		String insertedUrl = values.getAsString(JSONTableColumns.ELEMENT_URL);
 		String insertedJson = values.getAsString(JSONTableColumns.ELEMENT_JSON);
 		ClientLog.d(LOG_TAG, "insertedUrl is "+insertedUrl);
+		ClientLog.d(LOG_TAG, "insertedJson is "+insertedJson);
 		
 		boolean isEqual = false;
 		Cursor cursor = retrieveFromJsonTable(uri, null, null, null);
@@ -141,19 +136,6 @@ public class NiyoContentProvider extends ContentProvider {
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
 		
-		ArrayList<String> urls = new ArrayList<String>();
-		try {
-			urls.add("http://niyoapi.appspot.com/categories");
-			urls.add("http://niyoapi.appspot.com/tasks");
-			urls.add("http://niyoapi.appspot.com/getFlatTasks");
-			
-			Intent intent = new Intent(getContext(), JsonFetchIntentService.class);
-			intent.putStringArrayListExtra(JsonFetchIntentService.URLS_EXTRA, urls);
-			getContext().startService(intent);
-			
-		} catch (Exception e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
-		}
 		return 0;
 	}
 

@@ -19,7 +19,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
@@ -62,9 +61,6 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClick
 	         }
 
 	         getAdapter().getFilter().filter(s);
-
-	         ClientLog.d(LOG_TAG, "OnTextChange: " + s + " start: " + start +
-	         " before: " + before + " count: " + count + " adapter: " + getAdapter().getCount());    
 
 	    }
 	};
