@@ -1,9 +1,5 @@
 package com.niyo.authenticator;
 
-import com.niyo.Constants;
-import com.niyo.R;
-import com.niyo.network.NetworkUtilities;
-
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
@@ -11,6 +7,9 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.niyo.Constants;
+import com.niyo.R;
 
 public class Authenticator extends AbstractAccountAuthenticator {
 

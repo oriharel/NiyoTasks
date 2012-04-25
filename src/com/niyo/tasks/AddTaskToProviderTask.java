@@ -73,22 +73,23 @@ public class AddTaskToProviderTask extends AsyncTask<String, Void, Boolean> {
 			for (int i = 0; i < oldTasks.length(); i++){
 
 				if (!oldTasks.getJSONObject(i).getString("category").equals(category)){
-					newTasks.put(oldTasks.getJSONObject(i));
+//					newTasks.put(oldTasks.getJSONObject(i));
 				}
 				else{
 					oldCategoryJson = oldTasks.getJSONObject(i);
 				}
 			}
 
-			JSONObject newCategoryJson = createNewJsonObject(oldCategoryJson, content);
+//			JSONObject newCategoryJson = createNewJsonObject(oldCategoryJson, content);
+			createNewJsonObject(oldCategoryJson, content);
 
-			newTasks.put(newCategoryJson);
+//			newTasks.put(newCategoryJson);
 			
 			ClientLog.d(LOG_TAG, "inserting to provider: "+newTasks);
 
 			ContentValues values = new ContentValues();
 			values.put(JSONTableColumns.ELEMENT_URL, "/tasks");
-			values.put(JSONTableColumns.ELEMENT_JSON, "{\"tasks\":"+newTasks.toString()+"}");
+			values.put(JSONTableColumns.ELEMENT_JSON, result.toString());
 
 			mContext.getContentResolver().insert(Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks"), values);
 			return true;
@@ -109,11 +110,11 @@ public class AddTaskToProviderTask extends AsyncTask<String, Void, Boolean> {
 			oldTasks = oldCategoryJson.getJSONArray("tasks");
 
 
-			for (int i = 0; i < oldTasks.length(); i++){
-				newArray.put(oldTasks.getJSONObject(i));
-			}
+//			for (int i = 0; i < oldTasks.length(); i++){
+//				newArray.put(oldTasks.getJSONObject(i));
+//			}
 
-			newArray.put(new JSONObject("{\"content\":\""+content+"\",\"category\":\""+oldCategoryJson.getString("category")+"\"}"));
+			oldTasks.put(new JSONObject("{\"content\":\""+content+"\",\"category\":\""+oldCategoryJson.getString("category")+"\"}"));
 			String newJsonStr = "{\"category\":\""+oldCategoryJson.getString("category")+"\",\"tasks\":"+newArray+"}";
 			ClientLog.d(LOG_TAG, "the new category json is: "+newJsonStr);
 

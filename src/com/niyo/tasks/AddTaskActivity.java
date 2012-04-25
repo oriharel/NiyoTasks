@@ -183,6 +183,7 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClick
 			try {
 				jsonObj.put("category", getIntent().getStringExtra(CATEGORY_EXTRA));
 				jsonObj.put("content", taskName.getText());
+				jsonObj.put("taskId", taskName.getTag());
 			} catch (JSONException e) {
 				ClientLog.e(LOG_TAG, "Error!", e);
 			}

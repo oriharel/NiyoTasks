@@ -271,7 +271,7 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 	private void addCategoryToProvider(CharSequence name) {
 		JSONArray oldTasks = getAdapter().getList();
 		try {
-			JSONObject newCategory = new JSONObject("{category:"+name+",\"tasks\":[]}");
+			JSONObject newCategory = new JSONObject("{category:\""+name+"\",\"tasks\":[]}");
 			JSONArray newTasks = new JSONArray();
 			for (int i = 0; i< oldTasks.length(); i++){
 				if (oldTasks.get(i) instanceof JSONObject){

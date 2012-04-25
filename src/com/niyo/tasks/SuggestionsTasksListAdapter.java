@@ -38,6 +38,7 @@ public class SuggestionsTasksListAdapter extends ArrayAdapter<TaskJsonObject> {
 
 		try {
 			holder.taskName.setText(getItem(position).getString("content"));
+			holder.taskName.setTag(getItem(position).getString("taskId"));
 		} catch (JSONException e) {
 			ClientLog.e(LOG_TAG, "Error!", e);
 		}
