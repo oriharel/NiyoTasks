@@ -191,7 +191,7 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClick
 
 			try {
 				entity = new StringEntity(jsonObj.toString(), HTTP.UTF_8);
-				PostJsonTask task = new PostJsonTask(entity, this, getServiceCaller());
+				PostJsonTask task = new PostJsonTask(entity, this);
 				try {
 					URL url = new URL("http://niyoapi.appspot.com/add");
 					task.execute(url);
@@ -202,8 +202,20 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClick
 			} catch (Exception e) {
 				ClientLog.e(LOG_TAG, "Error!", e);
 			}
+			
+			addTaskToProvider(taskName);
 		}
 		
+	}
+
+	private void addTaskToProvider(TextView taskName) {
+		
+		String[] params = new String[2];
+		params[0] = taskName.getText().toString();
+		params[1] = getIntent().getStringExtra(CATEGORY_EXTRA);
+		
+		AddTaskToProviderTask task = new AddTaskToProviderTask(this, getServiceCaller());
+		task.execute(params);
 	}
 
 	private ServiceCaller getServiceCaller() {
