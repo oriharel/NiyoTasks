@@ -41,7 +41,7 @@
     <ListView
         android:id="@+id/tasksSuggestionsList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content" android:cacheColorHint="@color/appColor">
         <!-- Preview: listitem=@layout/task_suggestion_item_layout -->
 
     </ListView>
