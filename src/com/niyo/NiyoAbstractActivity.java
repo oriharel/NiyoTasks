@@ -9,4 +9,8 @@ public class NiyoAbstractActivity extends Activity {
 	protected Handler getHandler() {
 		return pHandler;
 	}
+	
+	public NiyoApplication getMyApplication(){
+		return (NiyoApplication)getApplication();
+	}
 }

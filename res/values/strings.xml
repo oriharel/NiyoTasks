@@ -80,5 +80,6 @@
     <string name="crossedOff">Crossed off</string>
     <string name="deleteAll">Delete all crossed-off items</string>
     <string name="someText">someText</string>
+    <string name="findCategory">Find Category</string>
 
 </resources>

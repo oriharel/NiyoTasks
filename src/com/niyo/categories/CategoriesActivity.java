@@ -319,7 +319,9 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
 		
 		if (adapterView.getItemIdAtPosition(position) == CategoriesListAdapter.ADD_CATEGORY_ITEM_ID){
-			showDialog(ADD_NEW_CATEGORY_DIALOG);
+//			showDialog(ADD_NEW_CATEGORY_DIALOG);
+			Intent intent = AddCategoryActivity.getCreationIntent(this);
+			startActivity(intent);
 		}
 		else
 		{

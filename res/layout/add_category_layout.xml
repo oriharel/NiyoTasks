@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/addCateogoryLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appColor"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/categoryNameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dip" >
+
+        <EditText
+            android:id="@+id/categoryNameEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:ems="10"
+            android:focusable="true"
+            android:hint="@string/findOrAdd"
+            android:text="@string/findCategory" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/addCategoryBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dip"
+            android:layout_weight="1"
+            android:background="@drawable/nav_btn_selector"
+            android:onClick="addClicked"
+            android:text="@string/add"
+            android:textColor="@color/text_color"
+            android:textSize="24sp" android:visibility="gone"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/foursqrCategoriesList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:cacheColorHint="@color/appColor" >
+
+        <!-- Preview: listitem=@layout/foursqaure_cat_item -->
+
+    </ListView>
+
+</LinearLayout>

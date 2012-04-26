@@ -93,6 +93,7 @@
                 <category android:name="com.appcard" />
             </intent-filter>
         </receiver>
+        <activity android:name=".categories.AddCategoryActivity"></activity>
         
     </application>
 
