@@ -3,22 +3,21 @@
     android:id="@+id/addTaskLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" android:background="@color/appColor">
 
 
     <LinearLayout
         android:id="@+id/taskNameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="10dip"
-        android:paddingTop="10dip" >
+        android:padding="10dip">
 
 
 
         <EditText
             android:id="@+id/taskNameEdit"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/findOrAdd" android:focusable="true">
@@ -31,10 +30,10 @@
         <Button
             android:id="@+id/addTaskBtn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="addClicked"
-            android:text="@string/add" />
+            android:text="@string/add" android:background="@drawable/nav_btn_selector" android:layout_marginLeft="10dip" android:textColor="@color/text_color" android:textSize="24sp"/>
 
     </LinearLayout>
 

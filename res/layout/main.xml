@@ -3,12 +3,17 @@
     android:id="@+id/categoriesListLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/appColor"
     android:orientation="vertical" >
 
     <ListView
         android:id="@+id/categoriesList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:cacheColorHint="@color/appColor"
+        android:divider="@drawable/black_divider"
+        android:dividerHeight="0.5dip" >
+
         <!-- Preview: listitem=@layout/category_list_item -->
     </ListView>
 

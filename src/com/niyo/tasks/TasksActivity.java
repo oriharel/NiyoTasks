@@ -18,6 +18,7 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -53,6 +54,13 @@ public class TasksActivity extends NiyoAbstractActivity {
         getListView().setOnItemClickListener(getOnOpenTasksItemClicked());
         setCrossedTasks(new ArrayList<JSONObject>());
         registerForContextMenu(getListView());
+        findViewById(R.id.addTask).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				addTask(v);
+			}
+		});
         URL url= null;
         
 		try {

@@ -2,7 +2,7 @@
     android:id="@+id/testLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" android:background="@color/appColor">
 
     <TableLayout
         android:layout_width="fill_parent"
@@ -16,33 +16,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingLeft="20dip"
-            android:paddingRight="20dip"
-            android:weightSum="3" >
+            android:weightSum="5" android:paddingLeft="20dip" android:paddingRight="20dip" android:gravity="center_vertical">
 
             <Button
                 android:id="@+id/Button03"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_width="0dip"
+                android:layout_height="100dip"
+                android:layout_weight="2"
                 android:onClick="navigateTo"
                 android:tag="32.179457,34.91667"
-                android:text="Work" />
+                android:text="Work" android:textSize="24sp" android:background="@drawable/nav_btn_selector" android:textColor="@color/text_color"/>
 
             <View
                 android:id="@+id/View02"
                 android:layout_width="0dip"
                 android:layout_height="10dip"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:visibility="visible" />
 
             <Button
                 android:id="@+id/Button04"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_width="0dip"
+                android:layout_height="100dip"
+                android:layout_weight="2"
                 android:onClick="navigateTo"
                 android:tag="32.179366,34.858251"
-                android:text="Home" />
+                android:text="Home" android:textSize="24sp" android:background="@drawable/nav_btn_selector" android:textColor="@color/text_color"/>
         </TableRow>
 
         <TableRow
@@ -52,16 +51,16 @@
             android:layout_weight="1"
             android:paddingLeft="20dip"
             android:paddingRight="20dip"
-            android:weightSum="3" >
+            android:weightSum="5" android:gravity="center_vertical">
 
             <Button
                 android:id="@+id/Button01"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_width="0dip"
+                android:layout_height="100dip"
+                android:layout_weight="2"
                 android:onClick="navigateTo"
                 android:tag="32.167724,34.874966"
-                android:text="Itchuk" />
+                android:text="Itchuk" android:textSize="24sp" android:background="@drawable/nav_btn_selector" android:textColor="@color/text_color"/>
 
             <View
                 android:id="@+id/View01"
@@ -71,12 +70,12 @@
 
             <Button
                 android:id="@+id/Button02"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_width="0dip"
+                android:layout_height="100dip"
+                android:layout_weight="2"
                 android:onClick="navigateTo"
                 android:tag="32.192033,34.876774"
-                android:text="Noa" />
+                android:text="Noa" android:textSize="24sp" android:background="@drawable/nav_btn_selector" android:textColor="@color/text_color"/>
         </TableRow>
 
         <TableRow
@@ -86,16 +85,16 @@
             android:layout_weight="1"
             android:paddingLeft="20dip"
             android:paddingRight="20dip"
-            android:weightSum="3" >
+            android:weightSum="5" android:gravity="center_vertical">
 
             <Button
                 android:id="@+id/button1"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_width="0dip"
+                android:layout_height="100dip"
+                android:layout_weight="2"
                 android:onClick="navigateTo"
                 android:tag="32.197249,34.878234"
-                android:text="Renanim" />
+                android:text="Renanim" android:textSize="24sp" android:background="@drawable/nav_btn_selector" android:textColor="@color/text_color"/>
 
             <View
                 android:id="@+id/view1"
@@ -105,12 +104,12 @@
 
             <Button
                 android:id="@+id/button3"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_width="0dip"
+                android:layout_height="100dip"
+                android:layout_weight="2"
                 android:onClick="navigateTo"
                 android:tag="32.186957,34.928117"
-                android:text="Ferber" />
+                android:text="Ferber" android:textSize="24sp" android:background="@drawable/nav_btn_selector" android:textColor="@color/text_color"/>
         </TableRow>
     </TableLayout>
 
