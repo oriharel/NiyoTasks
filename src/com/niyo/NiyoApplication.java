@@ -1,16 +1,22 @@
 package com.niyo;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import com.niyo.data.JsonFetchIntentService;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import android.app.Application;
 import android.content.Intent;
+
+import com.niyo.data.JsonFetchIntentService;
 
 public class NiyoApplication extends Application {
 
 	private static final String LOG_TAG = NiyoApplication.class.getSimpleName();
 	private static Boolean s_logEnabled = true;
+	private JSONArray mFoursqaureVenues;
 	public static boolean isLogEnabled() {
 		return s_logEnabled;
 	}
@@ -20,8 +26,42 @@ public class NiyoApplication extends Application {
 		
 		super.onCreate();
 		fetchData();
+		fetchFoursquareVenues();
 	}
 	
+	private void fetchFoursquareVenues() {
+
+		ClientLog.d(LOG_TAG, "reading the categories");
+		try {        
+			BufferedReader in = null;
+			in = new BufferedReader(new InputStreamReader(getAssets().open("categories.json")));
+			String line;
+			StringBuilder sb = new StringBuilder();
+			
+			while((line =in.readLine()) != null){
+				sb.append(line);
+			}
+			
+			in.close();
+			//create a json object
+			JSONObject json = new JSONObject(sb.toString());
+
+			//loop over the items array and look for pid
+			JSONArray categories = json.getJSONObject("response").getJSONArray("categories");
+			setFoursqaureVenues(categories);
+			
+			//TODO - to remove. expensinve loop
+			for (int i = 0; i < getFoursqaureVenues().length(); i++){
+				ClientLog.d(LOG_TAG, "category: "+getFoursqaureVenues().getJSONObject(i).getString("name"));
+			}
+			
+		} catch (Exception e) {
+			ClientLog.e(LOG_TAG, "Error!", e);
+		}
+
+
+	}
+
 	public void fetchData(){
 		ArrayList<String> urls = new ArrayList<String>();
 		try {
@@ -37,6 +77,14 @@ public class NiyoApplication extends Application {
 		} catch (Exception e) {
 			ClientLog.e(LOG_TAG, "Error!", e);
 		}
+	}
+
+	public JSONArray getFoursqaureVenues() {
+		return mFoursqaureVenues;
+	}
+
+	public void setFoursqaureVenues(JSONArray foursqaureVenues) {
+		mFoursqaureVenues = foursqaureVenues;
 	}
 
 }
