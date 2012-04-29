@@ -1,4 +1,4 @@
-package com.niyo.tasks;
+package com.niyo.data;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -6,8 +6,6 @@ import org.json.JSONObject;
 
 import com.niyo.ClientLog;
 import com.niyo.ServiceCaller;
-import com.niyo.data.JSONTableColumns;
-import com.niyo.data.NiyoContentProvider;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,9 +13,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-public class AddTaskToProviderTask extends AsyncTask<String, Void, Boolean> {
+public class AddCategoryToProviderTask extends AsyncTask<String, Void, Boolean> {
 
-	private static final String LOG_TAG = AddTaskToProviderTask.class.getSimpleName();
+	private static final String LOG_TAG = AddCategoryToProviderTask.class.getSimpleName();
 	private Context mContext;
 	private String[] mProjection = new String[] 
             {
@@ -28,7 +26,8 @@ public class AddTaskToProviderTask extends AsyncTask<String, Void, Boolean> {
 	private String mSelection = JSONTableColumns.ELEMENT_URL + "='/tasks'";
 	private ServiceCaller mCaller;
 	
-	public AddTaskToProviderTask(Context context, ServiceCaller caller){
+	public AddCategoryToProviderTask(Context context, ServiceCaller caller){
+		
 		mContext = context;
 		mCaller = caller;
 	}
@@ -36,10 +35,9 @@ public class AddTaskToProviderTask extends AsyncTask<String, Void, Boolean> {
 	@Override
 	protected Boolean doInBackground(String... params) {
 
-		String content = params[0];
-		String category = params[1];
+		String category = params[0];
 		
-		ClientLog.d(LOG_TAG, "inserting content: "+content+" category:"+category);
+		ClientLog.d(LOG_TAG, "inserting category:"+category);
 
 		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks");
 		Cursor cursor = mContext.getContentResolver().query(uri, mProjection, mSelection, null, null);
@@ -65,16 +63,8 @@ public class AddTaskToProviderTask extends AsyncTask<String, Void, Boolean> {
 		try {
 			oldTasks = result.getJSONArray("tasks");
 
-			JSONObject oldCategoryJson = null;
 
-			for (int i = 0; i < oldTasks.length(); i++){
-
-				if (oldTasks.getJSONObject(i).getString("category").equals(category)){
-					oldCategoryJson = oldTasks.getJSONObject(i);
-				}
-			}
-
-			createNewJsonObject(oldCategoryJson, content);
+			oldTasks.put(createNewJsonObject(category));
 
 			ContentValues values = new ContentValues();
 			values.put(JSONTableColumns.ELEMENT_URL, "/tasks");
@@ -88,30 +78,10 @@ public class AddTaskToProviderTask extends AsyncTask<String, Void, Boolean> {
 		}
 	}
 
-	private JSONObject createNewJsonObject(JSONObject oldCategoryJson, String content) {
-
-		ClientLog.d(LOG_TAG, "oldCategoryJson is: "+oldCategoryJson);
-		try {
-			JSONArray newArray = new JSONArray();
-
-			JSONArray oldTasks;
-
-			oldTasks = oldCategoryJson.getJSONArray("tasks");
-
-
-//			for (int i = 0; i < oldTasks.length(); i++){
-//				newArray.put(oldTasks.getJSONObject(i));
-//			}
-
-			oldTasks.put(new JSONObject("{\"content\":\""+content+"\",\"category\":\""+oldCategoryJson.getString("category")+"\"}"));
-			String newJsonStr = "{\"category\":\""+oldCategoryJson.getString("category")+"\",\"tasks\":"+newArray+"}";
-			ClientLog.d(LOG_TAG, "the new category json is: "+newJsonStr);
-
-			return new JSONObject(newJsonStr);
-		} catch (JSONException e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
-			return null;
-		}
+	private JSONObject createNewJsonObject(String category) throws JSONException {
+		
+		return new JSONObject("{category:\""+category+"\",tasks:[]}");
+		
 	}
 	
 	@Override

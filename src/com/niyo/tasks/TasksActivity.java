@@ -391,6 +391,8 @@ public class TasksActivity extends NiyoAbstractActivity {
 		
 		List<JSONObject> openTasks = StringUtils.sort(getOpenTasks(), Utils.getTaskJSONComparator());
 		List<JSONObject> crossedTasks = StringUtils.sort(getCrossedTasks(), Utils.getTaskJSONComparator());
+		
+		ClientLog.d(LOG_TAG, "num of open are: "+openTasks.size()+" num of crossed: "+crossedTasks.size());
 		if (getAdapter() != null){
 			getAdapter().setList(openTasks, crossedTasks);
 			getAdapter().notifyDataSetChanged();

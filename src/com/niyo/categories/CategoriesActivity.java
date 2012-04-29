@@ -2,22 +2,13 @@ package com.niyo.categories;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.accounts.Account;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.PeriodicSync;
 import android.database.ContentObserver;
@@ -25,14 +16,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
@@ -41,15 +30,13 @@ import com.niyo.ServiceCaller;
 import com.niyo.auto.AutoActivity;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.DeleteHttpTask;
-import com.niyo.data.JsonDbInsertTask;
 import com.niyo.data.NiyoContentProvider;
-import com.niyo.data.PostJsonTask;
 import com.niyo.tasks.TasksActivity;
 
 public class CategoriesActivity extends NiyoAbstractActivity implements OnItemClickListener {
 	
 	private static final String LOG_TAG = CategoriesActivity.class.getSimpleName();
-	private static final int ADD_NEW_CATEGORY_DIALOG = 0;
+//	private static final int ADD_NEW_CATEGORY_DIALOG = 0;
 	private Uri mUri;
 	
 	private CategoriesListAdapter mAdapter;
@@ -220,77 +207,77 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 	/**
 	 * Just to add something for the git process
 	 */
-	@Override
-    protected Dialog onCreateDialog(int id) {
-		switch (id) {
-			case ADD_NEW_CATEGORY_DIALOG:
-	            // This example shows how to add a custom layout to an AlertDialog
-	            LayoutInflater factory = LayoutInflater.from(this);
-	            final View textEntryView = factory.inflate(R.layout.add_category_dialog, null);
-	            return new AlertDialog.Builder(CategoriesActivity.this)
-	                .setIcon(R.drawable.alert_dialog_icon)
-	                .setTitle("Add a category")
-	                .setView(textEntryView)
-	                .setPositiveButton("Add category", new DialogInterface.OnClickListener() {
-	                    public void onClick(DialogInterface dialog, int whichButton) {
-	                    	TextView nameView = (TextView)textEntryView.findViewById(R.id.categoryNameEdit);
-	                        addCategory(nameView.getText());
-	                    }
-	                })
-	                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-	                    public void onClick(DialogInterface dialog, int whichButton) {
+//	@Override
+//    protected Dialog onCreateDialog(int id) {
+//		switch (id) {
+//			case ADD_NEW_CATEGORY_DIALOG:
+//	            // This example shows how to add a custom layout to an AlertDialog
+//	            LayoutInflater factory = LayoutInflater.from(this);
+//	            final View textEntryView = factory.inflate(R.layout.add_category_dialog, null);
+//	            return new AlertDialog.Builder(CategoriesActivity.this)
+//	                .setIcon(R.drawable.alert_dialog_icon)
+//	                .setTitle("Add a category")
+//	                .setView(textEntryView)
+//	                .setPositiveButton("Add category", new DialogInterface.OnClickListener() {
+//	                    public void onClick(DialogInterface dialog, int whichButton) {
+//	                    	TextView nameView = (TextView)textEntryView.findViewById(R.id.categoryNameEdit);
+//	                        addCategory(nameView.getText());
+//	                    }
+//	                })
+//	                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//	                    public void onClick(DialogInterface dialog, int whichButton) {
+//	
+//	                        /* User clicked cancel so do some stuff */
+//	                    }
+//	                })
+//	                .create();
+//			}
+//		return null;
+//	}
 	
-	                        /* User clicked cancel so do some stuff */
-	                    }
-	                })
-	                .create();
-			}
-		return null;
-	}
-	
-	protected void addCategory(CharSequence name) {
-		ClientLog.d(LOG_TAG, "name is "+name);
-		List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-		params.add(new BasicNameValuePair("name", name.toString()));
-		try {
-			PostJsonTask task = new PostJsonTask(new UrlEncodedFormEntity(params, HTTP.UTF_8), this);
-			try {
-				URL url = new URL("http://niyoapi.appspot.com/addCategory");
-				task.execute(url);
-			} catch (MalformedURLException e) {
-				ClientLog.e(LOG_TAG, "Error!", e);
-			}
-			
-		} catch (Exception e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
-		}
-		
-		addCategoryToProvider(name);
-	}
+//	private void addCategory(CharSequence name) {
+//		ClientLog.d(LOG_TAG, "name is "+name);
+//		List<NameValuePair> params = new ArrayList<NameValuePair>(2);
+//		params.add(new BasicNameValuePair("name", name.toString()));
+//		try {
+//			PostJsonTask task = new PostJsonTask(new UrlEncodedFormEntity(params, HTTP.UTF_8), this);
+//			try {
+//				URL url = new URL("http://niyoapi.appspot.com/addCategory");
+//				task.execute(url);
+//			} catch (MalformedURLException e) {
+//				ClientLog.e(LOG_TAG, "Error!", e);
+//			}
+//			
+//		} catch (Exception e) {
+//			ClientLog.e(LOG_TAG, "Error!", e);
+//		}
+//		
+//		addCategoryToProvider(name);
+//	}
 
-	private void addCategoryToProvider(CharSequence name) {
-		JSONArray oldTasks = getAdapter().getList();
-		try {
-			JSONObject newCategory = new JSONObject("{category:\""+name+"\",\"tasks\":[]}");
-			JSONArray newTasks = new JSONArray();
-			for (int i = 0; i< oldTasks.length(); i++){
-				if (oldTasks.get(i) instanceof JSONObject){
-					newTasks.put(oldTasks.getJSONObject(i));
-				}
-			}
-			
-			newTasks.put(newCategory);
-			
-			JsonDbInsertTask task = new JsonDbInsertTask(this);
-			String[] params = new String[]{NiyoContentProvider.AUTHORITY+"/tasks", "{\"tasks\":"+newTasks.toString()+"}"};
-			
-			task.execute(params);
-			
-		} catch (JSONException e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
-		}
-		
-	}
+//	private void addCategoryToProvider(CharSequence name) {
+//		JSONArray oldTasks = getAdapter().getList();
+//		try {
+//			JSONObject newCategory = new JSONObject("{category:\""+name+"\",\"tasks\":[]}");
+//			JSONArray newTasks = new JSONArray();
+//			for (int i = 0; i< oldTasks.length(); i++){
+//				if (oldTasks.get(i) instanceof JSONObject){
+//					newTasks.put(oldTasks.getJSONObject(i));
+//				}
+//			}
+//			
+//			newTasks.put(newCategory);
+//			
+//			JsonDbInsertTask task = new JsonDbInsertTask(this);
+//			String[] params = new String[]{NiyoContentProvider.AUTHORITY+"/tasks", "{\"tasks\":"+newTasks.toString()+"}"};
+//			
+//			task.execute(params);
+//			
+//		} catch (JSONException e) {
+//			ClientLog.e(LOG_TAG, "Error!", e);
+//		}
+//		
+//	}
 
 	private ListView getList() {
 		

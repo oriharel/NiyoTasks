@@ -28,6 +28,8 @@ import android.widget.TextView;
 import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
+import com.niyo.ServiceCaller;
+import com.niyo.data.AddCategoryToProviderTask;
 import com.niyo.data.PostJsonTask;
 
 public class AddCategoryActivity extends NiyoAbstractActivity implements OnItemClickListener {
@@ -117,26 +119,25 @@ public class AddCategoryActivity extends NiyoAbstractActivity implements OnItemC
 	}
 	
 	private void addCategoryToProvider(CharSequence name) {
-//		JSONArray oldTasks = getAdapter().getList();
-//		try {
-//			JSONObject newCategory = new JSONObject("{category:\""+name+"\",\"tasks\":[]}");
-//			JSONArray newTasks = new JSONArray();
-//			for (int i = 0; i< oldTasks.length(); i++){
-//				if (oldTasks.get(i) instanceof JSONObject){
-//					newTasks.put(oldTasks.getJSONObject(i));
-//				}
-//			}
-//			
-//			newTasks.put(newCategory);
-//			
-//			JsonDbInsertTask task = new JsonDbInsertTask(this);
-//			String[] params = new String[]{NiyoContentProvider.AUTHORITY+"/tasks", "{\"tasks\":"+newTasks.toString()+"}"};
-//			
-//			task.execute(params);
-//			
-//		} catch (JSONException e) {
-//			ClientLog.e(LOG_TAG, "Error!", e);
-//		}
+		
+		ServiceCaller caller = new ServiceCaller() {
+			
+			@Override
+			public void success(Object data) {
+				finish();
+				
+			}
+			
+			@Override
+			public void failure(Object data, String description) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		AddCategoryToProviderTask task = new AddCategoryToProviderTask(this, caller);
+		String[] params = new String[1];
+		params[0] = name.toString();
+		task.execute(params);
 		
 	}
 

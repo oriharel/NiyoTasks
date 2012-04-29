@@ -105,7 +105,8 @@ public class TasksListAdapter extends BaseAdapter {
 		result++;
 		
 		if (mCrossedTasks.size() > 0){
-			//for the crossed label
+			//for the crossed label and delete all crossed
+			result++;
 			result++;
 		}
 		
@@ -122,7 +123,7 @@ public class TasksListAdapter extends BaseAdapter {
 			}
 			else if (getItemViewType(position) == CROSS_TASK_TYPE){
 				
-				int crossPosition = position-mOpenTasks.size()-2;
+				int crossPosition = position-mOpenTasks.size()-3;
 				return mCrossedTasks.get(crossPosition);
 			}
 
