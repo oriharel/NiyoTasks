@@ -87,7 +87,7 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClick
 		URL url= null;
 		
 		try {
-			url = new URL("http://niyoapi.appspot.com/getFlatTasks");
+			url = new URL("http://niyoapi.appspot.com/tasks");
 		} catch (MalformedURLException e) {
 			ClientLog.e(LOG_TAG, "Error!", e);
 			return;
@@ -144,7 +144,7 @@ public class AddTaskActivity extends NiyoAbstractActivity implements OnItemClick
 		{
 			setAdapter(new SuggestionsTasksListAdapter(this, R.layout.task_suggestion_item_layout,
 					R.id.taskSuggestionName, StringUtils.toTasksList(tasks)));
-			getList().setAdapter(getAdapter());
+//			getList().setAdapter(getAdapter());
 		}
 	}
 	

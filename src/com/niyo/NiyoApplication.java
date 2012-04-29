@@ -25,7 +25,7 @@ public class NiyoApplication extends Application {
 	public void onCreate(){
 		
 		super.onCreate();
-		fetchData();
+//		fetchData();ff
 		fetchFoursquareVenues();
 	}
 	

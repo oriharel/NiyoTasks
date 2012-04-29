@@ -2,6 +2,7 @@ package com.niyo.categories;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -118,11 +119,21 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 			JSONObject bean = (JSONObject)selectedItem;
 			DeleteHttpTask task = new DeleteHttpTask(this);
 			try {
-				task.execute(new URL("http://niyoapi.appspot.com/deleteCategory?name="+bean.getString("category")));
+				
+				String paramValue = bean.getString("category");
+				String encoded = URLEncoder.encode(paramValue.toString(), "UTF-8");
+				task.execute(new URL("http://niyoapi.appspot.com/deleteCategory?name="+encoded));
+				
+				DeleteCategoryTask deleteTask = new DeleteCategoryTask(this);
+				String[] params = new String[1];
+				params[0] = bean.getString("category");
+				deleteTask.execute(params);
 			} catch (Exception e) {
 				ClientLog.e(LOG_TAG, "Errro!", e);
 			}
 		}
+		
+		
 		
 		return false;
 	}
@@ -156,19 +167,22 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 			@Override
 			public void success(Object data) {
 				
+				JSONArray categories = null;
 				if (data != null){
 					JSONObject categoriesData = (JSONObject)data;
-					JSONArray categories = null;
 					try {
 						categories = categoriesData.getJSONArray("tasks");
 					} catch (JSONException e) {
 						ClientLog.e(LOG_TAG, "Error!", e);
 					}
-					setCategories(categories);
+					
 				}
 				else{
 					ClientLog.d(LOG_TAG, "categories list is empty in activity");
+					categories = new JSONArray();
 				}
+				
+				setCategories(categories);
 			}
 			
 			@Override

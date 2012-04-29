@@ -1,11 +1,14 @@
-package com.niyo.data;
+package com.niyo.tasks;
+
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.niyo.ClientLog;
-import com.niyo.ServiceCaller;
+import com.niyo.data.JSONTableColumns;
+import com.niyo.data.NiyoContentProvider;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,9 +16,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-public class AddCategoryToProviderTask extends AsyncTask<String, Void, Boolean> {
+public class ProcessTasksTask extends AsyncTask<String, Void, Boolean> {
 
-	private static final String LOG_TAG = AddCategoryToProviderTask.class.getSimpleName();
+	private static final String LOG_TAG = ProcessTasksTask.class.getSimpleName();
 	private Context mContext;
 	private String[] mProjection = new String[] 
             {
@@ -24,21 +27,21 @@ public class AddCategoryToProviderTask extends AsyncTask<String, Void, Boolean> 
 				JSONTableColumns.ELEMENT_JSON, 
             };
 	private String mSelection = JSONTableColumns.ELEMENT_URL + "='/tasks'";
-	private ServiceCaller mCaller;
+	private String mCategory;
+	private List<JSONObject> mFinishedTasks;
+	private List<JSONObject> mUnfinishedTasks;
 	
-	public AddCategoryToProviderTask(Context context, ServiceCaller caller){
+	public ProcessTasksTask(Context context, String category, List<JSONObject> finishedTasks, List<JSONObject> unfinishedTasks){
 		
 		mContext = context;
-		mCaller = caller;
+		mCategory = category;
+		mFinishedTasks = finishedTasks;
+		mUnfinishedTasks = unfinishedTasks;
 	}
 	
 	@Override
 	protected Boolean doInBackground(String... params) {
-
-		String category = params[0];
 		
-		ClientLog.d(LOG_TAG, "inserting category:"+category);
-
 		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks");
 		Cursor cursor = mContext.getContentResolver().query(uri, mProjection, mSelection, null, null);
 		JSONObject result = null;
@@ -58,18 +61,41 @@ public class AddCategoryToProviderTask extends AsyncTask<String, Void, Boolean> 
 
 			cursor.close();
 		}
+		
+		JSONArray tasks;
 		try {
-		
-			if (result == null){
-				result = new JSONObject("{tasks:"+new JSONArray()+"}");
+			tasks = result.getJSONArray("tasks");
+
+			JSONObject categoryJson = null;
+
+			for (int i = 0; i < tasks.length(); i++){
+
+				if (tasks.getJSONObject(i).getString("category").equals(mCategory)){
+					categoryJson = tasks.getJSONObject(i);
+					break;
+				}
 			}
-	
-			JSONArray oldTasks;
-		
-			oldTasks = result.getJSONArray("tasks");
 
-
-			oldTasks.put(createNewJsonObject(category));
+			JSONArray categoryTasks = categoryJson.getJSONArray("tasks");
+			
+			for (int i = 0; i < categoryTasks.length(); i++){
+				
+				JSONObject savedTask = categoryTasks.getJSONObject(i);
+				
+				for (JSONObject finishedTask : mFinishedTasks) {
+					
+					if (finishedTask.getString("content").equals(savedTask.getString("content"))){
+						savedTask.put("done", true);
+					}
+				}
+				
+				for (JSONObject unFinishedTask : mUnfinishedTasks){
+					
+					if (unFinishedTask.getString("content").equals(savedTask.getString("content"))){
+						savedTask.put("done", false);
+					}
+				}
+			}
 
 			ContentValues values = new ContentValues();
 			values.put(JSONTableColumns.ELEMENT_URL, "/tasks");
@@ -82,30 +108,5 @@ public class AddCategoryToProviderTask extends AsyncTask<String, Void, Boolean> 
 			return false;
 		}
 	}
-
-	private JSONObject createNewJsonObject(String category) throws JSONException {
-		
-		return new JSONObject("{category:\""+category+"\",tasks:"+new JSONArray()+"}");
-		
-	}
-	
-	@Override
-    protected void onPostExecute(Boolean result) 
-	{
-        if (isCancelled()) 
-        {
-        	ClientLog.d(LOG_TAG, "isCancelled activated");
-        }
-        
-        ClientLog.d(LOG_TAG, "calling success");
-        try 
-        {
-			mCaller.success(result);
-		} 
-        catch (Exception e) 
-        {
-			ClientLog.e(LOG_TAG, "Error! with ", e);
-		}
-    }
 
 }

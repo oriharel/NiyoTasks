@@ -103,7 +103,7 @@ public class AddTaskToProviderTask extends AsyncTask<String, Void, Boolean> {
 //				newArray.put(oldTasks.getJSONObject(i));
 //			}
 
-			oldTasks.put(new JSONObject("{\"content\":\""+content+"\",\"category\":\""+oldCategoryJson.getString("category")+"\"}"));
+			oldTasks.put(new JSONObject("{content:\""+content+"\",category:\""+oldCategoryJson.getString("category")+"\", done:"+Boolean.FALSE+"}"));
 			String newJsonStr = "{\"category\":\""+oldCategoryJson.getString("category")+"\",\"tasks\":"+newArray+"}";
 			ClientLog.d(LOG_TAG, "the new category json is: "+newJsonStr);
 
