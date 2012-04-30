@@ -89,8 +89,13 @@
         directionsService.route(request, function(response, status) {
           if (status == google.maps.DirectionsStatus.OK) {
             directionsDisplay.setDirections(response);
+            Native.setResponse(JSON.stringify(response), originPtLat, originPtLon, destPtLat, destPtLon);
           }
         });
+      }
+      
+      function addVenues(venues){
+      	
       }
 
       google.maps.event.addDomListener(window, 'load', initialize);

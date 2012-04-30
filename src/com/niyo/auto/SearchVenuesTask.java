@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.niyo.ClientLog;
+import com.niyo.auto.map.AutoMapActivity;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -24,8 +25,15 @@ import android.util.Log;
 public class SearchVenuesTask extends AsyncTask<String, Void, List<AutoVenue>> {
 
 	private static final String LOG_TAG = SearchVenuesTask.class.getSimpleName();
+	private AutoMapActivity mContext;
+	
+	public SearchVenuesTask(AutoMapActivity context){
+		mContext = context;
+	}
+	
 	@Override
 	protected List<AutoVenue> doInBackground(String... params) {
+		
 		Double distance = new Double(params[0]);
 		String stepsJsonStr = params[1];
 		String categoryId = params[2];
@@ -175,6 +183,7 @@ public class SearchVenuesTask extends AsyncTask<String, Void, List<AutoVenue>> {
 		for (AutoVenue autoVenue : result) {
 			Log.d(LOG_TAG, "name: "+autoVenue.getName()+" The distance is "+autoVenue.getDistance()+" the id "+autoVenue.getFoursqaureId()+" address is "+autoVenue.getAddress());
 		}
+		mContext.showRelevantVenues(result);
 	}
 	
 	private Double getDistance(AutoPoint from, AutoPoint to)

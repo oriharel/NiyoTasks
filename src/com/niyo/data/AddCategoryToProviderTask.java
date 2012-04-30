@@ -36,6 +36,7 @@ public class AddCategoryToProviderTask extends AsyncTask<String, Void, Boolean> 
 	protected Boolean doInBackground(String... params) {
 
 		String category = params[0];
+		String id = params[1];
 		
 		ClientLog.d(LOG_TAG, "inserting category:"+category);
 
@@ -69,7 +70,7 @@ public class AddCategoryToProviderTask extends AsyncTask<String, Void, Boolean> 
 			oldTasks = result.getJSONArray("tasks");
 
 
-			oldTasks.put(createNewJsonObject(category));
+			oldTasks.put(createNewJsonObject(category, id));
 
 			ContentValues values = new ContentValues();
 			values.put(JSONTableColumns.ELEMENT_URL, "/tasks");
@@ -83,9 +84,9 @@ public class AddCategoryToProviderTask extends AsyncTask<String, Void, Boolean> 
 		}
 	}
 
-	private JSONObject createNewJsonObject(String category) throws JSONException {
+	private JSONObject createNewJsonObject(String category, String id) throws JSONException {
 		
-		return new JSONObject("{category:\""+category+"\",tasks:"+new JSONArray()+"}");
+		return new JSONObject("{category:\""+category+"\",tasks:"+new JSONArray()+", id:"+id+"}");
 		
 	}
 	

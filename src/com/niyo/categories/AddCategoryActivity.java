@@ -95,10 +95,15 @@ public class AddCategoryActivity extends NiyoAbstractActivity implements OnItemC
 	public void addClicked(View v){
 		
 		TextView categoryNameEdit = (TextView)findViewById(R.id.categoryNameEdit);
-		addCategory(categoryNameEdit.getText());
+		String id = "";
+		if (categoryNameEdit.getTag() != null){
+			
+			id = (String)categoryNameEdit.getTag();
+		}
+		addCategory(categoryNameEdit.getText(), id);
 	}
 	
-	protected void addCategory(CharSequence name) {
+	protected void addCategory(CharSequence name, String id) {
 		ClientLog.d(LOG_TAG, "name is "+name);
 		List<NameValuePair> params = new ArrayList<NameValuePair>(2);
 		params.add(new BasicNameValuePair("name", name.toString()));
@@ -115,10 +120,10 @@ public class AddCategoryActivity extends NiyoAbstractActivity implements OnItemC
 			ClientLog.e(LOG_TAG, "Error!", e);
 		}
 		
-		addCategoryToProvider(name);
+		addCategoryToProvider(name, id);
 	}
 	
-	private void addCategoryToProvider(CharSequence name) {
+	private void addCategoryToProvider(CharSequence name, String id) {
 		
 		ServiceCaller caller = new ServiceCaller() {
 			
@@ -135,8 +140,9 @@ public class AddCategoryActivity extends NiyoAbstractActivity implements OnItemC
 			}
 		};
 		AddCategoryToProviderTask task = new AddCategoryToProviderTask(this, caller);
-		String[] params = new String[1];
+		String[] params = new String[2];
 		params[0] = name.toString();
+		params[1] = id.toString();
 		task.execute(params);
 		
 	}
@@ -153,16 +159,22 @@ public class AddCategoryActivity extends NiyoAbstractActivity implements OnItemC
 
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View itemLayout, int position, long arg3) {
-		ClientLog.d(LOG_TAG, "item clicked");
-		JSONObject category = (JSONObject)adapterView.getItemAtPosition(position);
 		
+		JSONObject category = (JSONObject)adapterView.getItemAtPosition(position);
+		ClientLog.d(LOG_TAG, "item clicked with "+category);
 		try {
-			JSONArray subCategories = category.getJSONArray("categories");
-			if (subCategories.length() > 0){
-				populateList(subCategories);
+			if (category.has("categories")){
+				JSONArray subCategories = category.getJSONArray("categories");
+				if (subCategories.length() > 0){
+					populateList(subCategories);
+				}
+				else{
+					addCategory(category.getString("name"), category.getString("id"));
+				}
 			}
+			
 			else{
-				addCategory(category.getString("name"));
+				addCategory(category.getString("name"), category.getString("id"));
 			}
 		} catch (JSONException e) {
 			ClientLog.e(LOG_TAG, "Error", e);

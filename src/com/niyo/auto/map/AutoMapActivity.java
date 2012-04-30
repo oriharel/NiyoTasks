@@ -1,14 +1,12 @@
 package com.niyo.auto.map;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -18,10 +16,10 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.auto.AutoPoint;
+import com.niyo.auto.AutoVenue;
 import com.niyo.auto.AutoWVClient;
 import com.niyo.auto.JSInterface;
 
@@ -29,6 +27,7 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 	
 	private static final String LOG_TAG = AutoMapActivity.class.getSimpleName();
 	private static final String TO_EXTRA = "toExtra";
+	private static final String CATEGORY_IDS_EXTRA = "idsExtra";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -50,7 +49,7 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 		settings.setUseWideViewPort(true);
 		settings.setDomStorageEnabled(true);
 		webView.setWebViewClient(new AutoWVClient(this, getTo()));
-		JSInterface inter = new JSInterface();
+		JSInterface inter = new JSInterface(getCategryIds(), this);
 		webView.addJavascriptInterface(inter, "Native");
 		webView.setWebChromeClient(new WebChromeClient() 
 		{
@@ -71,10 +70,15 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 		return (AutoPoint)getIntent().getSerializableExtra(TO_EXTRA);
 	}
 	
-	public static Intent getCreationIntent(Activity activity, AutoPoint to){
+	private List<String> getCategryIds(){
+		return (List<String>)getIntent().getSerializableExtra(CATEGORY_IDS_EXTRA);
+	}
+	
+	public static Intent getCreationIntent(Activity activity, AutoPoint to, ArrayList<String> categroyIds){
 		
 		Intent intent = new Intent(activity, AutoMapActivity.class);
 		intent.putExtra(TO_EXTRA, to);
+		intent.putExtra(CATEGORY_IDS_EXTRA, categroyIds);
 		
 		return intent;
 	}
@@ -100,6 +104,12 @@ public class AutoMapActivity extends NiyoAbstractActivity {
             PackageManager.MATCH_DEFAULT_ONLY);
         return list.size() > 0;
     }
+
+	public void showRelevantVenues(List<AutoVenue> result) 
+	{
+		Toast.makeText(this, "there are close venues which you have tasks to do in", Toast.LENGTH_SHORT).show();
+		
+	}
 	
 	
 

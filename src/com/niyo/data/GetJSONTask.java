@@ -34,31 +34,31 @@ public class GetJSONTask extends AsyncTask<URL, Void, String> {
 		URL url = params[0];
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpGet get = new HttpGet(url.toString());
-		try {
-			HttpResponse response = client.execute(get);
-			HttpEntity entity = response.getEntity();
-			InputStream is = entity.getContent();
-			String json = readString(is);
-			ClientLog.d(LOG_TAG, "json of url "+url+" is "+json);
-			ContentValues values = new ContentValues();
-			values.put(JSONTableColumns.ELEMENT_URL, url.getPath());
-			values.put(JSONTableColumns.ELEMENT_JSON, json);
-			
-			Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
-			ClientLog.d(LOG_TAG, "uri is "+uri);
-			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-				mApp.getContentResolver().insert(uri, values);
-			}
-			else{
-				ClientLog.w(LOG_TAG, "received "+response.getStatusLine().getStatusCode()+" for url "+url);
-			}
-			
-			
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			HttpResponse response = client.execute(get);
+//			HttpEntity entity = response.getEntity();
+//			InputStream is = entity.getContent();
+//			String json = readString(is);
+//			ClientLog.d(LOG_TAG, "json of url "+url+" is "+json);
+//			ContentValues values = new ContentValues();
+//			values.put(JSONTableColumns.ELEMENT_URL, url.getPath());
+//			values.put(JSONTableColumns.ELEMENT_JSON, json);
+//			
+//			Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
+//			ClientLog.d(LOG_TAG, "uri is "+uri);
+//			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+//				mApp.getContentResolver().insert(uri, values);
+//			}
+//			else{
+//				ClientLog.w(LOG_TAG, "received "+response.getStatusLine().getStatusCode()+" for url "+url);
+//			}
+//			
+//			
+//		} catch (ClientProtocolException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		return null;
 	}
 	

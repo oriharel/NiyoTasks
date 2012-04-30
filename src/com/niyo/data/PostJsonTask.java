@@ -49,25 +49,25 @@ public class PostJsonTask extends AsyncTask<URL, Void, Integer> {
 			ClientLog.e(LOG_TAG, "Error!", e);
 		}
 		Integer result = null;
-		try {
-			
-			HttpResponse response = client.execute(post);
-			result = response.getStatusLine().getStatusCode();
-			ClientLog.d(LOG_TAG, "result is "+response.getStatusLine());
-			if (result == HttpStatus.SC_OK){
-				Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
-				
-				if (getShouldUpdate()){
-					getContext().getContentResolver().update(uri, null, null, null);
-				}
-				
-			}
-			
-		} catch (ClientProtocolException e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
-		} catch (IOException e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
-		}
+//		try {
+//			
+//			HttpResponse response = client.execute(post);
+//			result = response.getStatusLine().getStatusCode();
+//			ClientLog.d(LOG_TAG, "result is "+response.getStatusLine());
+//			if (result == HttpStatus.SC_OK){
+//				Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
+//				
+//				if (getShouldUpdate()){
+//					getContext().getContentResolver().update(uri, null, null, null);
+//				}
+//				
+//			}
+//			
+//		} catch (ClientProtocolException e) {
+//			ClientLog.e(LOG_TAG, "Error!", e);
+//		} catch (IOException e) {
+//			ClientLog.e(LOG_TAG, "Error!", e);
+//		}
 		
 		return result;
 	}

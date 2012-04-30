@@ -44,30 +44,3 @@ public class AutoWVClient extends WebViewClient {
 	}
 	
 }
-
-//public class AutoWVClient extends WebViewClient {
-//
-//	private static final String LOG_TAG = AutoWVClient
-//	@Override
-//	public void onPageFinished(WebView webView, String url) 
-//	{
-//		
-//		
-//	}
-//	
-//	private void processRoute(String[] coordinsatesStrArray) {
-//		AutoPoint to = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]));
-//		String serviceString = Context.LOCATION_SERVICE;
-//		LocationManager locationManager;
-//		locationManager = (LocationManager)getSystemService(serviceString);
-//		
-//		String provider = LocationManager.GPS_PROVIDER;
-//		Location location = locationManager.getLastKnownLocation(provider);
-//		ClientLog.d(LOG_TAG, "location is "+location);
-//		AutoPoint from = new AutoPoint(location.getLatitude(), location.getLongitude());
-//		
-//		WebView webView = (WebView)findViewById(R.id.autoMapWebView);
-//		webView.loadUrl("javascript: calcRoute("+from.getLat()+","+from.getLon()+","+to.getLat()+","+to.getLon()+")");
-//	}
-//	
-//}

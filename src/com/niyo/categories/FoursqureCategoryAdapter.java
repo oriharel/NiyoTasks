@@ -68,6 +68,7 @@ public class FoursqureCategoryAdapter extends BaseAdapter {
 			
 			JSONObject category = getItem(position);
 			holder.categoryName.setText(category.getString("name"));
+			holder.categoryName.setTag(category.getString("id"));
 			
 			if (category.has("categories") && category.getJSONArray("categories").length() > 0){
 				holder.moreCategories.setVisibility(View.VISIBLE);

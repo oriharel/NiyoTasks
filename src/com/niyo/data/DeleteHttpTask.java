@@ -31,20 +31,20 @@ public class DeleteHttpTask extends AsyncTask<URL, Void, Integer> {
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpDelete delete = new HttpDelete(url.toString());
 		Integer result = null;
-		try {
-			
-			HttpResponse response = client.execute(delete);
-			result = response.getStatusLine().getStatusCode();
-			ClientLog.d(LOG_TAG, "result is "+response.getStatusLine());
-			if (result == HttpStatus.SC_OK){
-				Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
-			}
-			
-		} catch (ClientProtocolException e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
-		} catch (IOException e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
-		}
+//		try {
+//			
+//			HttpResponse response = client.execute(delete);
+//			result = response.getStatusLine().getStatusCode();
+//			ClientLog.d(LOG_TAG, "result is "+response.getStatusLine());
+//			if (result == HttpStatus.SC_OK){
+//				Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
+//			}
+//			
+//		} catch (ClientProtocolException e) {
+//			ClientLog.e(LOG_TAG, "Error!", e);
+//		} catch (IOException e) {
+//			ClientLog.e(LOG_TAG, "Error!", e);
+//		}
 		
 		return result;
 	}
