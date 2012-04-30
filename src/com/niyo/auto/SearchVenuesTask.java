@@ -150,7 +150,7 @@ public class SearchVenuesTask extends AsyncTask<String, Void, List<AutoVenue>> {
 				
 //				Log.d(LOG_TAG, "distance is "+distance);
 				
-				if (distance < 100)
+				if (distance < 500)
 				{
 					autoVenue.setDistance(distance);
 					return true;

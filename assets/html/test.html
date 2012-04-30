@@ -104,9 +104,6 @@
         for (var i=0;i<venues.length;i++)
         {
         	venue = venues[i];
-        	Native.log('venue is '+venue);
-        	Native.log('venue.lat is '+venue.lat);
-        	Native.log('venue.long is '+venue.long);
         	
         	var latLong = new google.maps.LatLng(venue.lat,venue.long);
         	marker = new google.maps.Marker({
