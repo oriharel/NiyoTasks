@@ -3,6 +3,8 @@ package com.niyo.auto;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,10 +38,16 @@ public class SearchVenuesTask extends AsyncTask<String, Void, List<AutoVenue>> {
 		
 		Double distance = new Double(params[0]);
 		String stepsJsonStr = params[1];
-		String categoryId = params[2];
+		String categoryIds = "";
+		try {
+			categoryIds = URLEncoder.encode(params[2].toString(), "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		DefaultHttpClient client = new DefaultHttpClient();
 		String url = "https://api.foursquare.com/v2/venues/search?ll="+params[3]+","+params[4] +
-				"&categoryId="+categoryId+"&oauth_token=3MU3QXE3H3KHT33DGG4NMR0KD221DVFMOFQQQ3VOIUQ5DKJY&v=20120404&intent=browse&radius="+distance;
+				"&categoryId="+categoryIds+"&oauth_token=3MU3QXE3H3KHT33DGG4NMR0KD221DVFMOFQQQ3VOIUQ5DKJY&v=20120404&intent=browse&radius="+distance;
 		ClientLog.d(LOG_TAG, "url to foursquare is "+url);
 		HttpGet method = new HttpGet(url);
 		String result = null;
@@ -183,7 +191,11 @@ public class SearchVenuesTask extends AsyncTask<String, Void, List<AutoVenue>> {
 		for (AutoVenue autoVenue : result) {
 			Log.d(LOG_TAG, "name: "+autoVenue.getName()+" The distance is "+autoVenue.getDistance()+" the id "+autoVenue.getFoursqaureId()+" address is "+autoVenue.getAddress());
 		}
-		mContext.showRelevantVenues(result);
+		
+		if (result.size() > 0){
+			mContext.showRelevantVenues(result);
+		}
+		
 	}
 	
 	private Double getDistance(AutoPoint from, AutoPoint to)

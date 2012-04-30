@@ -107,4 +107,23 @@ public class StringUtils {
 		
 		return result;
 	}
+
+	public static String createCommaSeperatedList(List<String> strings) 
+	{
+		StringBuffer result = new StringBuffer();
+		
+		if (strings == null){
+			return null;
+		}
+		
+		for (int i = 0; i < strings.size(); i++){
+			result.append(strings.get(i));
+			
+			if (i < strings.size()-1){
+				result.append(",");
+			}
+		}
+		
+		return result.toString();
+	}
 }

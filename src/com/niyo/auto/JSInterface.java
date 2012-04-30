@@ -8,6 +8,8 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
+import com.niyo.ClientLog;
+import com.niyo.StringUtils;
 import com.niyo.auto.map.AutoMapActivity;
 
 public class JSInterface {
@@ -20,6 +22,10 @@ public class JSInterface {
 		
 		mCategoryIds = categoryIds;
 		mActivity = activity;
+	}
+	
+	public void log(String text){
+		ClientLog.e(LOG_TAG, "from webview "+text);
 	}
 	
 	public void setResponse(String response, String fromLat, String fromLon, String toLat, String toLon){
@@ -37,10 +43,13 @@ public class JSInterface {
 			Double distance = new Double(distanceStr.replace("km", "").replace(" ", "").replace("m", ""));
 			Log.d(LOG_TAG, "distance is "+distance*1000);
 			SearchVenuesTask task = new SearchVenuesTask(mActivity);
+			
+			String categories = StringUtils.createCommaSeperatedList(mCategoryIds);
+			ClientLog.d(LOG_TAG, "categories are "+categories);
 			String[] params = new String[7];
 			params[0] = Double.toString(distance*1000);
 			params[1] = steps.toString();
-			params[2] = mCategoryIds.get(0);
+			params[2] = categories;
 			params[3] = fromLat;
 			params[4] = fromLon;
 			params[5] = toLat;

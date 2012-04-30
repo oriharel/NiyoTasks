@@ -3,6 +3,10 @@ package com.niyo.auto.map;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,6 +20,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.auto.AutoPoint;
@@ -108,6 +113,28 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 	public void showRelevantVenues(List<AutoVenue> result) 
 	{
 		Toast.makeText(this, "there are close venues which you have tasks to do in", Toast.LENGTH_SHORT).show();
+		JSONArray venues = new JSONArray();
+		
+		for (AutoVenue autoVenue : result) {
+			try {
+				JSONObject venue = new JSONObject("{lat:"+autoVenue.getLocation().getLat()+", long:"+autoVenue.getLocation().getLon()+"}");
+				venues.put(venue);
+				
+				
+				
+			} catch (JSONException e) {
+				ClientLog.e(LOG_TAG, "Error!", e);
+			}
+		}
+		
+		WebView webView = (WebView)findViewById(R.id.autoMapWebView);
+		ClientLog.d(LOG_TAG, "sending to webview "+venues);
+		if (venues.length() > 0){
+			webView.loadUrl("javascript: addVenues("+venues+")");
+		}
+		else{
+			ClientLog.e(LOG_TAG, "Error!, for some reason got 0 venues for the map");
+		}
 		
 	}
 	

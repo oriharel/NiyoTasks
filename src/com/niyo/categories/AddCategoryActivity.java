@@ -37,20 +37,20 @@ public class AddCategoryActivity extends NiyoAbstractActivity implements OnItemC
 	private static final String LOG_TAG = AddCategoryActivity.class.getSimpleName();
 	private FoursqureCategoryAdapter mAdapter;
 	
-	private TextWatcher filterTextWatcher = new TextWatcher() {
-
-	    public void afterTextChanged(Editable s) {
-	    }
-
-	    public void beforeTextChanged(CharSequence s, int start, int count,
-	            int after) {
-	    }
-
-	    public void onTextChanged(CharSequence s, int start, int before,
-	            int count) {
-
-	    }
-	};
+//	private TextWatcher filterTextWatcher = new TextWatcher() {
+//
+//	    public void afterTextChanged(Editable s) {
+//	    }
+//
+//	    public void beforeTextChanged(CharSequence s, int start, int count,
+//	            int after) {
+//	    }
+//
+//	    public void onTextChanged(CharSequence s, int start, int before,
+//	            int count) {
+//
+//	    }
+//	};
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -59,8 +59,6 @@ public class AddCategoryActivity extends NiyoAbstractActivity implements OnItemC
 		setContentView(R.layout.add_category_layout);
 		getList().setOnItemClickListener(this);
 		getList().setTextFilterEnabled(true);
-		EditText addItemEdit = (EditText)findViewById(R.id.categoryNameEdit);
-		addItemEdit.addTextChangedListener(filterTextWatcher);
 		populateList(getMyApplication().getFoursqaureVenues());
 	}
 	
@@ -92,16 +90,16 @@ public class AddCategoryActivity extends NiyoAbstractActivity implements OnItemC
 		return result;
 	}
 	
-	public void addClicked(View v){
-		
-		TextView categoryNameEdit = (TextView)findViewById(R.id.categoryNameEdit);
-		String id = "";
-		if (categoryNameEdit.getTag() != null){
-			
-			id = (String)categoryNameEdit.getTag();
-		}
-		addCategory(categoryNameEdit.getText(), id);
-	}
+//	public void addClicked(View v){
+//		
+//		TextView categoryNameEdit = (TextView)findViewById(R.id.categoryNameEdit);
+//		String id = "";
+//		if (categoryNameEdit.getTag() != null){
+//			
+//			id = (String)categoryNameEdit.getTag();
+//		}
+//		addCategory(categoryNameEdit.getText(), id);
+//	}
 	
 	protected void addCategory(CharSequence name, String id) {
 		ClientLog.d(LOG_TAG, "name is "+name);
