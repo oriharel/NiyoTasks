@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.niyo.ClientLog;
 import com.niyo.R;
+import com.niyo.auto.map.AutoMapActivity;
 
 public class AutoActivity extends Activity implements OnInitListener {
     /** Called when the activity is first created. */
@@ -42,47 +43,8 @@ public class AutoActivity extends Activity implements OnInitListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.where_to_layout);
         Log.d(LOG_TAG, "onCreate started");
-//        mRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-//        mRecognizer.setRecognitionListener(new AutoRecognitionListener());
-//        
-//        
-        mTts = new TextToSpeech(this,
-                this  // TextToSpeech.OnInitListener
-                );
-//        
-//        final AutoActivity context = this;
-//        findViewById(R.id.gotoEvents).setOnClickListener(new OnClickListener()
-//        {
-//			@Overridejj
-//			public void onClick(View v) {
-//				Intent intent = new Intent(context, NextEventsActivity.class);
-//				startActivity(intent);
-//			}
-//		});
         
-        WebView webView = (WebView)findViewById(R.id.webView1);
-        webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-		WebSettings settings = webView.getSettings();
-		settings.setJavaScriptEnabled(true);
-		settings.setJavaScriptCanOpenWindowsAutomatically(true);
-		settings.setLoadWithOverviewMode(true);
-		settings.setUseWideViewPort(true);
-		settings.setDomStorageEnabled(true);
-		webView.setWebViewClient(new AutoWVClient());
-		JSInterface inter = new JSInterface();
-		webView.addJavascriptInterface(inter, "Native");
-		webView.setWebChromeClient(new WebChromeClient() 
-		{
-			@Override
-			public boolean onJsAlert(WebView view, String url, String message, JsResult result) 
-			{
-				return super.onJsAlert(view, url, message, result);
-		    }
-		});
-		
-		webView.getSettings().setAllowFileAccess(true);
-		webView.getSettings().setAppCacheEnabled(true);
-        webView.loadUrl("file:///android_asset/html/directions.html");
+        
         
         
     }
@@ -91,39 +53,14 @@ public class AutoActivity extends Activity implements OnInitListener {
 	{
     	String locationStr = (String)view.getTag();
     	String[] coordinsatesStrArray = locationStr.split(",");
-    	String geoQuery = "geo:"+coordinsatesStrArray[0]+","+coordinsatesStrArray[1];
-    	Intent intent = new Intent (Intent.ACTION_VIEW, Uri.parse(geoQuery)); 
-    	if (isCallable(intent))
-    	{
-    		startActivity(intent);
-    		processRoute(coordinsatesStrArray);
-    	}
-    	else
-    	{
-    		Toast.makeText(this, "Go get yourself a map app", Toast.LENGTH_LONG).show();
-    	}
+    	AutoPoint to = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]));
+    	Intent intent = AutoMapActivity.getCreationIntent(this, to);
+    	startActivity(intent);
 	}
     
-    private void processRoute(String[] coordinsatesStrArray) {
-		AutoPoint to = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]));
-		String serviceString = Context.LOCATION_SERVICE;
-		LocationManager locationManager;
-		locationManager = (LocationManager)getSystemService(serviceString);
-		
-		String provider = LocationManager.GPS_PROVIDER;
-		Location location = locationManager.getLastKnownLocation(provider);
-		ClientLog.d(LOG_TAG, "location is "+location);
-		AutoPoint from = new AutoPoint(location.getLatitude(), location.getLongitude());
-		
-		WebView webView = (WebView)findViewById(R.id.webView1);
-		webView.loadUrl("javascript: calcRoute("+from.getLat()+","+from.getLon()+","+to.getLat()+","+to.getLon()+")");
-	}
+    
 
-	private boolean isCallable(Intent intent) {
-        List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 
-            PackageManager.MATCH_DEFAULT_ONLY);
-        return list.size() > 0;
-    }
+	
 //    @Override
 //    protected void onResume()
 //    {

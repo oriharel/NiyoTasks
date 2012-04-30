@@ -94,6 +94,7 @@
             </intent-filter>
         </receiver>
         <activity android:name=".categories.AddCategoryActivity"></activity>
+        <activity android:name=".auto.map.AutoMapActivity"></activity>
         
     </application>
 

@@ -1,6 +1,12 @@
 package com.niyo.auto;
 
-public class AutoPoint {
+import java.io.Serializable;
+
+public class AutoPoint implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Double mLat;
 	private Double mLon;
 	

@@ -1,15 +1,73 @@
 package com.niyo.auto;
 
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.niyo.ClientLog;
+
 public class AutoWVClient extends WebViewClient {
 
-	@Override
-	public void onPageFinished(WebView webView, String url) 
-	{
+	private static final String LOG_TAG = AutoWVClient.class.getSimpleName();
+	private Context mContext;
+	private AutoPoint mTo;
+	
+	public AutoWVClient(Context context, AutoPoint to){
 		
+		mContext = context;
+		mTo = to;
 		
 	}
 	
+	@Override
+	public void onPageFinished(WebView webView, String url) 
+	{
+		processRoute(webView);
+		
+	}
+	
+	private void processRoute(WebView webView) {
+		
+		ClientLog.d(LOG_TAG, "processing route");
+		String serviceString = Context.LOCATION_SERVICE;
+		LocationManager locationManager;
+		locationManager = (LocationManager)mContext.getSystemService(serviceString);
+		
+		String provider = LocationManager.GPS_PROVIDER;
+		Location location = locationManager.getLastKnownLocation(provider);
+		ClientLog.d(LOG_TAG, "location is "+location);
+		AutoPoint from = new AutoPoint(location.getLatitude(), location.getLongitude());
+		
+		webView.loadUrl("javascript: calcRoute("+from.getLat()+","+from.getLon()+","+mTo.getLat()+","+mTo.getLon()+")");
+	}
+	
 }
+
+//public class AutoWVClient extends WebViewClient {
+//
+//	private static final String LOG_TAG = AutoWVClient
+//	@Override
+//	public void onPageFinished(WebView webView, String url) 
+//	{
+//		
+//		
+//	}
+//	
+//	private void processRoute(String[] coordinsatesStrArray) {
+//		AutoPoint to = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]));
+//		String serviceString = Context.LOCATION_SERVICE;
+//		LocationManager locationManager;
+//		locationManager = (LocationManager)getSystemService(serviceString);
+//		
+//		String provider = LocationManager.GPS_PROVIDER;
+//		Location location = locationManager.getLastKnownLocation(provider);
+//		ClientLog.d(LOG_TAG, "location is "+location);
+//		AutoPoint from = new AutoPoint(location.getLatitude(), location.getLongitude());
+//		
+//		WebView webView = (WebView)findViewById(R.id.autoMapWebView);
+//		webView.loadUrl("javascript: calcRoute("+from.getLat()+","+from.getLon()+","+to.getLat()+","+to.getLon()+")");
+//	}
+//	
+//}
