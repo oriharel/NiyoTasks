@@ -14,6 +14,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -39,8 +40,19 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.auto_map_layout);
-		
+		findViewById(R.id.startNavBtn).setOnClickListener(getStartNavOnClick());
 		initWebView();
+	}
+
+	private OnClickListener getStartNavOnClick() {
+		return new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				navigateTo(v);
+				
+			}
+		};
 	}
 
 	private void initWebView() {
@@ -90,9 +102,8 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 	
 	public void navigateTo(View view) 
 	{
-    	String locationStr = (String)view.getTag();
-    	String[] coordinsatesStrArray = locationStr.split(",");
-    	String geoQuery = "geo:"+coordinsatesStrArray[0]+","+coordinsatesStrArray[1];
+		AutoPoint point = getTo();
+    	String geoQuery = "geo:"+point.getLat()+","+point.getLon();
     	Intent intent = new Intent (Intent.ACTION_VIEW, Uri.parse(geoQuery)); 
     	if (isCallable(intent))
     	{

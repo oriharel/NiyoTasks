@@ -29,10 +29,12 @@ import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.ServiceCaller;
 import com.niyo.auto.AutoActivity;
+import com.niyo.auto.map.AutoMapActivity;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.DeleteHttpTask;
 import com.niyo.data.NiyoContentProvider;
 import com.niyo.tasks.TasksActivity;
+import com.niyo.tasks.map.AdGenericTaskActivity;
 
 public class CategoriesActivity extends NiyoAbstractActivity implements OnItemClickListener {
 	
@@ -319,9 +321,15 @@ public class CategoriesActivity extends NiyoAbstractActivity implements OnItemCl
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
 		
+		
 		if (adapterView.getItemIdAtPosition(position) == CategoriesListAdapter.ADD_CATEGORY_ITEM_ID){
 //			showDialog(ADD_NEW_CATEGORY_DIALOG);
 			Intent intent = AddCategoryActivity.getCreationIntent(this);
+			startActivity(intent);
+		}
+		else if (adapterView.getItemIdAtPosition(position) == CategoriesListAdapter.ADD_GENERIC_ITEM_ID){
+//			showDialog(ADD_NEW_CATEGORY_DIALOG);
+			Intent intent = AdGenericTaskActivity.getCreationIntent(this);
 			startActivity(intent);
 		}
 		else

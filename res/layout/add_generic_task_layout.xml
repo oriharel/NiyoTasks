@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appColor"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dip"
+        android:text="@string/taskTitle"
+        android:textColor="@color/textColor" />
+
+    <EditText
+        android:id="@+id/taskTitleLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dip"
+        android:ems="10" />
+
+    <LinearLayout
+        android:id="@+id/searchLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dip"
+        android:weightSum="5" >
+
+        <EditText
+            android:id="@+id/searchEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:ems="10" >
+
+            <requestFocus />
+        </EditText>
+
+        <ImageButton
+            android:id="@+id/searchBtn"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dip"
+            android:layout_marginLeft="10dip"
+            android:layout_weight="1"
+            android:background="@drawable/nav_btn_selector"
+            android:src="@drawable/ic_btn_search" />
+    </LinearLayout>
+    
+    <ImageButton
+        android:id="@+id/createTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/create_contact" android:layout_gravity="center_horizontal"/>
+
+    <com.google.android.maps.MapView
+        android:id="@+id/map_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:apiKey="0nHnZCjh1Wz9c8IhW-mvK1uPtudMEp-sYz-bqng"
+        android:clickable="true"
+        android:enabled="true" android:visibility="gone"/>
+
+    
+
+</LinearLayout>

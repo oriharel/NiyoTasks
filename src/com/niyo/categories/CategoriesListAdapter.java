@@ -20,7 +20,9 @@ public class CategoriesListAdapter extends BaseAdapter {
 	private JSONArray mCategories;
 	protected static final int ADD_CATEGORY_TYPE = 0;
 	public static final int ADD_CATEGORY_ITEM_ID = 6367;
+	public static final int ADD_GENERIC_ITEM_ID = 6366;
 	protected static final int REGULAR_CATEGORY_TYPE = 1;
+	protected static final int AD_GENERIC_TYPE_TYPE = 2;
 	
 	public CategoriesListAdapter(Activity activity){
 		setActivity(activity);
@@ -29,6 +31,7 @@ public class CategoriesListAdapter extends BaseAdapter {
 	public void setList(JSONArray categories){
 		mCategories = categories;
 		mCategories.put(0);
+		mCategories.put(1);
 	}
 	
 	public JSONArray getList(){
@@ -38,15 +41,20 @@ public class CategoriesListAdapter extends BaseAdapter {
 	@Override
 	public int getViewTypeCount()
 	{
-		return 2;
+		return 3;
 	}
 	
 	@Override
 	public int getItemViewType (int position)
 	{
-		if (getCount() == 0 || position == getCount()-1)
+		
+		if (getCount() == 0 || position == getCount()-2)
 		{
 			return ADD_CATEGORY_TYPE;
+		}
+		else if (position == getCount()-1)
+		{
+			return AD_GENERIC_TYPE_TYPE;
 		}
 		else
 		{
@@ -60,9 +68,9 @@ public class CategoriesListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public JSONObject getItem(int position) {
+	public Object getItem(int position) {
 		try {
-			return (JSONObject)mCategories.get(position);
+			return mCategories.get(position);
 		} catch (JSONException e) {
 			ClientLog.e(LOG_TAG, "Error!", e);
 		}
@@ -72,8 +80,12 @@ public class CategoriesListAdapter extends BaseAdapter {
 
 	@Override
 	public long getItemId(int position) {
-		if (getCount() == 0 || position == getCount()-1){
+		
+		if (getCount() == 0 || position == getCount()-2){
 			return ADD_CATEGORY_ITEM_ID;
+		}
+		else if (position == getCount()-1){
+			return ADD_GENERIC_ITEM_ID;
 		}
 		else{
 			return position;
@@ -93,6 +105,13 @@ public class CategoriesListAdapter extends BaseAdapter {
 				convertView = getActivity().getLayoutInflater().inflate(R.layout.add_new_category_item, null);
 				return convertView;
 			}
+			case AD_GENERIC_TYPE_TYPE:
+			{
+				convertView = getActivity().getLayoutInflater().inflate(R.layout.add_new_category_item, null);
+				TextView text = (TextView)convertView.findViewById(R.id.addCategoryItem);
+				text.setText("Add a task");
+				return convertView;
+			}
 			default:
 			{
 				if (convertView == null)
@@ -109,8 +128,9 @@ public class CategoriesListAdapter extends BaseAdapter {
 				}
 				
 				try {
-					holder.categoryName.setText(getItem(position).getString("category"));
-					JSONArray tasks = getItem(position).getJSONArray("tasks");
+					JSONObject item = (JSONObject)getItem(position);
+					holder.categoryName.setText(item.getString("category"));
+					JSONArray tasks = item.getJSONArray("tasks");
 					if (tasks.length() > 0){
 						holder.numOfTasks.setVisibility(View.VISIBLE);
 						holder.numOfTasks.setText(Integer.toString(tasks.length()));

@@ -81,5 +81,8 @@
     <string name="deleteAll">Delete all crossed-off items</string>
     <string name="someText">someText</string>
     <string name="findCategory">Find Category</string>
+    <string name="startNav">Start Navigating</string>
+    <string name="taskTitle">Task Title</string>
+    <string name="tapToUse">Tap to use this address</string>
 
 </resources>
