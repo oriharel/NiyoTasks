@@ -1,6 +1,7 @@
 package com.niyo.tasks.map;
 
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,12 +27,15 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.niyo.ClientLog;
 import com.niyo.R;
+import com.niyo.ServiceCaller;
 import com.niyo.Utils;
+import com.niyo.tasks.AddGenericTaskTask;
+import com.niyo.tasks.LocationTask;
 
 public class AdGenericTaskActivity extends MapActivity implements OnClickListener {
 	
 	private static final String LOG_TAG = AdGenericTaskActivity.class.getSimpleName();
-	private Address mSeletctedAddress;
+	private GeoPoint mSeletctedAddress;
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		
@@ -55,7 +59,20 @@ public class AdGenericTaskActivity extends MapActivity implements OnClickListene
 	
 	private OnClickListener getCreateTaskClickListener() {
 		
-		
+		final ServiceCaller caller = new ServiceCaller() {
+			
+			@Override
+			public void success(Object data) {
+				ClientLog.d(LOG_TAG, "task added");
+				finish();
+			}
+			
+			@Override
+			public void failure(Object data, String description) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
 		
 		OnClickListener result = new OnClickListener() {
 			
@@ -69,6 +86,10 @@ public class AdGenericTaskActivity extends MapActivity implements OnClickListene
 					return;
 				}
 				
+				AddGenericTaskTask task = new AddGenericTaskTask(AdGenericTaskActivity.this, caller);
+				LocationTask lovTask = new LocationTask(mSeletctedAddress, taskTitle.getText().toString());
+				LocationTask[] params = new LocationTask[]{lovTask};
+				task.execute(params);
 			}
 		};
 		return result;
@@ -102,7 +123,7 @@ public class AdGenericTaskActivity extends MapActivity implements OnClickListene
 			}
 			else{
 				if (addresses.size() == 1){
-					mSeletctedAddress = addresses.get(0);
+					mSeletctedAddress = createGeoPoint(addresses.get(0));
 				}
 				showResults(addresses);
 			}
@@ -110,6 +131,15 @@ public class AdGenericTaskActivity extends MapActivity implements OnClickListene
 		} catch (IOException e) {
 			ClientLog.e(LOG_TAG, "Error!", e);
 		}
+	}
+
+	private GeoPoint createGeoPoint(Address address) {
+		
+		Double lat1e6 = new Double(address.getLatitude()*1e6);
+		Double lon1e6 = new Double(address.getLongitude()*1e6);
+		
+		GeoPoint result = new GeoPoint(lat1e6.intValue(), lon1e6.intValue());
+		return result;
 	}
 
 	private void showResults(List<Address> addresses) {

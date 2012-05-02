@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.niyo.ClientLog;
+import com.niyo.ServiceCaller;
 import com.niyo.data.JSONTableColumns;
 import com.niyo.data.NiyoContentProvider;
 
@@ -25,10 +26,12 @@ public class AddGenericTaskTask extends AsyncTask<LocationTask, Void, Boolean> {
 				JSONTableColumns.ELEMENT_JSON, 
             };
 	private String mSelection = JSONTableColumns.ELEMENT_URL + "='/locationTasks'";
+	private ServiceCaller mCaller;
 	
-	public AddGenericTaskTask(Context context){
+	public AddGenericTaskTask(Context context, ServiceCaller caller){
 		
 		mContext = context;
+		mCaller = caller;
 	}
 	
 	@Override
@@ -55,26 +58,54 @@ public class AddGenericTaskTask extends AsyncTask<LocationTask, Void, Boolean> {
 		}
 		try {
 
+			JSONArray tasks = null;
 			if (result == null){
 				
-				JSONArray tasks = new JSONArray();
-				LocationTask taskLocation = params[0];
-				JSONObject taskJson = new JSONObject("{content:"+taskLocation.getTitle()+",lot:"+taskLocation.getDoublelat()+",lon:"+taskLocation.getDoubleLon()+"}");
-				tasks.put(taskJson);
+				tasks = new JSONArray();
 				result = new JSONObject("{tasks:"+tasks+"}");
-				
-				ContentValues values = new ContentValues();
-				values.put(JSONTableColumns.ELEMENT_URL, "/locationTasks");
-				values.put(JSONTableColumns.ELEMENT_JSON, result.toString());
-
-				mContext.getContentResolver().insert(Uri.parse(NiyoContentProvider.AUTHORITY+"/locationTasks"), values);
-				
 			}
+			else{
+				tasks = result.getJSONArray("tasks");
+			}
+			
+			LocationTask taskLocation = params[0];
+			JSONObject taskJson = new JSONObject("{content:"+taskLocation.getTitle()+",lot:"+taskLocation.getDoublelat()+
+					",lon:"+taskLocation.getDoubleLon()+"}");
+			tasks.put(taskJson);
+			
+			ContentValues values = new ContentValues();
+			values.put(JSONTableColumns.ELEMENT_URL, "/locationTasks");
+			values.put(JSONTableColumns.ELEMENT_JSON, result.toString());
+
+			mContext.getContentResolver().insert(Uri.parse(NiyoContentProvider.AUTHORITY+"/locationTasks"), values);
+			
 		} catch (JSONException e) {
 			ClientLog.e(LOG_TAG, "Error!", e);
 		}
 		
 		return true;
 	}
+	
+	@Override
+    protected void onPostExecute(Boolean result) 
+	{
+        if (isCancelled()) 
+        {
+        	ClientLog.d(LOG_TAG, "isCancelled activated");
+        }
+        
+        ClientLog.d(LOG_TAG, "calling success");
+        try 
+        {
+        	if (mCaller != null){
+        		mCaller.success(result);
+        	}
+			
+		} 
+        catch (Exception e) 
+        {
+			ClientLog.e(LOG_TAG, "Error! with ", e);
+		}
+    }
 
 }
