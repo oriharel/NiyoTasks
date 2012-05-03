@@ -18,7 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dip"
-        android:ems="10" />
+        android:ems="10" >
+    </EditText>
 
     <LinearLayout
         android:id="@+id/searchLayout"
@@ -33,8 +34,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="4"
             android:ems="10" >
-
-            <requestFocus />
         </EditText>
 
         <ImageButton
@@ -48,12 +47,36 @@
             android:background="@drawable/nav_btn_selector"
             android:src="@drawable/ic_btn_search" />
     </LinearLayout>
-    
-    <ImageButton
-        android:id="@+id/createTask"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/create_contact" android:layout_gravity="center_horizontal"/>
+
+    <LinearLayout
+        android:id="@+id/actionBtnsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center" android:paddingLeft="10dip" android:paddingRight="10dip" android:onClick="On click	" android:layout_marginBottom="10dip">
+
+        <Button
+            android:id="@+id/mapBtn"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/mapBtn" android:background="@drawable/nav_btn_selector"/>
+
+        <Button
+            android:id="@+id/showCategories"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:layout_weight="1"
+            android:text="@string/showCategories" android:background="@drawable/nav_btn_selector"/>
+
+        <Button
+            android:id="@+id/createTask"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:text="@string/addTask" android:layout_weight="1" android:background="@drawable/nav_btn_selector"/>
+    </LinearLayout>
 
     <com.google.android.maps.MapView
         android:id="@+id/map_view"
@@ -61,8 +84,13 @@
         android:layout_height="fill_parent"
         android:apiKey="0nHnZCjh1Wz9c8IhW-mvK1uPtudMEp-sYz-bqng"
         android:clickable="true"
-        android:enabled="true" android:visibility="gone"/>
+        android:enabled="true"
+        android:visibility="gone" />
 
-    
+    <ListView
+        android:id="@+id/categoryList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
 
 </LinearLayout>

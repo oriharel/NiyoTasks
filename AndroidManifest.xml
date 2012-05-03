@@ -36,7 +36,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" android:name="NiyoApplication" android:theme="@android:style/Theme.NoTitleBar">
         <activity
-            android:name=".categories.TasksActivity"
+            android:name=".tasks.CategoryTasksActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,7 +45,6 @@
             </intent-filter>
         </activity>
         <provider android:name=".data.NiyoContentProvider" android:authorities="com.niyo.provider"></provider>
-        <activity android:name=".tasks.CategoryTasksActivity"></activity>
         <activity
             android:name=".authenticator.AuthenticatorActivity"
             android:label="@string/ui_activity_title"

@@ -1,7 +1,13 @@
 package com.niyo.categories;
 
-public class CategoryBean {
+import java.io.Serializable;
 
+public class CategoryBean implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String mName;
 	private String mId;
 	

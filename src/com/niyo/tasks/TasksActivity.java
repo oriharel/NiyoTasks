@@ -2,65 +2,51 @@ package com.niyo.tasks;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URLEncoder;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.ServiceCaller;
-import com.niyo.StringUtils;
-import com.niyo.Utils;
+import com.niyo.auto.AutoActivity;
+import com.niyo.categories.CategoriesListAdapter;
+import com.niyo.categories.DeleteCategoryTask;
 import com.niyo.data.DBJsonFetchTask;
+import com.niyo.data.DeleteHttpTask;
 import com.niyo.data.NiyoContentProvider;
-import com.niyo.data.PutJsonTask;
 
-public class TasksActivity extends NiyoAbstractActivity {
+public class TasksActivity extends NiyoAbstractActivity implements OnItemClickListener {
 	
 	private static final String LOG_TAG = TasksActivity.class.getSimpleName();
-	private ContentObserver mObserver;
-	private TasksListAdapter mAdapter;
-	private List<JSONObject> mOpenTasks;
-	private List<JSONObject> mCrossedTasks;
-	private Uri mUri;
-	private static final String CATEGORY_EXTRA = "category";
 	
-	@Override
+	private CategoriesListAdapter mAdapter;
+	private ContentObserver mObserver;
+	private static final int DELETE_CATEGORY_CONTEXT_MENU_ITEM = 1; 
+	
+    /** Called when the activity is first created. */
+    @Override
     public void onCreate(Bundle savedInstanceState) {
-		
-		super.onCreate(savedInstanceState);
-        setContentView(R.layout.tasks_list_layout);
-        TextView categoryTitle = (TextView)findViewById(R.id.categoryTitle);
-        categoryTitle.setText(getIntent().getStringExtra(CATEGORY_EXTRA));
-        getListView().setOnItemClickListener(getOnOpenTasksItemClicked());
-        setCrossedTasks(new ArrayList<JSONObject>());
-        registerForContextMenu(getListView());
-        findViewById(R.id.addTask).setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				addTask(v);
-			}
-		});
+        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.main);
+        getList().setOnItemClickListener(this);
+        registerForContextMenu(getList());
         URL url= null;
         
 		try {
@@ -74,389 +60,138 @@ public class TasksActivity extends NiyoAbstractActivity {
         	public void onChange(boolean selfChange) 
 			{
 				ClientLog.d(LOG_TAG, "onChange started");
-				getTasks();
+				getCategories();
 			}
 		};
 		
 		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
-		setUri(uri);
         getContentResolver().registerContentObserver(uri, false, mObserver);
-        getTasks();
-	}
-	
-	private OnItemClickListener getOnOpenTasksItemClicked() {
-		
-		OnItemClickListener result = new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
-				
-				if (adapterView.getItemIdAtPosition(position) == TasksListAdapter.ADD_TASK_TYPE){
-					addTask(null);
+        getCategories();
+    }
+    
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+    	if (v instanceof ListView) 
+		{
+			if (menuInfo instanceof AdapterView.AdapterContextMenuInfo)
+			{
+				ListView list = (ListView) v;
+				CategoriesListAdapter adapter = (CategoriesListAdapter)list.getAdapter();
+				AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+				Object item = adapter.getItem(info.position);
+				if (item instanceof JSONObject)
+				{
+					JSONObject bean = (JSONObject)item;
+					try {
+						menu.setHeaderTitle(bean.getString("category"));
+					} catch (JSONException e) {
+						ClientLog.e(LOG_TAG, "Error!", e);
+					}
 				}
-				else if (adapterView.getItemIdAtPosition(position) == TasksListAdapter.DELETE_ALL_CROSSED_TYPE){
-					deleteAllCrossed();
-				}
-				else if (adapterView.getItemIdAtPosition(position) == TasksListAdapter.OPEN_TASK_TYPE){
-					
-					JSONObject task = (JSONObject)adapterView.getItemAtPosition(position);
-					removeFromOpenTasks(task);
-					getCrossedTasks().add(task);
-//					populateTasks();
-//					finishTasksToServer();
-				}
-				else if (adapterView.getItemIdAtPosition(position) == TasksListAdapter.CROSS_TASK_TYPE){
-					JSONObject task = (JSONObject)adapterView.getItemAtPosition(position);
-					removeFromCrossTasks(task);
-					getOpenTasks().add(task);
-//					populateTasks();
-//					finishTasksToServer();
-					
-				}
-				
-				processTasksToProvider();
 			}
-			
-		};
-		return result;
-	}
-
-	protected void deleteAllCrossed() {
+		}
+        menu.add(0, DELETE_CATEGORY_CONTEXT_MENU_ITEM, 0, "Delete Category");
+    }
+    
+    @Override
+    public boolean onContextItemSelected(MenuItem item) 
+	{
+		AdapterView.AdapterContextMenuInfo info =
+			(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		
-//		String finishTaskIds = getCrossedTasksIds();
-//		JSONArray finishTaskIdsArray;
-//		JSONObject jsonObj = null;
-//		try {
-//			finishTaskIdsArray = new JSONArray(finishTaskIds);
-//			jsonObj = new JSONObject();
-//
-//			jsonObj.put("taskIds", finishTaskIdsArray);
-//		} catch (JSONException e) {
-//			ClientLog.e(LOG_TAG, "Error!", e);
-//		}
-//
-//		HttpEntity entity = null;
-//
-//		try {
-//			entity = new StringEntity(jsonObj.toString(), HTTP.UTF_8);
-//			PutJsonTask task = new PutJsonTask(entity, this, getServiceCaller());
-//			try {
-//				URL url = new URL("http://niyoapi.appspot.com/deleteTasksFromList");
-//				task.execute(url);
-//			} catch (Exception e) {
-//				ClientLog.e(LOG_TAG, "Error!", e);
-//			}
-//
-//		} catch (Exception e) {
-//			ClientLog.e(LOG_TAG, "Error!", e);
-//		}
-		
-		DeleteTasksFromCategory task = new DeleteTasksFromCategory(this);
-		String[] params = new String[1];
-		params[0] = getIntent().getStringExtra(CATEGORY_EXTRA);
-		task.execute(params);
-		
-	}
-
-	protected void removeFromOpenTasks(JSONObject task) {
-		List<JSONObject> openTasks = new ArrayList<JSONObject>(getOpenTasks());
-		
-		for (JSONObject jsonObject : openTasks) {
-			if (task.toString().equals(jsonObject.toString())){
-				getOpenTasks().remove(jsonObject);
+		ListView listView = getList();
+		CategoriesListAdapter adapter = (CategoriesListAdapter) listView.getAdapter();
+		Object selectedItem = adapter.getItem(info.position);
+		if (selectedItem instanceof JSONObject)
+		{
+			JSONObject bean = (JSONObject)selectedItem;
+			DeleteHttpTask task = new DeleteHttpTask(this);
+			try {
+				
+				String paramValue = bean.getString("category");
+				String encoded = URLEncoder.encode(paramValue.toString(), "UTF-8");
+				task.execute(new URL("http://niyoapi.appspot.com/deleteCategory?name="+encoded));
+				
+				DeleteCategoryTask deleteTask = new DeleteCategoryTask(this);
+				String[] params = new String[1];
+				params[0] = bean.getString("category");
+				deleteTask.execute(params);
+			} catch (Exception e) {
+				ClientLog.e(LOG_TAG, "Errro!", e);
 			}
 		}
 		
+		return false;
 	}
-	
-	protected void removeFromCrossTasks(JSONObject task) {
-		List<JSONObject> crossedTasks = new ArrayList<JSONObject>(getCrossedTasks());
-		
-		for (JSONObject jsonObject : crossedTasks) {
-			if (task.toString().equals(jsonObject.toString())){
-				boolean isDelete = getCrossedTasks().remove(jsonObject);
-				ClientLog.d(LOG_TAG, "success remove? "+isDelete);
-			}
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) 
+	{
+		ClientLog.d(LOG_TAG, "onCreateOptionsMenu started");
+		try {
+			MenuItem settingsMenuItem = menu.add(0, 0, 0, "Go!");
+			settingsMenuItem.setIcon(R.drawable.ic_menu_directions);
+		} catch (Exception e) 
+		{
+			ClientLog.e(LOG_TAG, "Error!", e);
 		}
-		
+		return true;
+	}
+    
+    @Override
+	public boolean onOptionsItemSelected(MenuItem menuItem) 
+	{
+    	Intent intent = new Intent(this, AutoActivity.class);
+    	startActivity(intent);
+    	return true;
 	}
 
-	public void addTask(View v){
-		Intent intent = AddTaskActivity.getCreationIntent(this, getIntent().getStringExtra(CATEGORY_EXTRA));
-		startActivityForResult(intent, 0);
-	}
-	
-	public static Intent getCreationIntent(Activity activity, String category){
+	private void getCategories() {
 		
-		Intent intent = new Intent(activity, TasksActivity.class);
-		intent.putExtra(CATEGORY_EXTRA, category);
-		return intent;
-	}
-	
-	protected void getTasks() {
-
 		ServiceCaller caller = new ServiceCaller() {
-
+			
 			@Override
 			public void success(Object data) {
 				
+				JSONArray tasks = null;
 				if (data != null){
-					JSONObject tasksData = (JSONObject)data;
-					JSONArray tasks = null;
+					JSONObject categoriesData = (JSONObject)data;
 					try {
-						tasks = tasksData.getJSONArray("tasks");
+						tasks = categoriesData.getJSONArray("tasks");
 					} catch (JSONException e) {
 						ClientLog.e(LOG_TAG, "Error!", e);
 					}
 					
-					setOpenTasks(StringUtils.toList(extractOpenTasks(tasks)));
-					setCrossedTasks(StringUtils.toList(extractDoneTasks(tasks)));
-					
-					populateTasks();
 				}
 				else{
-					ClientLog.d(LOG_TAG, "tasks list is empty in activity");
+					ClientLog.d(LOG_TAG, "categories list is empty in activity");
+					tasks = new JSONArray();
 				}
+				
+				setTasks(tasks);
 			}
-
+			
 			@Override
 			public void failure(Object data, String description) {
 				ClientLog.e(LOG_TAG, "Error in service caller");
-
+				
 			}
 		};
-
+		
 		DBJsonFetchTask task = new DBJsonFetchTask(this, caller);
-		task.execute(getUri());
-	}
-	
-	private JSONArray extractOpenTasks(JSONArray tasks) {
-
-		JSONArray result = new JSONArray();
-		String category = getIntent().getStringExtra(CATEGORY_EXTRA);
 		
-		JSONArray categoryTasks = getCategoryTasks(tasks, category);
-		for (int i = 0; i < categoryTasks.length(); i ++){
-			try {
-				JSONObject currObj = categoryTasks.getJSONObject(i);
+		URL url= null;
 
-				if (currObj.isNull("done") || !currObj.getBoolean("done")){
-					result.put(categoryTasks.get(i));
-				}
-			}
-			catch (JSONException e) {
-				ClientLog.w(LOG_TAG, "Error!", e);
-			}
-		}
-
-		return result;
-	}
-	
-	private JSONArray extractDoneTasks(JSONArray tasks) {
-
-		JSONArray result = new JSONArray();
-		String category = getIntent().getStringExtra(CATEGORY_EXTRA);
-		
-		JSONArray categoryTasks = getCategoryTasks(tasks, category);
-		for (int i = 0; i < categoryTasks.length(); i ++){
-			try {
-				JSONObject currObj = categoryTasks.getJSONObject(i);
-
-				if (!currObj.isNull("done") && currObj.getBoolean("done")){
-					result.put(categoryTasks.get(i));
-				}
-			}
-			catch (JSONException e) {
-				ClientLog.w(LOG_TAG, "Error!", e);
-			}
-		}
-
-		return result;
-	}
-	
-	
-	private JSONArray getCategoryTasks(JSONArray tasks, String category) {
-		
 		try {
-			for (int i = 0; i < tasks.length(); i++){
-				JSONObject currObj = tasks.getJSONObject(i);
-				if (currObj.getString("category").equals(category)){
-					return currObj.getJSONArray("tasks");
-				}
-			}
+			url = new URL("http://niyoapi.appspot.com/tasks");
+		} catch (MalformedURLException e) {
+			ClientLog.e(LOG_TAG, "Error!", e);
+			return;
 		}
-		catch (JSONException e) {
-			ClientLog.w(LOG_TAG, "Error!", e);
-		}
-
-		return null;
+		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
+		task.execute(uri);
 	}
 	
-//	private void finishTasksToServer() {
-//		
-//		String finishTaskIds = getCrossedTasksIds();
-//		String unFinishTaskIds = getOpenTasksIds();
-//		JSONArray finishTaskIdsArray = null;
-//		JSONArray unFinishTaskIdsArray = null;
-//		JSONObject jsonObj = null;
-//		try {
-//			finishTaskIdsArray = new JSONArray(finishTaskIds);
-//			unFinishTaskIdsArray = new JSONArray(unFinishTaskIds);
-//			jsonObj = new JSONObject();
-//
-//			jsonObj.put("finishTaskIds", finishTaskIdsArray);
-//			jsonObj.put("unFinishTaskIds", unFinishTaskIdsArray);
-//		} catch (JSONException e) {
-//			ClientLog.e(LOG_TAG, "Error!", e);
-//		}
-//
-//		HttpEntity entity = null;
-//
-//		try {
-//			entity = new StringEntity(jsonObj.toString(), HTTP.UTF_8);
-//			PutJsonTask task = new PutJsonTask(entity, this, getServiceCaller());
-//			try {
-//				URL url = new URL("http://niyoapi.appspot.com/finishTasks");
-//				task.execute(url);
-//			} catch (Exception e) {
-//				ClientLog.e(LOG_TAG, "Error!", e);
-//			}
-//
-//		} catch (Exception e) {
-//			ClientLog.e(LOG_TAG, "Error!", e);
-//		}
-//	}
-
-	private void processTasksToProvider() {
-		
-		ProcessTasksTask task = new ProcessTasksTask(this, getIntent().getStringExtra(CATEGORY_EXTRA), getCrossedTasks(), getOpenTasks());
-		
-		task.execute(new String[1]);
-	}
-
-	private String getOpenTasksIds() {
-
-		List<JSONObject> openTasks = getOpenTasks();
-		
-		StringBuffer result = new StringBuffer();
-		result.append("[");
-		
-		for (int i = 0; i < openTasks.size(); i++) {
-			try {
-				result.append(openTasks.get(i).getString("taskId"));
-			} catch (JSONException e) {
-				ClientLog.e(LOG_TAG, "Error!", e);
-			}
-			
-			if (i < openTasks.size()-1){
-				result.append(",");
-			}
-		}
-		
-		result.append("]");
-		
-		ClientLog.d(LOG_TAG, "preparing finish tasks with "+result);
-		
-		return result.toString();
-	}
-
-	private String getCrossedTasksIds() {
-		
-		List<JSONObject> crossedTasks = getCrossedTasks();
-		
-		StringBuffer result = new StringBuffer();
-		result.append("[");
-		
-		for (int i = 0; i < crossedTasks.size(); i++) {
-			try {
-				result.append(crossedTasks.get(i).getString("taskId"));
-			} catch (JSONException e) {
-				ClientLog.e(LOG_TAG, "Error!", e);
-			}
-			
-			if (i < crossedTasks.size()-1){
-				result.append(",");
-			}
-		}
-		
-		result.append("]");
-		
-		ClientLog.d(LOG_TAG, "preparing finish tasks with "+result);
-		
-		return result.toString();
-	}
-
-	private ServiceCaller getServiceCaller() {
-		
-		return new ServiceCaller() {
-			
-			@Override
-			public void success(Object data) {
-				ClientLog.d(LOG_TAG, "successfully finished tasks");
-			}
-			
-			@Override
-			public void failure(Object data, String description) {
-				ClientLog.d(LOG_TAG, "failed to finish tasks");
-			}
-		};
-	}
-
-	private void populateTasks() {
-		
-		List<JSONObject> openTasks = StringUtils.sort(getOpenTasks(), Utils.getTaskJSONComparator());
-		List<JSONObject> crossedTasks = StringUtils.sort(getCrossedTasks(), Utils.getTaskJSONComparator());
-		
-		ClientLog.d(LOG_TAG, "num of open are: "+openTasks.size()+" num of crossed: "+crossedTasks.size());
-		if (getAdapter() != null){
-			getAdapter().setList(openTasks, crossedTasks);
-			getAdapter().notifyDataSetChanged();
-		}
-		else{
-			setAdapter(new TasksListAdapter(this));
-			getAdapter().setList(openTasks, crossedTasks);
-			getListView().setAdapter(getAdapter());
-		}
-	}
-
-//	private JSONArray getCategoryTasks(List<JSONObject> tasks, String category) {
-//
-//		JSONArray result = new JSONArray();
-//		ClientLog.d(LOG_TAG, "tasks is "+StringUtils.printList(tasks));
-//		for (JSONObject task : tasks) {
-//			
-//			ClientLog.d(LOG_TAG, "task is "+task);
-//			try {
-//				if (task.get("category").equals(category)){
-//					result = task.getJSONArray("tasks");
-//					return result;
-//				}
-//
-//			} catch (JSONException e) {
-//				ClientLog.e(LOG_TAG, "Error!", e);
-//			}
-//		}
-//
-//		return result;
-//	}
-
-	private void setUri(Uri uri)
-	{
-		mUri = uri;
-	}
-	
-	private Uri getUri()
-	{
-		return mUri;
-	}
-
-	
-	private ListView getListView() {
-		
-		return (ListView)findViewById(R.id.tasksList);
-	}
-	
-
 	@Override
 	public void onDestroy()
 	{
@@ -464,28 +199,56 @@ public class TasksActivity extends NiyoAbstractActivity {
 		getContentResolver().unregisterContentObserver(mObserver);
 	}
 
-	public TasksListAdapter getAdapter() {
+	private void setTasks(JSONArray tasks) {
+//		ClientLog.d(LOG_TAG, "setTasks started with "+tasks);
+//		if (getAdapter() != null)
+//		{
+//			getAdapter().setList(tasks);
+//			getAdapter().notifyDataSetChanged();
+//		}
+//		else
+//		{
+//			setAdapter(new CategoriesListAdapter(this));
+//			getAdapter().setList(tasks);
+//			getList().setAdapter(getAdapter());
+//		}
+	}
+	
+	private ListView getList() {
+		return null;
+	}
+
+	public CategoriesListAdapter getAdapter() {
 		return mAdapter;
 	}
 
-	public void setAdapter(TasksListAdapter adapter) {
+	public void setAdapter(CategoriesListAdapter adapter) {
 		mAdapter = adapter;
 	}
 
-
-	public List<JSONObject> getCrossedTasks() {
-		return mCrossedTasks;
-	}
-
-	public void setCrossedTasks(List<JSONObject> crossedTasks) {
-		mCrossedTasks = crossedTasks;
-	}
-
-	public List<JSONObject> getOpenTasks() {
-		return mOpenTasks;
-	}
-
-	public void setOpenTasks(List<JSONObject> openTasks) {
-		mOpenTasks = openTasks;
+	@Override
+	public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
+		
+		
+//		if (adapterView.getItemIdAtPosition(position) == CategoriesListAdapter.ADD_CATEGORY_ITEM_ID){
+//			Intent intent = AddCategoryActivity.getCreationIntent(this);
+//			startActivity(intent);
+//		}
+//		else if (adapterView.getItemIdAtPosition(position) == CategoriesListAdapter.ADD_GENERIC_ITEM_ID){
+//			Intent intent = AdGenericTaskActivity.getCreationIntent(this);
+//			startActivity(intent);
+//		}
+//		else
+//		{
+//			JSONObject json = (JSONObject) adapterView.getItemAtPosition(position);
+//			
+//			try {
+//				Intent intent = CategoryTasksActivity.getCreationIntent(this, json.getString("category"));
+//				startActivity(intent);
+//			} catch (JSONException e) {
+//				ClientLog.e(LOG_TAG, "Error!", e);
+//			}
+//		}
+		
 	}
 }

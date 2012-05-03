@@ -84,5 +84,8 @@
     <string name="startNav">Start Navigating</string>
     <string name="taskTitle">Task Title</string>
     <string name="tapToUse">Tap to use this address</string>
+    <string name="addTask">Add Task</string>
+    <string name="showCategories">Categories</string>
+    <string name="mapBtn">Map</string>
 
 </resources>

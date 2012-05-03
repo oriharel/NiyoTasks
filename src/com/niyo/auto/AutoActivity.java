@@ -113,7 +113,13 @@ public class AutoActivity extends NiyoAbstractActivity {
 		ArrayList<String> result = new ArrayList<String>();
 		JSONArray tasks = getTasks();
 		for (int i = 0; i < tasks.length(); i++){
-			result.add(tasks.getJSONObject(i).getString("id"));
+			JSONObject task = tasks.getJSONObject(i);
+			JSONArray categories = task.getJSONArray("categories");
+			
+			for (int j = 0; j < categories.length(); j++){
+				result.add(categories.getJSONObject(j).getString("id"));
+			}
+			
 		}
 		
 		return result;

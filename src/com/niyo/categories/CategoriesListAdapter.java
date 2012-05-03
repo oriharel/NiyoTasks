@@ -1,8 +1,6 @@
 package com.niyo.categories;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.List;
 
 import android.app.Activity;
 import android.view.View;
@@ -17,24 +15,21 @@ public class CategoriesListAdapter extends BaseAdapter {
 
 	private static final String LOG_TAG = CategoriesListAdapter.class.getSimpleName();
 	private Activity mActivity;
-	private JSONArray mCategories;
+	private List<CategoryBean> mCategories;
 	protected static final int ADD_CATEGORY_TYPE = 0;
 	public static final int ADD_CATEGORY_ITEM_ID = 6367;
 	public static final int ADD_GENERIC_ITEM_ID = 6366;
 	protected static final int REGULAR_CATEGORY_TYPE = 1;
-	protected static final int AD_GENERIC_TYPE_TYPE = 2;
 	
 	public CategoriesListAdapter(Activity activity){
 		setActivity(activity);
 	}
 	
-	public void setList(JSONArray categories){
+	public void setList(List<CategoryBean> categories){
 		mCategories = categories;
-		mCategories.put(0);
-		mCategories.put(1);
 	}
 	
-	public JSONArray getList(){
+	public List<CategoryBean> getList(){
 		return mCategories;
 	}
 	
@@ -48,13 +43,9 @@ public class CategoriesListAdapter extends BaseAdapter {
 	public int getItemViewType (int position)
 	{
 		
-		if (getCount() == 0 || position == getCount()-2)
+		if (getItemId(position) == ADD_CATEGORY_ITEM_ID)
 		{
 			return ADD_CATEGORY_TYPE;
-		}
-		else if (position == getCount()-1)
-		{
-			return AD_GENERIC_TYPE_TYPE;
 		}
 		else
 		{
@@ -64,32 +55,31 @@ public class CategoriesListAdapter extends BaseAdapter {
 	
 	@Override
 	public int getCount() {
-		return mCategories.length();
+		return mCategories.size();
 	}
 
 	@Override
-	public Object getItem(int position) {
-		try {
-			return mCategories.get(position);
-		} catch (JSONException e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
-		}
-		
-		return null;
+	public CategoryBean getItem(int position) {
+		return mCategories.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
 		
-		if (getCount() == 0 || position == getCount()-2){
-			return ADD_CATEGORY_ITEM_ID;
+		try{
+			
+			Long itemId = Long.parseLong(getItem(position).getId());
+			if (itemId == ADD_CATEGORY_ITEM_ID){
+				return ADD_CATEGORY_ITEM_ID;
+			}
+			else{
+				return position;
+			}
 		}
-		else if (position == getCount()-1){
-			return ADD_GENERIC_ITEM_ID;
-		}
-		else{
+		catch (NumberFormatException e){
 			return position;
 		}
+		
 		
 	}
 
@@ -105,13 +95,6 @@ public class CategoriesListAdapter extends BaseAdapter {
 				convertView = getActivity().getLayoutInflater().inflate(R.layout.add_new_category_item, null);
 				return convertView;
 			}
-			case AD_GENERIC_TYPE_TYPE:
-			{
-				convertView = getActivity().getLayoutInflater().inflate(R.layout.add_new_category_item, null);
-				TextView text = (TextView)convertView.findViewById(R.id.addCategoryItem);
-				text.setText("Add a task");
-				return convertView;
-			}
 			default:
 			{
 				if (convertView == null)
@@ -119,7 +102,6 @@ public class CategoriesListAdapter extends BaseAdapter {
 					convertView = getActivity().getLayoutInflater().inflate(R.layout.category_list_item, null);
 					holder = new CategoryHolder();
 					holder.categoryName = (TextView)convertView.findViewById(R.id.categoryName);
-					holder.numOfTasks = (TextView)convertView.findViewById(R.id.numOfTasks);
 					convertView.setTag(holder);
 				}
 				else
@@ -127,20 +109,8 @@ public class CategoriesListAdapter extends BaseAdapter {
 					holder = (CategoryHolder)convertView.getTag();
 				}
 				
-				try {
-					JSONObject item = (JSONObject)getItem(position);
-					holder.categoryName.setText(item.getString("category"));
-					JSONArray tasks = item.getJSONArray("tasks");
-					if (tasks.length() > 0){
-						holder.numOfTasks.setVisibility(View.VISIBLE);
-						holder.numOfTasks.setText(Integer.toString(tasks.length()));
-					}
-					else{
-						holder.numOfTasks.setVisibility(View.GONE);
-					}
-				} catch (JSONException e) {
-					ClientLog.e(LOG_TAG, "Error!", e);
-				}
+				CategoryBean category = getItem(position);
+				holder.categoryName.setText(category.getName());
 			}
 		}
 		
@@ -157,7 +127,6 @@ public class CategoriesListAdapter extends BaseAdapter {
 	
 	static class CategoryHolder{
 		TextView categoryName;
-		TextView numOfTasks;
 	}
 
 }

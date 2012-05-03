@@ -1,6 +1,9 @@
 package com.niyo.tasks;
 
+import java.util.List;
+
 import com.google.android.maps.GeoPoint;
+import com.niyo.categories.CategoryBean;
 
 public class LocationTask {
 
@@ -8,13 +11,21 @@ public class LocationTask {
 	private String mTitle;
 	private Double mDoublelat;
 	private Double mDoubleLon;
+	private String mUserInputAddress;
+	private String mId;
+	private List<CategoryBean> mCategories;
 	
-	public LocationTask(GeoPoint point, String title){
+	public LocationTask(String id, GeoPoint point, String title, String userInputAddress, List<CategoryBean> categories){
 		setPoint(point);
 		setTitle(title);
 		
-		setDoublelat(point.getLatitudeE6()/1e6);
-		setDoubleLon(point.getLongitudeE6()/1e6);
+		if (point != null){
+			setDoublelat(point.getLatitudeE6()/1e6);
+			setDoubleLon(point.getLongitudeE6()/1e6);
+		}
+		setId(id);
+		setUserInputAddress(userInputAddress);
+		setCategories(categories);
 	}
 	public GeoPoint getPoint() {
 		return mPoint;
@@ -39,5 +50,23 @@ public class LocationTask {
 	}
 	public void setDoubleLon(Double doubleLon) {
 		mDoubleLon = doubleLon;
+	}
+	public String getUserInputAddress() {
+		return mUserInputAddress;
+	}
+	public void setUserInputAddress(String userInputAddress) {
+		mUserInputAddress = userInputAddress;
+	}
+	public String getId() {
+		return mId;
+	}
+	public void setId(String id) {
+		mId = id;
+	}
+	public List<CategoryBean> getCategories() {
+		return mCategories;
+	}
+	public void setCategories(List<CategoryBean> categories) {
+		mCategories = categories;
 	}
 }
