@@ -1,10 +1,13 @@
 package com.niyo.auto;
 
+import java.io.IOException;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,8 +19,10 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.niyo.ClientLog;
 import com.niyo.R;
+import com.niyo.ServiceCaller;
 import com.niyo.SettingsManager;
 import com.niyo.auto.map.NiyoMapActivity;
+import com.niyo.tasks.map.AddressGeocodingTask;
 import com.niyo.tasks.map.AutoItemizedOverlay;
 
 public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickListener {
@@ -47,8 +52,8 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickLis
 		TextView title = (TextView)findViewById(R.id.boxTitleEdit);
 		title.setText(SettingsManager.getString(this, getTitleKey()));
 		
-		float lat = SettingsManager.getFloat(this, getLatKey(), 0);
-		float lon = SettingsManager.getFloat(this, getLonKey(), 0);
+		Float lat = SettingsManager.getFloat(this, getLatKey(), 0);
+		Float lon = SettingsManager.getFloat(this, getLonKey(), 0);
 		
 		ClientLog.d(LOG_TAG, "lat = "+lat);
 		ClientLog.d(LOG_TAG, "lon = "+lon);
@@ -70,6 +75,35 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickLis
 			
 			mapView.getController().setCenter(point);
 			mapView.getController().setZoom(18);
+			
+			ServiceCaller caller = new ServiceCaller() {
+
+				@Override
+				public void success(Object data) {
+
+					if (data != null){
+
+						List<Address> addresses = (List<Address>)data;
+						if (addresses != null && addresses.size() > 0){
+
+							EditText addressSearch = (EditText)findViewById(R.id.boxSearchEdit);
+							addressSearch.setText(addresses.get(0).getAddressLine(0));
+						}
+					}
+				}
+
+				@Override
+				public void failure(Object data, String description) {
+					// TODO Auto-generated method stub
+
+				}
+			};
+			
+			AddressGeocodingTask task = new AddressGeocodingTask(this, caller);
+			Double[] params = new Double[2];
+			params[0] = lat.doubleValue();
+			params[1] = lon.doubleValue();
+			task.execute(params);
 		}
 		
 	}
