@@ -3,6 +3,7 @@ package com.niyo.auto;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,13 +16,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.maps.GeoPoint;
 import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.ServiceCaller;
 import com.niyo.auto.map.AutoMapActivity;
+import com.niyo.categories.CategoryBean;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
+import com.niyo.tasks.LocationTask;
 
 public class AutoActivity extends NiyoAbstractActivity {
     /** Called when the activity is first created. */
@@ -51,11 +55,11 @@ public class AutoActivity extends NiyoAbstractActivity {
 		
 		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
 		setUri(uri);
-        getCategories();
+        loadTasksFromDb();
         
     }
     
-    private void getCategories() {
+    private void loadTasksFromDb() {
 		
 		ServiceCaller caller = new ServiceCaller() {
 			
@@ -108,6 +112,58 @@ public class AutoActivity extends NiyoAbstractActivity {
 	}
     
     
+//    private ArrayList<LocationTask> getLocationTasks() throws JSONException {
+//
+//    	ArrayList<LocationTask> result = new ArrayList<LocationTask>();
+//    	JSONArray tasks = getTasks();
+//    	for (int i = 0; i < tasks.length(); i++){
+//    		JSONObject task = tasks.getJSONObject(i);
+//
+//    		String id = task.getString("id");
+//
+//    		GeoPoint point = getGeoPoint(task);
+//    		String title = task.getString("content");
+//    		String userInputAddress = task.getString("userInputAddress");
+//
+//    		List<CategoryBean> categories = getCategories(task);
+//    		LocationTask locTask = new LocationTask(id, point, title, userInputAddress, categories);
+//    		result.add(locTask);
+//    	}
+//    	
+//    	return result;
+//    }
+
+//	private List<CategoryBean> getCategories(JSONObject task) throws JSONException {
+//		
+//		List<CategoryBean> result = new ArrayList<CategoryBean>();
+//		JSONArray categories = task.getJSONArray("categories");
+//		
+//		for (int i = 0; i < categories.length(); i++){
+//			
+//			String name = categories.getJSONObject(i).getString("name");
+//			String id = categories.getJSONObject(i).getString("id");
+//			CategoryBean cat = new CategoryBean(name, id);
+//		}
+//		
+//		return result;
+//	}
+//
+//	private GeoPoint getGeoPoint(JSONObject task) throws JSONException {
+//		
+//		String lat = task.getString("lat");
+//		String lon = task.getString("lon");
+//		
+//		Double latDbl = new Double(lat);
+//		Double lonDbl = new Double(lon);
+//		
+//		latDbl = latDbl*1e6;
+//		lonDbl = lonDbl*1e6;
+//		
+//		GeoPoint result = new GeoPoint(latDbl.intValue(), lonDbl.intValue());
+//		
+//		return result;
+//	}
+
 	private ArrayList<String> getCategoryIds() throws JSONException {
 		
 		ArrayList<String> result = new ArrayList<String>();

@@ -1,12 +1,17 @@
 package com.niyo.tasks;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.google.android.maps.GeoPoint;
 import com.niyo.categories.CategoryBean;
 
-public class LocationTask {
+public class LocationTask implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private GeoPoint mPoint;
 	private String mTitle;
 	private Double mDoublelat;

@@ -37,10 +37,26 @@ public class AutoWVClient extends WebViewClient {
 		
 		String provider = LocationManager.GPS_PROVIDER;
 		Location location = locationManager.getLastKnownLocation(provider);
-		ClientLog.d(LOG_TAG, "location is "+location);
-		AutoPoint from = new AutoPoint(location.getLatitude(), location.getLongitude());
 		
-		webView.loadUrl("javascript: calcRoute("+from.getLat()+","+from.getLon()+","+mTo.getLat()+","+mTo.getLon()+")");
+		
+		if (location == null){
+			provider = LocationManager.NETWORK_PROVIDER;
+			location = locationManager.getLastKnownLocation(provider);
+		}
+		
+		if (location == null){
+			provider = LocationManager.PASSIVE_PROVIDER;
+			location = locationManager.getLastKnownLocation(provider);
+		}
+		
+		ClientLog.d(LOG_TAG, "location is "+location);
+		
+		if (location != null){
+			AutoPoint from = new AutoPoint(location.getLatitude(), location.getLongitude());
+			
+			webView.loadUrl("javascript: calcRoute("+from.getLat()+","+from.getLon()+","+mTo.getLat()+","+mTo.getLon()+")");
+		}
+		
 	}
 	
 }

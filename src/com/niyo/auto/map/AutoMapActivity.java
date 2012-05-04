@@ -28,6 +28,7 @@ import com.niyo.auto.AutoPoint;
 import com.niyo.auto.AutoVenue;
 import com.niyo.auto.AutoWVClient;
 import com.niyo.auto.JSInterface;
+import com.niyo.tasks.LocationTask;
 
 public class AutoMapActivity extends NiyoAbstractActivity {
 	
@@ -90,6 +91,7 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 	private List<String> getCategryIds(){
 		return (List<String>)getIntent().getSerializableExtra(CATEGORY_IDS_EXTRA);
 	}
+	
 	
 	public static Intent getCreationIntent(Activity activity, AutoPoint to, ArrayList<String> categroyIds){
 		
