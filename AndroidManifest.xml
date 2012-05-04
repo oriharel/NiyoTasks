@@ -97,6 +97,7 @@
         <activity android:name=".tasks.map.AdGenericTaskActivity"></activity>
         
         <uses-library android:name="com.google.android.maps" />
+        <activity android:name=".auto.CreateAutoBoxAcitivty"></activity>
         
     </application>
 

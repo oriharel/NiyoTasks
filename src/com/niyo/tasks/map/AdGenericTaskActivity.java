@@ -1,11 +1,9 @@
 package com.niyo.tasks.map;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 import org.json.JSONArray;
@@ -14,9 +12,6 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -31,15 +26,11 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
 import com.niyo.ClientLog;
 import com.niyo.R;
 import com.niyo.ServiceCaller;
 import com.niyo.Utils;
+import com.niyo.auto.map.NiyoMapActivity;
 import com.niyo.categories.AddCategoryActivity;
 import com.niyo.categories.CategoriesListAdapter;
 import com.niyo.categories.CategoryBean;
@@ -48,14 +39,13 @@ import com.niyo.data.NiyoContentProvider;
 import com.niyo.tasks.AddGenericTaskTask;
 import com.niyo.tasks.LocationTask;
 
-public class AdGenericTaskActivity extends MapActivity implements OnClickListener, OnItemClickListener {
+public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickListener, OnItemClickListener {
 	
 	private static final String LOG_TAG = AdGenericTaskActivity.class.getSimpleName();
 	private static final String TASK_ID_EXTRA = "taskID";
 	private static final int CATEGORY_ADD_REQUEST = 0;
 	public static final String CATEGORY_DATA = "categoryData";
 	public static final int RESULT_ADD_CATEGORY = 333;
-	private GeoPoint mSeletctedAddress;
 	private CategoriesListAdapter mCategoriesAdapter;
 	private List<CategoryBean> mCategories;
 	@Override
@@ -323,74 +313,12 @@ public class AdGenericTaskActivity extends MapActivity implements OnClickListene
 	public void onClick(View v) {
 		
 		EditText addressEdit = (EditText)findViewById(R.id.searchEdit);
-//		Utils.hideKeyboard(this, addressEdit);
 		String userAddress = addressEdit.getText().toString();
 		
 		showMarker(userAddress);
 	}
 
-	private void showMarker(String userAddress) {
-		Geocoder coder = new Geocoder(this, Locale.getDefault());
-		try {
-			List<Address> addresses = coder.getFromLocationName(userAddress, 5);
-			
-			if (addresses.size() <= 0){
-				Toast.makeText(this, "No results for "+userAddress, Toast.LENGTH_LONG).show();
-			}
-			else{
-				if (addresses.size() == 1){
-					mSeletctedAddress = createGeoPoint(addresses.get(0));
-				}
-				showResults(addresses);
-			}
-			
-		} catch (IOException e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
-		}
-	}
-
-	private GeoPoint createGeoPoint(Address address) {
-		
-		Double lat1e6 = new Double(address.getLatitude()*1e6);
-		Double lon1e6 = new Double(address.getLongitude()*1e6);
-		
-		GeoPoint result = new GeoPoint(lat1e6.intValue(), lon1e6.intValue());
-		return result;
-	}
-
-	private void showResults(List<Address> addresses) {
-		
-		showMap();
-		MapView mapView = (MapView)findViewById(R.id.map_view);
-		List<Overlay> overlays = mapView.getOverlays();
-		Resources r = getResources();
-		AutoItemizedOverlay markers = new AutoItemizedOverlay(r.getDrawable(R.drawable.marker));
-		for (Address address : addresses) {
-			
-			Double lat1E6 = new Double(address.getLatitude()*1E6);
-			Double lon1E6 = new Double(address.getLongitude()*1E6);
-			GeoPoint point = new GeoPoint(lat1E6.intValue(), lon1E6.intValue());
-			
-			markers.addNewItem(point, "markerText", "snippet");
-		}
-		overlays.add(markers);
-		
-		centerAndZoom(addresses);
-		
-	}
-
-	private void centerAndZoom(List<Address> addresses) {
-		
-		MapView mapView = (MapView)findViewById(R.id.map_view);
-		MapController mapController = mapView.getController();
-		
-		Double lat1E6 = new Double(addresses.get(0).getLatitude()*1E6);
-		Double lon1E6 = new Double(addresses.get(0).getLongitude()*1E6);
-		GeoPoint point = new GeoPoint(lat1E6.intValue(), lon1E6.intValue());
-		
-		mapController.setCenter(point);
-		mapController.setZoom(18);
-	}
+	
 
 	@Override
 	protected boolean isRouteDisplayed() {
@@ -430,6 +358,11 @@ public class AdGenericTaskActivity extends MapActivity implements OnClickListene
 
 	public void addToCategoryList(CategoryBean category) {
 		mCategories.add(0, category);
+	}
+
+	@Override
+	protected int getMapViewId() {
+		return R.id.map_view;
 	}
 
 }

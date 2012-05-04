@@ -1,31 +1,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/testLayout"
+    android:id="@+id/boxesLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" android:background="@color/appColor">
+    android:background="@color/appColor"
+    android:orientation="vertical" >
 
     <TableLayout
+        android:id="@+id/boxesTable"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:paddingBottom="10dip"
         android:paddingTop="10dip"
-        android:weightSum="3">
+        android:weightSum="3" >
 
         <TableRow
-            android:id="@+id/TableRow02"
+            android:id="@+id/firstRow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:weightSum="5" android:paddingLeft="20dip" android:paddingRight="20dip" android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:paddingLeft="20dip"
+            android:paddingRight="20dip"
+            android:weightSum="5" >
 
             <Button
-                android:id="@+id/Button03"
+                android:id="@+id/boxBtn1"
                 android:layout_width="0dip"
                 android:layout_height="100dip"
                 android:layout_weight="2"
+                android:background="@drawable/nav_btn_selector"
                 android:onClick="navigateTo"
                 android:tag="32.179457,34.91667"
-                android:text="Work" android:textSize="24sp" android:background="@drawable/nav_btn_selector" android:textColor="@color/text_color"/>
+                android:text="Work"
+                android:textColor="@color/text_color"
+                android:textSize="24sp" />
 
             <View
                 android:id="@+id/View02"
@@ -35,32 +43,40 @@
                 android:visibility="visible" />
 
             <Button
-                android:id="@+id/Button04"
+                android:id="@+id/boxBtn2"
                 android:layout_width="0dip"
                 android:layout_height="100dip"
                 android:layout_weight="2"
+                android:background="@drawable/nav_btn_selector"
                 android:onClick="navigateTo"
                 android:tag="32.179366,34.858251"
-                android:text="Home" android:textSize="24sp" android:background="@drawable/nav_btn_selector" android:textColor="@color/text_color"/>
+                android:text="Home"
+                android:textColor="@color/text_color"
+                android:textSize="24sp" />
+
         </TableRow>
 
         <TableRow
-            android:id="@+id/TableRow01"
+            android:id="@+id/secondRow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="center_vertical"
             android:paddingLeft="20dip"
             android:paddingRight="20dip"
-            android:weightSum="5" android:gravity="center_vertical">
+            android:weightSum="5" >
 
             <Button
-                android:id="@+id/Button01"
+                android:id="@+id/boxBtn3"
                 android:layout_width="0dip"
                 android:layout_height="100dip"
                 android:layout_weight="2"
+                android:background="@drawable/nav_btn_selector"
                 android:onClick="navigateTo"
                 android:tag="32.167724,34.874966"
-                android:text="Itchuk" android:textSize="24sp" android:background="@drawable/nav_btn_selector" android:textColor="@color/text_color"/>
+                android:text="Itchuk"
+                android:textColor="@color/text_color"
+                android:textSize="24sp" />
 
             <View
                 android:id="@+id/View01"
@@ -69,32 +85,40 @@
                 android:layout_weight="1" />
 
             <Button
-                android:id="@+id/Button02"
+                android:id="@+id/boxBtn4"
                 android:layout_width="0dip"
                 android:layout_height="100dip"
                 android:layout_weight="2"
+                android:background="@drawable/nav_btn_selector"
                 android:onClick="navigateTo"
                 android:tag="32.192033,34.876774"
-                android:text="Noa" android:textSize="24sp" android:background="@drawable/nav_btn_selector" android:textColor="@color/text_color"/>
+                android:text="Noa"
+                android:textColor="@color/text_color"
+                android:textSize="24sp" />
+
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow1"
+            android:id="@+id/secondRow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="center_vertical"
             android:paddingLeft="20dip"
             android:paddingRight="20dip"
-            android:weightSum="5" android:gravity="center_vertical">
+            android:weightSum="5" >
 
             <Button
-                android:id="@+id/button1"
+                android:id="@+id/boxBtn5"
                 android:layout_width="0dip"
                 android:layout_height="100dip"
                 android:layout_weight="2"
+                android:background="@drawable/nav_btn_selector"
                 android:onClick="navigateTo"
                 android:tag="32.197249,34.878234"
-                android:text="Renanim" android:textSize="24sp" android:background="@drawable/nav_btn_selector" android:textColor="@color/text_color"/>
+                android:text="Renanim"
+                android:textColor="@color/text_color"
+                android:textSize="24sp" />
 
             <View
                 android:id="@+id/view1"
@@ -103,13 +127,17 @@
                 android:layout_weight="1" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/boxBtn6"
                 android:layout_width="0dip"
                 android:layout_height="100dip"
                 android:layout_weight="2"
+                android:background="@drawable/nav_btn_selector"
                 android:onClick="navigateTo"
                 android:tag="32.186957,34.928117"
-                android:text="Ferber" android:textSize="24sp" android:background="@drawable/nav_btn_selector" android:textColor="@color/text_color"/>
+                android:text="Ferber"
+                android:textColor="@color/text_color"
+                android:textSize="24sp" />
+
         </TableRow>
     </TableLayout>
 
