@@ -61,7 +61,7 @@ public class SearchFoursquareVenuesTask extends AsyncTask<String, Void, List<Aut
 			int status = getFoursqaureStatus(result);
 			ClientLog.d(LOG_TAG, "status is "+status);
 			if (status != HttpStatus.SC_OK){
-				ClientLog.e(LOG_TAG, "Error!");
+//				ClientLog.e(LOG_TAG, "Error!");
 				return new ArrayList<AutoVenue>();
 			}
 			
@@ -78,7 +78,6 @@ public class SearchFoursquareVenuesTask extends AsyncTask<String, Void, List<Aut
 			
 			JSONObject responseJSon = resultJson.getJSONObject("response");
 			JSONArray foursquareVenues = responseJSon.getJSONArray("venues");
-			Log.d(LOG_TAG, "venues is "+foursquareVenues);
 			JSONArray stepsArray = new JSONArray(stepsJsonStr);
 			
 			for (int i = 0; i < foursquareVenues.length(); i++)
@@ -92,13 +91,17 @@ public class SearchFoursquareVenuesTask extends AsyncTask<String, Void, List<Aut
 				}
 				
 				String id = foursquareVenues.getJSONObject(i).getString("id");
+				String name = foursquareVenues.getJSONObject(i).getString("name");
+//				ClientLog.d(LOG_TAG, "venue name is "+name);
+				AutoPoint venuePoint = new AutoPoint(Double.parseDouble(venueLat), Double.parseDouble(venueLng), "");
+				AutoVenue autoVenue = new AutoVenue(name, venuePoint, id, address, "from 4sqr");
 				
-				AutoPoint venuePoint = new AutoPoint(Double.parseDouble(venueLat), Double.parseDouble(venueLng));
-				AutoVenue autoVenue = new AutoVenue(foursquareVenues.getJSONObject(i).getString("name"), venuePoint, id, address);
-				
-				if (Utils.isVenueClose(autoVenue, stepsArray))
-				{
+				if (Utils.isVenueClose(autoVenue, stepsArray)){
+					ClientLog.d(LOG_TAG, autoVenue.getName()+" is close enough");
 					listResult.add(autoVenue);
+				}
+				else{
+					ClientLog.d(LOG_TAG, autoVenue.getName()+" is not close enough");
 				}
 				
 //				AutoVenue[] asArray = (AutoVenue[])listResult.toArray();
@@ -161,9 +164,9 @@ public class SearchFoursquareVenuesTask extends AsyncTask<String, Void, List<Aut
 	protected void onPostExecute(List<AutoVenue> result) 
 	{
 		Log.d(LOG_TAG, "we have "+result.size()+" close venues:");
-		for (AutoVenue autoVenue : result) {
-			Log.d(LOG_TAG, "name: "+autoVenue.getName()+" The distance is "+autoVenue.getDistance()+" the id "+autoVenue.getFoursqaureId()+" address is "+autoVenue.getAddress());
-		}
+//		for (AutoVenue autoVenue : result) {
+//			Log.d(LOG_TAG, "name: "+autoVenue.getName()+" The distance is "+autoVenue.getDistance()+" the id "+autoVenue.getFoursqaureId()+" address is "+autoVenue.getAddress());
+//		}
 		
 		if (result.size() > 0){
 			mContext.showRelevantVenues(result);

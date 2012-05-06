@@ -8,14 +8,20 @@ import org.json.JSONObject;
 
 import com.niyo.auto.AutoPoint;
 import com.niyo.auto.AutoVenue;
+import com.niyo.data.JSONTableColumns;
+import com.niyo.data.NiyoContentProvider;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.IBinder;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 public class Utils {
 
+	private static final String LOG_TAG = Utils.class.getSimpleName();
 	public static Comparator<JSONObject> getTaskJSONComparator() {
 
 		Comparator<JSONObject> result = new Comparator<JSONObject>() {
@@ -41,6 +47,48 @@ public class Utils {
 		return result;
 	}
 	
+	public static Uri setTasksInProvider(JSONObject result, Context context){
+		
+		ContentValues values = new ContentValues();
+		values.put(JSONTableColumns.ELEMENT_URL, "/tasks");
+		values.put(JSONTableColumns.ELEMENT_JSON, result.toString());
+
+		return context.getContentResolver().insert(Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks"), values);
+	}
+	
+	public static JSONObject getTasksFromProvider(Context context){
+		
+		String[] projection = new String[] 
+	            {
+					JSONTableColumns._ID,
+					JSONTableColumns.ELEMENT_URL, 
+					JSONTableColumns.ELEMENT_JSON, 
+	            };
+		String selection = JSONTableColumns.ELEMENT_URL + "='/tasks'";
+		
+		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks");
+		Cursor cursor = context.getContentResolver().query(uri, projection, selection, null, null);
+		JSONObject result = null;
+
+		if (cursor != null)
+		{
+			if (cursor.moveToFirst())
+			{
+				String jsonStr = cursor.getString(JSONTableColumns.COLUMN_JSON_INDEX);
+				ClientLog.d(LOG_TAG, "received "+jsonStr);
+				try {
+					result = new JSONObject(jsonStr);
+				} catch (JSONException e) {
+					ClientLog.e(LOG_TAG, "Error!", e);
+				}
+			}
+
+			cursor.close();
+		}
+		
+		return result;
+	}
+	
 	public static boolean isVenueClose(AutoVenue autoVenue, JSONArray stepsArray) {
 		
 //		Log.d(LOG_TAG, "stepsArrya is "+stepsArray.length());
@@ -52,7 +100,7 @@ public class Utils {
 				String stepLat = stepsArray.getJSONObject(i).getJSONObject("end_location").getString("$a");
 				String stepLon = stepsArray.getJSONObject(i).getJSONObject("end_location").getString("ab");
 				
-				AutoPoint fromPoint = new AutoPoint(Double.parseDouble(stepLat), Double.parseDouble(stepLon));
+				AutoPoint fromPoint = new AutoPoint(Double.parseDouble(stepLat), Double.parseDouble(stepLon), "");
 				
 				Double distance = getDistance(fromPoint, venuePoint);
 				

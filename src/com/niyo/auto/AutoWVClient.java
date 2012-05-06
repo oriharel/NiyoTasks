@@ -52,7 +52,7 @@ public class AutoWVClient extends WebViewClient {
 		ClientLog.d(LOG_TAG, "location is "+location);
 		
 		if (location != null){
-			AutoPoint from = new AutoPoint(location.getLatitude(), location.getLongitude());
+			AutoPoint from = new AutoPoint(location.getLatitude(), location.getLongitude(), "origin");
 			
 			webView.loadUrl("javascript: calcRoute("+from.getLat()+","+from.getLon()+","+mTo.getLat()+","+mTo.getLon()+")");
 		}

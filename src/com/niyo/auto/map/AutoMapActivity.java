@@ -19,6 +19,7 @@ import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.niyo.ClientLog;
@@ -28,7 +29,6 @@ import com.niyo.auto.AutoPoint;
 import com.niyo.auto.AutoVenue;
 import com.niyo.auto.AutoWVClient;
 import com.niyo.auto.JSInterface;
-import com.niyo.tasks.LocationTask;
 
 public class AutoMapActivity extends NiyoAbstractActivity {
 	
@@ -41,8 +41,15 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.auto_map_layout);
+		Button navBtn = (Button)findViewById(R.id.startNavBtn);
+		navBtn.setText("Start navigating to "+getDesName());
 		findViewById(R.id.startNavBtn).setOnClickListener(getStartNavOnClick());
 		initWebView();
+	}
+
+	private CharSequence getDesName() {
+		AutoPoint to = (AutoPoint)getIntent().getSerializableExtra(TO_EXTRA);
+		return to.getName();
 	}
 
 	private OnClickListener getStartNavOnClick() {
@@ -130,7 +137,8 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 		
 		for (AutoVenue autoVenue : result) {
 			try {
-				JSONObject venue = new JSONObject("{lat:"+autoVenue.getLocation().getLat()+", long:"+autoVenue.getLocation().getLon()+"}");
+				JSONObject venue = new JSONObject("{lat:"+autoVenue.getLocation().getLat()+
+						", long:"+autoVenue.getLocation().getLon()+", name:\""+autoVenue.getName()+"\", taskContent:\""+autoVenue.getTaskContent()+"\"}");
 				venues.put(venue);
 				
 				

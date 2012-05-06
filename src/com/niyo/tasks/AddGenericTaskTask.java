@@ -6,29 +6,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.niyo.ClientLog;
 import com.niyo.ServiceCaller;
+import com.niyo.Utils;
 import com.niyo.categories.CategoryBean;
-import com.niyo.data.JSONTableColumns;
-import com.niyo.data.NiyoContentProvider;
 
 public class AddGenericTaskTask extends AsyncTask<LocationTask, Void, Boolean> {
 
 	private static final String LOG_TAG = AddGenericTaskTask.class.getSimpleName();
 	private Context mContext;
-	private String[] mProjection = new String[] 
-            {
-				JSONTableColumns._ID,
-				JSONTableColumns.ELEMENT_URL, 
-				JSONTableColumns.ELEMENT_JSON, 
-            };
-	private String mSelection = JSONTableColumns.ELEMENT_URL + "='/tasks'";
+	
 	private ServiceCaller mCaller;
 	
 	public AddGenericTaskTask(Context context, ServiceCaller caller){
@@ -40,25 +30,8 @@ public class AddGenericTaskTask extends AsyncTask<LocationTask, Void, Boolean> {
 	@Override
 	protected Boolean doInBackground(LocationTask... params) {
 		
-		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks");
-		Cursor cursor = mContext.getContentResolver().query(uri, mProjection, mSelection, null, null);
-		JSONObject result = null;
+		JSONObject result = Utils.getTasksFromProvider(mContext);
 
-		if (cursor != null)
-		{
-			if (cursor.moveToFirst())
-			{
-				String jsonStr = cursor.getString(JSONTableColumns.COLUMN_JSON_INDEX);
-				ClientLog.d(LOG_TAG, "received "+jsonStr);
-				try {
-					result = new JSONObject(jsonStr);
-				} catch (JSONException e) {
-					ClientLog.e(LOG_TAG, "Error!", e);
-				}
-			}
-
-			cursor.close();
-		}
 		try {
 
 			JSONArray tasks = null;
@@ -86,11 +59,7 @@ public class AddGenericTaskTask extends AsyncTask<LocationTask, Void, Boolean> {
 			}
 			
 			
-			ContentValues values = new ContentValues();
-			values.put(JSONTableColumns.ELEMENT_URL, "/tasks");
-			values.put(JSONTableColumns.ELEMENT_JSON, result.toString());
-
-			mContext.getContentResolver().insert(Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks"), values);
+			Utils.setTasksInProvider(result, mContext);
 			
 		} catch (JSONException e) {
 			ClientLog.e(LOG_TAG, "Error!", e);

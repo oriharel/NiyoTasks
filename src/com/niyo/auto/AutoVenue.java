@@ -6,8 +6,9 @@ public class AutoVenue implements Comparable<AutoVenue>{
 	private AutoPoint mLocation;
 	private String mFoursqaureId;
 	private String mAddress;
+	private String mTaskContent;
 	
-	public AutoVenue(String name, AutoPoint location, String foursquareId, String address)
+	public AutoVenue(String name, AutoPoint location, String foursquareId, String address, String taskContent)
 	{
 		setName(name);
 		setLocation(location);
@@ -64,5 +65,13 @@ public class AutoVenue implements Comparable<AutoVenue>{
 
 	public void setAddress(String address) {
 		mAddress = address;
+	}
+
+	public String getTaskContent() {
+		return mTaskContent;
+	}
+
+	public void setTaskContent(String taskContent) {
+		mTaskContent = taskContent;
 	}
 }

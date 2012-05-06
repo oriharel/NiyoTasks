@@ -33,7 +33,7 @@ public class JSInterface {
 	}
 	
 	public void log(String text){
-		ClientLog.e(LOG_TAG, "from webview "+text);
+		ClientLog.d(LOG_TAG, "from webview "+text);
 	}
 	
 	public void setResponse(String response, String fromLat, String fromLon, String toLat, String toLon){
@@ -121,9 +121,10 @@ public class JSInterface {
 				String title = tasks.getJSONObject(i).getString("content");
 				String id = tasks.getJSONObject(i).getString("id");
 				String userInputAddress = tasks.getJSONObject(i).getString("userInputAddress");
+				String content = tasks.getJSONObject(i).getString("content");
 				
-				AutoPoint point = new AutoPoint(Double.parseDouble(lat), Double.parseDouble(lon));
-				AutoVenue venue = new AutoVenue(title, point, id, userInputAddress);
+				AutoPoint point = new AutoPoint(Double.parseDouble(lat), Double.parseDouble(lon), title);
+				AutoVenue venue = new AutoVenue(title, point, id, userInputAddress, content);
 
 				if (Utils.isVenueClose(venue, steps)){
 					closeVenues.add(venue);

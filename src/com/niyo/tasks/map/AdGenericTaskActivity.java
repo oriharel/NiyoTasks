@@ -316,6 +316,7 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 		String userAddress = addressEdit.getText().toString();
 		
 		showMarker(userAddress);
+		showMap();
 	}
 
 	
@@ -347,9 +348,12 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 	@Override
 	protected final void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
-		CategoryBean category = (CategoryBean)data.getSerializableExtra(CATEGORY_DATA);
-		addToCategoryList(category);
-		populateCategoriesList();
+		if (data != null){
+			CategoryBean category = (CategoryBean)data.getSerializableExtra(CATEGORY_DATA);
+			addToCategoryList(category);
+			populateCategoriesList();
+		}
+		
 	}
 
 	public List<CategoryBean> getCategories() {

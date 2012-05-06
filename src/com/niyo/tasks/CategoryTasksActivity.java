@@ -151,27 +151,32 @@ public class CategoryTasksActivity extends NiyoAbstractActivity {
 			task = (JSONObject)selectedItem;
 		}
 		
-		if (item.getItemId() == EDIT_TASK_CONTEXT_MENU_ITEM){
-			
-			Intent intent = null;
-			try {
+		try {
+			if (item.getItemId() == EDIT_TASK_CONTEXT_MENU_ITEM){
+
+				Intent intent = null;
+
 				intent = AdGenericTaskActivity.getCreationIntent(this, task.getString("id"));
-			} catch (JSONException e) {
-				ClientLog.e(LOG_TAG, "Error!", e);
+
+				startActivity(intent);
+				return true;
 			}
-			startActivity(intent);
-			return true;
-		}
-		else if (item.getItemId() == DELETE_TASK_CONTEXT_MENU_ITEM){
-			
-			
-			return true;
-		}
-		else{
+			else if (item.getItemId() == DELETE_TASK_CONTEXT_MENU_ITEM){
+
+				DeleteTaskTask deleteTask = new DeleteTaskTask(this, null);
+				String[] params = new String[1];
+				params[0] = task.getString("id");
+				deleteTask.execute(params);
+				return true;
+			}
+			else{
+				return false;
+			}
+
+		} catch (JSONException e) {
+			ClientLog.e(LOG_TAG, "Error!", e);
 			return false;
 		}
-		
-		
 	}
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) 

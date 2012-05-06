@@ -49,6 +49,7 @@ public abstract class NiyoMapActivity extends MapActivity {
 		List<Overlay> overlays = mapView.getOverlays();
 		Resources r = getResources();
 		AutoItemizedOverlay markers = new AutoItemizedOverlay(r.getDrawable(R.drawable.marker));
+		ClientLog.d(LOG_TAG, "got "+addresses.size()+" address");
 		for (Address address : addresses) {
 
 			Double lat1E6 = new Double(address.getLatitude()*1E6);
@@ -60,7 +61,6 @@ public abstract class NiyoMapActivity extends MapActivity {
 		overlays.add(markers);
 
 		centerAndZoom(addresses);
-
 	}
 	
 	protected abstract int getMapViewId();

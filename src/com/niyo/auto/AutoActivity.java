@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.niyo.ClientLog;
@@ -366,8 +367,10 @@ public class AutoActivity extends NiyoAbstractActivity {
 	{
     	if (getTasksReady()){
     		String locationStr = (String)view.getTag();
+    		TextView btn = (TextView)view;
+    		
         	String[] coordinsatesStrArray = locationStr.split(",");
-        	AutoPoint to = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]));
+        	AutoPoint to = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]), btn.getText().toString());
         	Intent intent;
 			try {
 				intent = AutoMapActivity.getCreationIntent(this, to, getCategoryIds());

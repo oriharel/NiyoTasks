@@ -112,6 +112,13 @@
       				animation: google.maps.Animation.DROP,
       				title:"Hello World!"
   				});
+  				
+  				
+  			var infowindow = new google.maps.InfoWindow({
+    				content: venue.name
+				});
+			
+			infowindow.open(map,marker);
         }
               	
       	
