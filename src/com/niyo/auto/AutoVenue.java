@@ -35,10 +35,10 @@ public class AutoVenue implements Comparable<AutoVenue>{
 	@Override
 	public int compareTo(AutoVenue another) {
 		if (getDistance() > another.getDistance()){
-			return 1;
+			return -1;
 		}
 		else if (getDistance() < another.getDistance()){
-			return -1;
+			return 1;
 		}
 		return 0;
 	}

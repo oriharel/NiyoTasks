@@ -46,19 +46,19 @@ public class AutoItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		return items.size();
 	}
 	
-	@Override
-	public boolean onTap(GeoPoint point, MapView mapView){
-		
-		MapView.LayoutParams geoLP = new MapView.LayoutParams(MapView.LayoutParams.WRAP_CONTENT,
-				MapView.LayoutParams.WRAP_CONTENT,
-				point,
-				MapView.LayoutParams.BOTTOM_CENTER);
-		
-		Activity context = (Activity)mapView.getContext();
-		View baloon = context.getLayoutInflater().inflate(R.layout.marker_baloon, null);
-		
-		mapView.addView(baloon, geoLP);
-		return false;
-	}
+//	@Override
+//	public boolean onTap(GeoPoint point, MapView mapView){
+//		
+//		MapView.LayoutParams geoLP = new MapView.LayoutParams(MapView.LayoutParams.WRAP_CONTENT,
+//				MapView.LayoutParams.WRAP_CONTENT,
+//				point,
+//				MapView.LayoutParams.BOTTOM_CENTER);
+//		
+//		Activity context = (Activity)mapView.getContext();
+//		View baloon = context.getLayoutInflater().inflate(R.layout.marker_baloon, null);
+//		
+//		mapView.addView(baloon, geoLP);
+//		return false;
+//	}
 
 }

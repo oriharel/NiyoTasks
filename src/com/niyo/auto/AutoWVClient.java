@@ -2,11 +2,11 @@ package com.niyo.auto;
 
 import android.content.Context;
 import android.location.Location;
-import android.location.LocationManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.niyo.ClientLog;
+import com.niyo.LocationUtil;
 
 public class AutoWVClient extends WebViewClient {
 
@@ -31,23 +31,8 @@ public class AutoWVClient extends WebViewClient {
 	private void processRoute(WebView webView) {
 		
 		ClientLog.d(LOG_TAG, "processing route");
-		String serviceString = Context.LOCATION_SERVICE;
-		LocationManager locationManager;
-		locationManager = (LocationManager)mContext.getSystemService(serviceString);
 		
-		String provider = LocationManager.GPS_PROVIDER;
-		Location location = locationManager.getLastKnownLocation(provider);
-		
-		
-		if (location == null){
-			provider = LocationManager.NETWORK_PROVIDER;
-			location = locationManager.getLastKnownLocation(provider);
-		}
-		
-		if (location == null){
-			provider = LocationManager.PASSIVE_PROVIDER;
-			location = locationManager.getLastKnownLocation(provider);
-		}
+		Location location = LocationUtil.getLocation(mContext);
 		
 		ClientLog.d(LOG_TAG, "location is "+location);
 		

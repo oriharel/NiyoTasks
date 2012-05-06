@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.niyo.auto.AutoVenue;
 import com.niyo.tasks.TaskJsonObject;
 
 public class StringUtils {
@@ -85,6 +86,17 @@ public class StringUtils {
 		List<JSONObject> result = new ArrayList<JSONObject>();
 		
 		for (JSONObject jsonObject : asArray) {
+			result.add(jsonObject);
+		}
+		
+		return result;
+	}
+	
+	public static List<AutoVenue> toList(AutoVenue[] asArray) {
+		
+		List<AutoVenue> result = new ArrayList<AutoVenue>();
+		
+		for (AutoVenue jsonObject : asArray) {
 			result.add(jsonObject);
 		}
 		

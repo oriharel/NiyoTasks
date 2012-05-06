@@ -1,7 +1,9 @@
 package com.niyo.tasks.map;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +14,10 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.location.Address;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -29,15 +35,22 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
 import com.niyo.ClientLog;
+import com.niyo.LocationUtil;
 import com.niyo.R;
 import com.niyo.ServiceCaller;
+import com.niyo.StringUtils;
 import com.niyo.Utils;
+import com.niyo.auto.AutoVenue;
+import com.niyo.auto.SearchVenuesByNameTask;
 import com.niyo.auto.map.NiyoMapActivity;
 import com.niyo.categories.AddCategoryActivity;
 import com.niyo.categories.CategoriesListAdapter;
 import com.niyo.categories.CategoryBean;
-import com.niyo.categories.DeleteCategoryTask;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
 import com.niyo.tasks.AddGenericTaskTask;
@@ -375,6 +388,79 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 		
 		showMarker(userAddress);
 		showMap();
+	}
+	
+	@Override
+	protected void doNoResultsFromCode(String userAddress) {
+		
+		
+		Location location = LocationUtil.getLocation(this);
+		String locationStr = location.getLatitude()+","+location.getLongitude();
+		String[] params = new String[2];
+		try {
+			params[0] = URLEncoder.encode(userAddress, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			ClientLog.e(LOG_TAG, "Error!", e);
+		}
+		params[1] = locationStr;
+		
+		ServiceCaller caller = new ServiceCaller() {
+			
+			@Override
+			public void success(Object data) {
+				
+				if (data != null){
+					List<AutoVenue> venues = (List<AutoVenue>)data;
+					AutoVenue[] sorted = venues.toArray(new AutoVenue[venues.size()]);
+					showResults(StringUtils.toList(sorted));
+				}
+				
+			}
+			
+			@Override
+			public void failure(Object data, String description) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
+		SearchVenuesByNameTask task = new SearchVenuesByNameTask(this, caller);
+		task.execute(params);
+	} 
+	
+	private void showResults(List<AutoVenue> venues) {
+
+		MapView mapView = (MapView)findViewById(getMapViewId());
+		List<Overlay> overlays = mapView.getOverlays();
+		Resources r = getResources();
+		AutoItemizedOverlay markers = new AutoItemizedOverlay(r.getDrawable(R.drawable.marker));
+		ClientLog.d(LOG_TAG, "got "+venues.size()+" address");
+		for (AutoVenue venue : venues) {
+
+			Double lat1E6 = new Double(venue.getLocation().getLat()*1e6);
+			Double lon1E6 = new Double(venue.getLocation().getLon()*1e6);
+			GeoPoint point = new GeoPoint(lat1E6.intValue(), lon1E6.intValue());
+
+			markers.addNewItem(point, "markerText", "snippet");
+		}
+		overlays.add(markers);
+
+		centerAndZoomVenues(venues);
+	}
+	
+	private void centerAndZoomVenues(List<AutoVenue> venues){
+		
+		
+		
+		MapView mapView = (MapView)findViewById(getMapViewId());
+		MapController mapController = mapView.getController();
+
+		Double lat1E6 = new Double(venues.get(0).getLocation().getLat()*1e6);
+		Double lon1E6 = new Double(venues.get(0).getLocation().getLon()*1e6);
+		GeoPoint point = new GeoPoint(lat1E6.intValue(), lon1E6.intValue());
+
+		mapController.setCenter(point);
+		mapController.setZoom(18);
 	}
 
 	

@@ -1,7 +1,11 @@
 package com.niyo;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Comparator;
 
+import org.apache.http.util.ByteArrayBuffer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +20,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -45,6 +50,27 @@ public class Utils {
 		};
 
 		return result;
+	}
+	
+	public static String readString(InputStream inputStream) 
+	{
+		int BUFFER_SIZE = 20000;
+		BufferedInputStream bis = new BufferedInputStream(inputStream);
+		ByteArrayBuffer baf = new ByteArrayBuffer(BUFFER_SIZE);
+		byte[] buffer = new byte[BUFFER_SIZE];
+		int current = 0;
+
+		try {
+			while ((current = bis.read(buffer)) != -1) 
+			{
+				baf.append(buffer, 0, current);
+			}
+		} catch (IOException e) 
+		{
+			Log.e(LOG_TAG, "Error", e);
+		}
+
+		return new String(baf.toByteArray());
 	}
 	
 	public static Uri setTasksInProvider(JSONObject result, Context context){
@@ -110,7 +136,7 @@ public class Utils {
 					
 					AutoPoint fromPoint = new AutoPoint(Double.parseDouble(stepLat), Double.parseDouble(stepLon), "");
 					
-					Double distance = getDistance(fromPoint, venuePoint);
+					Double distance = getDistance(fromPoint.getLat(), fromPoint.getLon(), venuePoint.getLat(), venuePoint.getLon());
 					
 //					ClientLog.d(LOG_TAG, "distance is "+distance);
 					
@@ -131,13 +157,13 @@ public class Utils {
 		return result;
 	}
 	
-	private static Double getDistance(AutoPoint from, AutoPoint to)
+	public static Double getDistance(double fromLat, double fromLon, double toLat, double toLon)
 	{
 		Double R = 6371.0; // km
-		Double dLat = Math.toRadians((to.getLat()-from.getLat()));
-		Double dLon = Math.toRadians((to.getLon()-from.getLon()));
-		Double lat1 = Math.toRadians(from.getLat());
-		Double lat2 = Math.toRadians(to.getLat());
+		Double dLat = Math.toRadians((toLat-fromLat));
+		Double dLon = Math.toRadians((toLon-fromLon));
+		Double lat1 = Math.toRadians(fromLat);
+		Double lat2 = Math.toRadians(toLat);
 
 		Double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
 		        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 

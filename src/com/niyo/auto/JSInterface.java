@@ -145,7 +145,7 @@ public class JSInterface {
 		String distanceStr = legs.getJSONObject(0).getJSONObject("distance").getString("text");
 		Double distance = new Double(distanceStr.replace("km", "").replace(" ", "").replace("m", ""));
 		Log.d(LOG_TAG, "distance is "+distance*1000);
-		SearchFoursquareVenuesTask task = new SearchFoursquareVenuesTask(mActivity);
+		SearchAndProcessVenuesByIdsTask task = new SearchAndProcessVenuesByIdsTask(mActivity);
 		
 		String categories = StringUtils.createCommaSeperatedList(mCategoryIds);
 		ClientLog.d(LOG_TAG, "categories are "+categories);

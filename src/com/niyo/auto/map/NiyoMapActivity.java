@@ -36,13 +36,15 @@ public abstract class NiyoMapActivity extends MapActivity {
 			List<Address> addresses = coder.getFromLocationName(userAddress, 5);
 			
 			if (addresses.size() <= 0){
-				Toast.makeText(this, "No results for "+userAddress, Toast.LENGTH_LONG).show();
+				
+				doNoResultsFromCode(userAddress);
+				
 			}
 			else{
 				if (addresses.size() == 1){
 					mSeletctedAddress = createGeoPoint(addresses.get(0));
 				}
-				showResults(addresses);
+				showAddressResults(addresses);
 			}
 			
 		} catch (IOException e) {
@@ -50,7 +52,12 @@ public abstract class NiyoMapActivity extends MapActivity {
 		}
 	}
 	
-	private void showResults(List<Address> addresses) {
+	protected void doNoResultsFromCode(String userAddress) {
+		
+		Toast.makeText(this, "No results for "+userAddress, Toast.LENGTH_LONG).show();
+	}
+
+	private void showAddressResults(List<Address> addresses) {
 
 		MapView mapView = (MapView)findViewById(getMapViewId());
 		List<Overlay> overlays = mapView.getOverlays();
