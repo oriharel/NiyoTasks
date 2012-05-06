@@ -7,6 +7,7 @@ import java.util.Locale;
 import android.content.res.Resources;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
@@ -22,6 +23,12 @@ public abstract class NiyoMapActivity extends MapActivity {
 	
 	private static String LOG_TAG = NiyoMapActivity.class.getSimpleName();
 	protected GeoPoint mSeletctedAddress;
+	
+	protected final Handler pHandler = new Handler();
+	
+	protected Handler getHandler() {
+		return pHandler;
+	}
 
 	protected void showMarker(String userAddress) {
 		Geocoder coder = new Geocoder(this, Locale.getDefault());

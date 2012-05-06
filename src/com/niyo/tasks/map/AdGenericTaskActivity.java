@@ -15,7 +15,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -34,6 +37,7 @@ import com.niyo.auto.map.NiyoMapActivity;
 import com.niyo.categories.AddCategoryActivity;
 import com.niyo.categories.CategoriesListAdapter;
 import com.niyo.categories.CategoryBean;
+import com.niyo.categories.DeleteCategoryTask;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
 import com.niyo.tasks.AddGenericTaskTask;
@@ -46,6 +50,7 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 	private static final int CATEGORY_ADD_REQUEST = 0;
 	public static final String CATEGORY_DATA = "categoryData";
 	public static final int RESULT_ADD_CATEGORY = 333;
+	private static final int DETACH_CATEGORY_CONTEXT_MENU_ITEM = 876;
 	private CategoriesListAdapter mCategoriesAdapter;
 	private List<CategoryBean> mCategories;
 	@Override
@@ -55,6 +60,8 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 		setContentView(R.layout.add_generic_task_layout);
 		findViewById(R.id.searchBtn).setOnClickListener(this);
 		EditText searchEdit = (EditText)findViewById(R.id.searchEdit);
+		
+		registerForContextMenu(getCategoryListView());
 		findViewById(R.id.showCategories).setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -98,6 +105,57 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 		}
 	}
 	
+	@Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+    	if (v instanceof ListView) 
+		{
+			if (menuInfo instanceof AdapterView.AdapterContextMenuInfo)
+			{
+				ListView list = (ListView) v;
+				CategoriesListAdapter adapter = (CategoriesListAdapter)list.getAdapter();
+				AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+				Object item = adapter.getItem(info.position);
+				if (item instanceof CategoryBean)
+				{
+					CategoryBean bean = (CategoryBean)item;
+					menu.setHeaderTitle(bean.getName());
+				}
+			}
+		}
+    	menu.add(0, DETACH_CATEGORY_CONTEXT_MENU_ITEM, 0, "Detach Category");
+    }
+	
+	@Override
+    public boolean onContextItemSelected(MenuItem item) 
+	{
+		AdapterView.AdapterContextMenuInfo info =
+				(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		CategoryBean category = null;
+			
+		ListView listView = getCategoryListView();
+		CategoriesListAdapter adapter = (CategoriesListAdapter) listView.getAdapter();
+		Object selectedItem = adapter.getItem(info.position);
+		if (selectedItem instanceof CategoryBean)
+		{
+			category = (CategoryBean)selectedItem;
+		}
+		
+			if (item.getItemId() == DETACH_CATEGORY_CONTEXT_MENU_ITEM){
+
+				removeFromCategoryList(category);
+				populateCategoriesList();
+				return true;
+			}
+			else{
+				return false;
+			}
+
+	}
+	
+	private void removeFromCategoryList(CategoryBean category) {
+		mCategories.remove(category);
+	}
+
 	private ListView getCategoryListView() {
 		
 		return (ListView)findViewById(R.id.categoryList);

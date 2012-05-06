@@ -91,26 +91,38 @@ public class Utils {
 	
 	public static boolean isVenueClose(AutoVenue autoVenue, JSONArray stepsArray) {
 		
-//		Log.d(LOG_TAG, "stepsArrya is "+stepsArray.length());
+		
 		boolean result = false;
 		AutoPoint venuePoint = autoVenue.getLocation();
+		
 		for (int i = 0; i< stepsArray.length(); i++)
 		{
 			try {
-				String stepLat = stepsArray.getJSONObject(i).getJSONObject("end_location").getString("$a");
-				String stepLon = stepsArray.getJSONObject(i).getJSONObject("end_location").getString("ab");
 				
-				AutoPoint fromPoint = new AutoPoint(Double.parseDouble(stepLat), Double.parseDouble(stepLon), "");
+				JSONObject step = stepsArray.getJSONObject(i);
 				
-				Double distance = getDistance(fromPoint, venuePoint);
-				
-//				Log.d(LOG_TAG, "distance is "+distance);
-				
-				if (distance < 500)
-				{
-					autoVenue.setDistance(distance);
-					return true;
+				JSONArray latlngs = step.getJSONArray("lat_lngs");
+//				ClientLog.d(LOG_TAG, "stepsArrya is "+latlngs.length());
+				for (int j = 0; j < latlngs.length(); j++){
+					
+					String stepLat = latlngs.getJSONObject(j).getString("$a");
+					String stepLon = latlngs.getJSONObject(j).getString("ab");
+					
+					AutoPoint fromPoint = new AutoPoint(Double.parseDouble(stepLat), Double.parseDouble(stepLon), "");
+					
+					Double distance = getDistance(fromPoint, venuePoint);
+					
+//					ClientLog.d(LOG_TAG, "distance is "+distance);
+					
+					if (distance < 100)
+					{
+						autoVenue.setDistance(distance);
+						return true;
+					}
+					
 				}
+				
+				
 				
 			} catch (JSONException e) {
 				e.printStackTrace();

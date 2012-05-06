@@ -97,11 +97,11 @@ public class SearchFoursquareVenuesTask extends AsyncTask<String, Void, List<Aut
 				AutoVenue autoVenue = new AutoVenue(name, venuePoint, id, address, "from 4sqr");
 				
 				if (Utils.isVenueClose(autoVenue, stepsArray)){
-					ClientLog.d(LOG_TAG, autoVenue.getName()+" is close enough");
+//					ClientLog.d(LOG_TAG, autoVenue.getName()+" is close enough");
 					listResult.add(autoVenue);
 				}
 				else{
-					ClientLog.d(LOG_TAG, autoVenue.getName()+" is not close enough");
+//					ClientLog.d(LOG_TAG, autoVenue.getName()+" is not close enough");
 				}
 				
 //				AutoVenue[] asArray = (AutoVenue[])listResult.toArray();

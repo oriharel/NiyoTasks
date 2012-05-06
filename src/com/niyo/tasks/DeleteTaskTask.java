@@ -33,27 +33,29 @@ public class DeleteTaskTask extends AsyncTask<String, Void, Boolean> {
 			JSONArray tasks = null;
 			if (result == null){
 				
-				result = new JSONObject("{tasks:"+new JSONArray()+"}");
+				ClientLog.e(LOG_TAG, "you delete a task when there are no tasks?!");
 			}
-			
-			tasks = result.getJSONArray("tasks");
-			
-			JSONArray newTasksArray = new JSONArray();
-			
-			String taskId = params[0];
-			
-			for (int i = 0; i < tasks.length(); i++){
+			else{
+				tasks = result.getJSONArray("tasks");
 				
-				JSONObject currTask = tasks.getJSONObject(i);
+				JSONArray newTasksArray = new JSONArray();
 				
-				if (!currTask.getString("id").equals(taskId)){
-					newTasksArray.put(currTask);
+				String taskId = params[0];
+				
+				for (int i = 0; i < tasks.length(); i++){
+					
+					JSONObject currTask = tasks.getJSONObject(i);
+					
+					if (!currTask.getString("id").equals(taskId)){
+						newTasksArray.put(currTask);
+					}
 				}
+				
+				result.put("tasks", newTasksArray);
+				
+				Utils.setTasksInProvider(result, mContext);
 			}
 			
-			JSONObject newResult = new JSONObject("{tasks:"+newTasksArray+"}");
-			
-			Utils.setTasksInProvider(newResult, mContext);
 			
 		} catch (JSONException e) {
 			ClientLog.e(LOG_TAG, "Error!", e);
