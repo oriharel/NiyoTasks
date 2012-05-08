@@ -31,6 +31,8 @@
         android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -85,7 +87,40 @@
                 android:resource="@xml/authenticator"/>
         </service>
         <service android:name=".data.SyncIntentService"></service>
-        
+        <receiver android:name=".auto.AppLauncher">
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.ACTION_CONNECTION_STATE_CHANGED" />
+                <category android:name="com.appcard" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.ACTION_DISCOVERY_FINISHED" />
+                <category android:name="com.appcard" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.ACTION_DISCOVERY_STARTED" />
+                <category android:name="com.appcard" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.ACTION_LOCAL_NAME_CHANGED" />
+                <category android:name="com.appcard" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.ACTION_REQUEST_DISCOVERABLE" />
+                <category android:name="com.appcard" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.ACTION_REQUEST_ENABLE" />
+                <category android:name="com.appcard" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.ACTION_SCAN_MODE_CHANGED" />
+                <category android:name="com.appcard" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.ACTION_STATE_CHANGED" />
+                <category android:name="com.appcard" />
+            </intent-filter>
+        </receiver>
         <activity android:name=".categories.AddCategoryActivity"></activity>
         <activity android:name=".auto.map.AutoMapActivity"></activity>
         <activity android:name=".tasks.map.AdGenericTaskActivity"></activity>
