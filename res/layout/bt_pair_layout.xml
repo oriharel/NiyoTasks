@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appColor"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btWelcome1"
+        android:textColor="@color/textColor" android:textSize="24sp" android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/deviceMacAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="@color/textColor" android:textSize="24sp"/>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btWelcome2"
+        android:textColor="@color/textColor" android:textSize="24sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dip" android:paddingLeft="10dip" android:paddingRight="10dip">
+
+        <Button
+            android:id="@+id/btYes"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="5dip"
+            android:layout_weight="1"
+            android:background="@drawable/nav_btn_selector"
+            android:text="@string/yes" />
+
+        <Button
+            android:id="@+id/btNo"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/nav_btn_selector"
+            android:text="@string/no" />
+
+    </LinearLayout>
+
+</LinearLayout>

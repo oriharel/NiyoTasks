@@ -3,7 +3,10 @@ package com.niyo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -103,7 +106,7 @@ public class StringUtils {
 		return result;
 	}
 
-	public static String createCommaSeperatedList(List<String> strings) 
+	public static String createCommaSeperatedList(Set<String> strings) 
 	{
 		StringBuffer result = new StringBuffer();
 		
@@ -111,14 +114,25 @@ public class StringUtils {
 			return null;
 		}
 		
-		for (int i = 0; i < strings.size(); i++){
-			result.append(strings.get(i));
-			
-			if (i < strings.size()-1){
+		Iterator<String> iter = strings.iterator();
+		int count = 0;
+		while (iter.hasNext()){
+			result.append(iter.next());
+			if (count < strings.size()-1){
 				result.append(",");
 			}
 		}
 		
+		return result.toString();
+	}
+
+	public static String printMap(HashMap<String, String> map) {
+		
+		StringBuffer result = new StringBuffer();
+		
+		for (String key : map.keySet()) {
+			result.append("key="+key+" value="+map.get(key)+"\n");
+		}
 		return result.toString();
 	}
 }

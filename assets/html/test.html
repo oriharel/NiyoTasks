@@ -113,9 +113,9 @@
       				title:"Hello World!"
   				});
   				
-  				
+  			var contextText = venue.name+'<br>('+venue.taskContent+')';
   			var infowindow = new google.maps.InfoWindow({
-    				content: venue.name
+    				content: contextText
 				});
 			
 			infowindow.open(map,marker);

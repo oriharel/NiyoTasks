@@ -1,7 +1,8 @@
 package com.niyo.auto.map;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,7 +75,7 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 		settings.setUseWideViewPort(true);
 		settings.setDomStorageEnabled(true);
 		webView.setWebViewClient(new AutoWVClient(this, getTo()));
-		JSInterface inter = new JSInterface(getCategryIds(), this);
+		JSInterface inter = new JSInterface(this, getCategryIdsToTaskContent());
 		webView.addJavascriptInterface(inter, "Native");
 		webView.setWebChromeClient(new WebChromeClient() 
 		{
@@ -95,12 +96,12 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 		return (AutoPoint)getIntent().getSerializableExtra(TO_EXTRA);
 	}
 	
-	private List<String> getCategryIds(){
-		return (List<String>)getIntent().getSerializableExtra(CATEGORY_IDS_EXTRA);
+	private Map<String, String> getCategryIdsToTaskContent(){
+		return (Map<String, String>)getIntent().getSerializableExtra(CATEGORY_IDS_EXTRA);
 	}
 	
 	
-	public static Intent getCreationIntent(Activity activity, AutoPoint to, ArrayList<String> categroyIds){
+	public static Intent getCreationIntent(Activity activity, AutoPoint to, HashMap<String, String> categroyIds){
 		
 		Intent intent = new Intent(activity, AutoMapActivity.class);
 		intent.putExtra(TO_EXTRA, to);

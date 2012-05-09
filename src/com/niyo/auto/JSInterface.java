@@ -3,7 +3,9 @@ package com.niyo.auto;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,13 +25,14 @@ import com.niyo.data.NiyoContentProvider;
 public class JSInterface {
 	
 	private static final String LOG_TAG = JSInterface.class.getSimpleName();
-	private List<String> mCategoryIds;
 	private AutoMapActivity mActivity;
+	private Map<String, String> mCategoriesToTaskContent;
 	
-	public JSInterface(List<String> categoryIds, AutoMapActivity activity){
+	public JSInterface(AutoMapActivity activity, Map<String, String> categoriesToTaskContent){
 		
-		mCategoryIds = categoryIds;
 		mActivity = activity;
+		mCategoriesToTaskContent = categoriesToTaskContent;
+		ClientLog.d(LOG_TAG, "init with "+StringUtils.printMap((HashMap<String, String>)categoriesToTaskContent));
 	}
 	
 	public void log(String text){
@@ -48,7 +51,7 @@ public class JSInterface {
 			JSONArray steps = legs.getJSONObject(0).getJSONArray("steps");
 			Log.d(LOG_TAG, "num of steps is "+steps.length());
 			
-			if (mCategoryIds != null && mCategoryIds.size() > 0){
+			if (mCategoriesToTaskContent != null && mCategoriesToTaskContent.size() > 0){
 				populateFoursquareVenues(fromLat, fromLon, toLat, toLon, legs, steps);
 			}
 			
@@ -145,9 +148,9 @@ public class JSInterface {
 		String distanceStr = legs.getJSONObject(0).getJSONObject("distance").getString("text");
 		Double distance = new Double(distanceStr.replace("km", "").replace(" ", "").replace("m", ""));
 		Log.d(LOG_TAG, "distance is "+distance*1000);
-		SearchAndProcessVenuesByIdsTask task = new SearchAndProcessVenuesByIdsTask(mActivity);
+		SearchAndProcessVenuesByIdsTask task = new SearchAndProcessVenuesByIdsTask(mActivity, mCategoriesToTaskContent);
 		
-		String categories = StringUtils.createCommaSeperatedList(mCategoryIds);
+		String categories = StringUtils.createCommaSeperatedList(mCategoriesToTaskContent.keySet());
 		ClientLog.d(LOG_TAG, "categories are "+categories);
 		String[] params = new String[7];
 		params[0] = Double.toString(distance*1000);

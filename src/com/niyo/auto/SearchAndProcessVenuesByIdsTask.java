@@ -1,37 +1,41 @@
 package com.niyo.auto;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.ByteArrayBuffer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.niyo.ClientLog;
-import com.niyo.Utils;
-import com.niyo.auto.map.AutoMapActivity;
-
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.niyo.ClientLog;
+import com.niyo.StringUtils;
+import com.niyo.Utils;
+import com.niyo.auto.map.AutoMapActivity;
 
 public class SearchAndProcessVenuesByIdsTask extends AsyncTask<String, Void, List<AutoVenue>> {
 
 	private static final String LOG_TAG = SearchAndProcessVenuesByIdsTask.class.getSimpleName();
 	private AutoMapActivity mContext;
+	private Map<String, String> mCategoriesToTaskContent;
 	
-	public SearchAndProcessVenuesByIdsTask(AutoMapActivity context){
+	public SearchAndProcessVenuesByIdsTask(AutoMapActivity context, Map<String, String> categoriesToTasks){
 		mContext = context;
+		mCategoriesToTaskContent = categoriesToTasks;
+		ClientLog.d(LOG_TAG, "init with "+StringUtils.printMap((HashMap<String, String>)categoriesToTasks));
 	}
 	
 	@Override
@@ -82,18 +86,33 @@ public class SearchAndProcessVenuesByIdsTask extends AsyncTask<String, Void, Lis
 			
 			for (int i = 0; i < foursquareVenues.length(); i++)
 			{
-				String venueLat = foursquareVenues.getJSONObject(i).getJSONObject("location").getString("lat");
-				String venueLng = foursquareVenues.getJSONObject(i).getJSONObject("location").getString("lng");
+				JSONObject fourVenue = foursquareVenues.getJSONObject(i);
+				String venueLat = fourVenue.getJSONObject("location").getString("lat");
+				String venueLng = fourVenue.getJSONObject("location").getString("lng");
 				String address = "";
-				if (foursquareVenues.getJSONObject(i).getJSONObject("location").has("address"))
+				if (fourVenue.getJSONObject("location").has("address"))
 				{
-					address = foursquareVenues.getJSONObject(i).getJSONObject("location").getString("address");
+					address = fourVenue.getJSONObject("location").getString("address");
 				}
 				
-				String id = foursquareVenues.getJSONObject(i).getString("id");
-				String name = foursquareVenues.getJSONObject(i).getString("name");
+				String id = fourVenue.getString("id");
+				String name = fourVenue.getString("name");
 				AutoPoint venuePoint = new AutoPoint(Double.parseDouble(venueLat), Double.parseDouble(venueLng), "");
 				AutoVenue autoVenue = new AutoVenue(name, venuePoint, id, address, "from 4sqr");
+				
+				JSONArray categories = fourVenue.getJSONArray("categories");
+				
+				for (int j=0; j < categories.length(); j++){
+					
+					String categoryId = categories.getJSONObject(j).getString("id");
+					String taskTitle = mCategoriesToTaskContent.get(categoryId);
+					
+					if (taskTitle != null){
+						autoVenue.setTaskContent(taskTitle);
+					}
+				}
+				
+				
 				
 				if (Utils.isVenueClose(autoVenue, stepsArray)){
 					listResult.add(autoVenue);

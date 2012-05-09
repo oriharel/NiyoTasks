@@ -89,35 +89,7 @@
         <service android:name=".data.SyncIntentService"></service>
         <receiver android:name=".auto.AppLauncher">
             <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.ACTION_CONNECTION_STATE_CHANGED" />
-                <category android:name="com.appcard" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.ACTION_DISCOVERY_FINISHED" />
-                <category android:name="com.appcard" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.ACTION_DISCOVERY_STARTED" />
-                <category android:name="com.appcard" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.ACTION_LOCAL_NAME_CHANGED" />
-                <category android:name="com.appcard" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.ACTION_REQUEST_DISCOVERABLE" />
-                <category android:name="com.appcard" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.ACTION_REQUEST_ENABLE" />
-                <category android:name="com.appcard" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.ACTION_SCAN_MODE_CHANGED" />
-                <category android:name="com.appcard" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.ACTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
                 <category android:name="com.appcard" />
             </intent-filter>
         </receiver>
@@ -127,6 +99,7 @@
         
         <uses-library android:name="com.google.android.maps" />
         <activity android:name=".auto.CreateAutoBoxAcitivty"></activity>
+        <activity android:name=".auto.BtPairActivity"></activity>
         
     </application>
 

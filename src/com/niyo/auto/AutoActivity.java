@@ -24,10 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.niyo.ClientLog;
+import com.niyo.LocationUtil;
 import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.ServiceCaller;
 import com.niyo.SettingsManager;
+import com.niyo.StringUtils;
 import com.niyo.auto.map.AutoMapActivity;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
@@ -128,6 +130,7 @@ public class AutoActivity extends NiyoAbstractActivity {
     protected void onResume(){
     	super.onResume();
     	setupBoxes();
+    	LocationUtil.updateLocation(this);
     }
 	
 	
@@ -373,7 +376,7 @@ public class AutoActivity extends NiyoAbstractActivity {
         	AutoPoint to = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]), btn.getText().toString());
         	Intent intent;
 			try {
-				intent = AutoMapActivity.getCreationIntent(this, to, getCategoryIds());
+				intent = AutoMapActivity.getCreationIntent(this, to, getCategoryIdsToTaskContent());
 				startActivity(intent);
 			} catch (JSONException e) {
 				ClientLog.e(LOG_TAG, "Error!", e);
@@ -384,20 +387,21 @@ public class AutoActivity extends NiyoAbstractActivity {
 	}
     
     
-	private ArrayList<String> getCategoryIds() throws JSONException {
+	private HashMap<String, String> getCategoryIdsToTaskContent() throws JSONException {
 		
-		ArrayList<String> result = new ArrayList<String>();
+		HashMap<String, String> result = new HashMap<String, String>();
 		JSONArray tasks = getTasks();
 		for (int i = 0; i < tasks.length(); i++){
 			JSONObject task = tasks.getJSONObject(i);
 			JSONArray categories = task.getJSONArray("categories");
 			
 			for (int j = 0; j < categories.length(); j++){
-				result.add(categories.getJSONObject(j).getString("id"));
+				result.put(categories.getJSONObject(j).getString("id"), task.getString("content"));
 			}
 			
 		}
 		
+		ClientLog.d(LOG_TAG, StringUtils.printMap(result));
 		return result;
 	}
 
