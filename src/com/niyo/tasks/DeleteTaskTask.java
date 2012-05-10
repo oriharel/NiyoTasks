@@ -54,6 +54,7 @@ public class DeleteTaskTask extends AsyncTask<String, Void, Boolean> {
 				result.put("tasks", newTasksArray);
 				
 				Utils.setTasksInProvider(result, mContext);
+				Utils.setupProximityAlerts(mContext);
 			}
 			
 			

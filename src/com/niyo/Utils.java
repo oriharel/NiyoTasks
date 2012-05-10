@@ -12,14 +12,19 @@ import org.json.JSONObject;
 
 import com.niyo.auto.AutoPoint;
 import com.niyo.auto.AutoVenue;
+import com.niyo.auto.map.ProximityIntentReciever;
 import com.niyo.data.JSONTableColumns;
 import com.niyo.data.NiyoContentProvider;
 
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.IBinder;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -80,6 +85,60 @@ public class Utils {
 		values.put(JSONTableColumns.ELEMENT_JSON, result.toString());
 
 		return context.getContentResolver().insert(Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks"), values);
+	}
+	
+	public static void setupProximityAlerts(Context context){
+		
+		JSONObject tasks = getTasksFromProvider(context);
+		float radius = 100f;
+		long expiration = -1;
+		
+		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+		locationManager.removeProximityAlert(PendingIntent.getBroadcast(context, -1, new Intent(ProximityIntentReciever.TASK_PROXIMITY_ALERT), 0));
+		
+		try {
+			JSONArray tasksArray = tasks.getJSONArray("tasks");
+			
+			for (int i = 0; i < tasksArray.length(); i++){
+				
+				JSONObject task = tasksArray.getJSONObject(i);
+				
+				String lat = task.getString("lat");
+				String lon = task.getString("lon");
+				String taskId = task.getString("id");
+				
+				if (!(TextUtils.isEmpty(lat) || TextUtils.isEmpty(lon))){
+					
+					if (!(lat.equals("null") || lon.equals("null"))){
+						
+						Double latDbl = new Double(lat);
+						Double lonDbl = new Double(lon);
+						addTaskProximityAlert(context, radius, expiration,
+								locationManager, taskId, latDbl, lonDbl);
+					}
+					
+				}
+				
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+
+	private static void addTaskProximityAlert(Context context, float radius,
+			long expiration, LocationManager locationManager, String taskId,
+			Double latDbl, Double lonDbl) {
+		
+		Intent intent = new Intent(ProximityIntentReciever.TASK_PROXIMITY_ALERT);
+		intent.putExtra(ProximityIntentReciever.TASK_ID_PROXIMITY, taskId);
+		
+		PendingIntent proximityIntent = PendingIntent.getBroadcast(context, -1,
+				intent,
+				0);
+		
+		locationManager.addProximityAlert(latDbl, lonDbl, radius, expiration, proximityIntent);
 	}
 	
 	public static JSONObject getTasksFromProvider(Context context){

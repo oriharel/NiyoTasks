@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import com.niyo.ClientLog;
 import com.niyo.ServiceCaller;
+import com.niyo.Utils;
 import com.niyo.data.JSONTableColumns;
 import com.niyo.data.NiyoContentProvider;
 
@@ -81,6 +82,8 @@ public class AddTaskToProviderTask extends AsyncTask<String, Void, Boolean> {
 			values.put(JSONTableColumns.ELEMENT_JSON, result.toString());
 
 			mContext.getContentResolver().insert(Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks"), values);
+			
+			Utils.setupProximityAlerts(mContext);
 			return true;
 		} catch (JSONException e) {
 			ClientLog.e(LOG_TAG, "Error!", e);

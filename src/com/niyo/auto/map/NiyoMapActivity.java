@@ -41,7 +41,7 @@ public abstract class NiyoMapActivity extends MapActivity {
 				
 			}
 			else{
-				if (addresses.size() == 1){
+				if (addresses.size() > 0){
 					mSeletctedAddress = createGeoPoint(addresses.get(0));
 				}
 				showAddressResults(addresses);

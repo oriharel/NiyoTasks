@@ -52,7 +52,11 @@ public class JSInterface {
 			Log.d(LOG_TAG, "num of steps is "+steps.length());
 			
 			if (mCategoriesToTaskContent != null && mCategoriesToTaskContent.size() > 0){
+				ClientLog.d(LOG_TAG, "going to populate manual locations");
 				populateFoursquareVenues(fromLat, fromLon, toLat, toLon, legs, steps);
+			}
+			else{
+				ClientLog.d(LOG_TAG, "no manual locations found");
 			}
 			
 			
@@ -127,7 +131,7 @@ public class JSInterface {
 				String content = tasks.getJSONObject(i).getString("content");
 				
 				AutoPoint point = new AutoPoint(Double.parseDouble(lat), Double.parseDouble(lon), title);
-				AutoVenue venue = new AutoVenue(title, point, id, userInputAddress, content);
+				AutoVenue venue = new AutoVenue(userInputAddress, point, id, userInputAddress, content);
 
 				if (Utils.isVenueClose(venue, steps)){
 					closeVenues.add(venue);

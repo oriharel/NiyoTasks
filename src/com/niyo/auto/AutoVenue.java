@@ -14,6 +14,7 @@ public class AutoVenue implements Comparable<AutoVenue>{
 		setLocation(location);
 		setFoursqaureId(foursquareId);
 		setAddress(address);
+		setTaskContent(taskContent);
 	}
 
 	public String getName() {

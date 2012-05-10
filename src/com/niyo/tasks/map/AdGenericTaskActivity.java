@@ -15,9 +15,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.location.Address;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -290,6 +288,22 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 		for (CategoryBean categoryBean : categories) {
 			addToCategoryList(categoryBean);
 		}
+		
+		String lat = task.getString("lat");
+		String lon = task.getString("lon");
+		
+		if (!(lat.equals("null") || lon.equals("null"))){
+			
+			Double latDbl = new Double(lat);
+			Double lonDbl = new Double(lon);
+			
+			Double lat1e6 = latDbl*1e6;
+			Double lon1e6 = lonDbl*1e6;
+			
+			mSeletctedAddress = new GeoPoint(lat1e6.intValue(), lon1e6.intValue());
+			
+		}
+		
 		populateCategoriesList();
 		
 	}
@@ -449,8 +463,6 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 	}
 	
 	private void centerAndZoomVenues(List<AutoVenue> venues){
-		
-		
 		
 		MapView mapView = (MapView)findViewById(getMapViewId());
 		MapController mapController = mapView.getController();

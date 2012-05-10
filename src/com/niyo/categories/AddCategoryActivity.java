@@ -1,14 +1,5 @@
 package com.niyo.categories;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,9 +15,6 @@ import android.widget.ListView;
 import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
-import com.niyo.ServiceCaller;
-import com.niyo.data.AddCategoryToProviderTask;
-import com.niyo.data.PostJsonTask;
 import com.niyo.tasks.map.AdGenericTaskActivity;
 
 public class AddCategoryActivity extends NiyoAbstractActivity implements OnItemClickListener {

@@ -27,8 +27,15 @@ public class NiyoApplication extends Application {
 		super.onCreate();
 //		fetchData();ff
 		fetchFoursquareVenues();
+		setupProximityAlerts();
 	}
 	
+	private void setupProximityAlerts() {
+		
+		Utils.setupProximityAlerts(this);
+		
+	}
+
 	private void fetchFoursquareVenues() {
 
 		ClientLog.d(LOG_TAG, "reading the categories");
