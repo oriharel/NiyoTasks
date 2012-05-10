@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -98,10 +99,57 @@ public class AutoActivity extends NiyoAbstractActivity {
 		setUri(uri);
         loadTasksFromDb();
         
+        getNextCalendarEvent();
+        
     }
     
 
-    private void saveDefaults() {
+    private void getNextCalendarEvent() 
+    {
+		ServiceCaller caller = new ServiceCaller() {
+			
+			@Override
+			public void success(Object data) {
+				
+				if (data != null){
+					AutoEvent event = (AutoEvent)data;
+					ClientLog.d(LOG_TAG, "next event is: "+event.getTitle());
+					
+					setupSixBox(event);
+				}
+				else{
+					ClientLog.d(LOG_TAG, "couldn't find any next event");
+				}
+				
+				
+				
+			}
+			
+			@Override
+			public void failure(Object data, String description) {
+				ClientLog.e(LOG_TAG, "Error! "+description);
+				
+			}
+		};
+		
+		VersionedTaskInvoker invoker = VersionedTaskInvoker.newInstance(this, caller);
+		invoker.invokeTask();
+	}
+
+
+	protected void setupSixBox(AutoEvent event) {
+		
+		if(!TextUtils.isEmpty(event.getLat()) && !TextUtils.isEmpty(event.getLon())){
+			TextView btn6 = (TextView)findViewById(R.id.boxBtn6);
+			btn6.setText(event.getTitle());
+			btn6.setTag(event.getLat()+","+event.getLon());
+		}
+		
+		
+	}
+
+
+	private void saveDefaults() {
 		
     	mDefaultsTitles = new HashMap<Integer, String>();
     	mDefaultsLocations = new HashMap<Integer, String>();
