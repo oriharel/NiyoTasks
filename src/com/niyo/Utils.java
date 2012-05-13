@@ -20,6 +20,7 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -72,7 +73,7 @@ public class Utils {
 			}
 		} catch (IOException e) 
 		{
-			Log.e(LOG_TAG, "Error", e);
+			Log.e(LOG_TAG, "xxxError", e);
 		}
 
 		return new String(baf.toByteArray());
@@ -109,6 +110,7 @@ public class Utils {
 				String lat = task.getString("lat");
 				String lon = task.getString("lon");
 				String taskId = task.getString("id");
+				String content = task.getString("content");
 				
 				if (!(TextUtils.isEmpty(lat) || TextUtils.isEmpty(lon))){
 					
@@ -117,7 +119,7 @@ public class Utils {
 						Double latDbl = new Double(lat);
 						Double lonDbl = new Double(lon);
 						addTaskProximityAlert(context, radius, expiration,
-								locationManager, taskId, latDbl, lonDbl);
+								locationManager, taskId, latDbl, lonDbl	);
 					}
 					
 				}
@@ -127,7 +129,24 @@ public class Utils {
 			e.printStackTrace();
 		}
 		
+//		testProximity(context);
 		
+		IntentFilter filter = new IntentFilter(ProximityIntentReciever.TASK_PROXIMITY_ALERT);
+		context.registerReceiver(new ProximityIntentReciever(), filter);
+	}
+	
+	private static void testProximity(Context context){
+		
+		ClientLog.d(LOG_TAG, "testProximity");
+		Intent intent = new Intent(ProximityIntentReciever.TASK_PROXIMITY_ALERT);
+		intent.putExtra(ProximityIntentReciever.TASK_ID_PROXIMITY, "5516ecd9-4ff5-4591-aa75-9370fb87cb68");
+		
+		PendingIntent proximityIntent = PendingIntent.getBroadcast(context, -1,
+				intent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+		
+		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+		locationManager.addProximityAlert(32.182369, 34.853032, 100f, -1, proximityIntent);
 	}
 
 	private static void addTaskProximityAlert(Context context, float radius,

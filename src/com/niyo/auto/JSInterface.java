@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.niyo.ClientLog;
 import com.niyo.ServiceCaller;
@@ -66,6 +67,10 @@ public class JSInterface {
 			e.printStackTrace();
 			Log.e(LOG_TAG, "Error!", e);
 		}
+	}
+	
+	public void showError(String msg){
+		Toast.makeText(mActivity, "Couldn't calculate route", Toast.LENGTH_SHORT).show();
 	}
 
 	private void populateLocationTasks(final JSONArray steps) {

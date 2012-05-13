@@ -81,6 +81,8 @@
         
         var start = new google.maps.LatLng(originPtLat, originPtLon);
   		var end = new google.maps.LatLng(destPtLat, destPtLon);
+  		
+  		Native.log('start is '+start+' end is '+end);
   			
         var request = {
           origin: start,
@@ -88,9 +90,14 @@
           travelMode: google.maps.DirectionsTravelMode.DRIVING
         };
         directionsService.route(request, function(response, status) {
+          Native.log('status is '+status);
           if (status == google.maps.DirectionsStatus.OK) {
             directionsDisplay.setDirections(response);
             Native.setResponse(JSON.stringify(response), originPtLat, originPtLon, destPtLat, destPtLon);
+          }
+          else{
+          
+          	Native.showError('no route '+status);
           }
         });
       }

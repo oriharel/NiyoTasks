@@ -101,6 +101,7 @@
         <uses-library android:name="com.google.android.maps" />
         <activity android:name=".auto.CreateAutoBoxAcitivty"></activity>
         <activity android:name=".auto.BtPairActivity"></activity>
+        <receiver android:name=".auto.map.ProximityIntentReciever"></receiver>
         
     </application>
 

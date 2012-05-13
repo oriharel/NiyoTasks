@@ -12,7 +12,7 @@
     	
     	function initialize() {
   			directionsDisplay = new google.maps.DirectionsRenderer();
-  			var haight = new google.maps.LatLng(32.179322,34.916675);
+  			var haight = new google.maps.LatLng(32.211505863815546,34.462765445932746);
   			var myOptions = {
     			zoom: 14,
     			mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -20,7 +20,7 @@
   				}
   			map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
   			directionsDisplay.setMap(map);
-  			calcRoute(32.179322, 34.916675, 32.179418, 34.858192);
+  			calcRoute(32.211505863815546, 34.462765445932746, 32.179366, 34.858250999999996);
 		}
                 
         function calcRoute(originPtLat, originPtLon, destPtLat, destPtLon) {
