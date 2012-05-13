@@ -12,6 +12,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
@@ -480,7 +482,7 @@ public class AutoActivity extends NiyoAbstractActivity {
     public void navigateTo(View view) 
 	{
     	ClientLog.d(LOG_TAG, "navigating to");
-    	if (getTasksReady()){
+    	if (getTasksReady() && getTasks().length() > 0){
     		String locationStr = (String)view.getTag();
     		TextView btn = (TextView)view;
     		
@@ -497,11 +499,38 @@ public class AutoActivity extends NiyoAbstractActivity {
     	}
     	else{
     		ClientLog.d(LOG_TAG, "tasks are not ready");
+    		onWithTheNav(view);
     	}
     	
 	}
     
     
+	private void onWithTheNav(View view) {
+		
+		String locationStr = (String)view.getTag();
+		TextView btn = (TextView)view;
+		
+    	String[] coordinsatesStrArray = locationStr.split(",");
+    	AutoPoint point = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]), btn.getText().toString());
+    	String geoQuery = "geo:"+point.getLat()+","+point.getLon();
+    	Intent intent = new Intent (Intent.ACTION_VIEW, Uri.parse(geoQuery)); 
+    	if (isCallable(intent))
+    	{
+    		startActivity(intent);
+    	}
+    	else
+    	{
+    		Toast.makeText(this, "Go get yourself a map app", Toast.LENGTH_LONG).show();
+    	}
+	}
+	
+	private boolean isCallable(Intent intent) {
+        List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 
+            PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
+    }
+
+
 	private HashMap<String, String> getCategoryIdsToTaskContent() throws JSONException {
 		
 		HashMap<String, String> result = new HashMap<String, String>();

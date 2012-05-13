@@ -141,6 +141,7 @@ public class Utils {
 				intent,
 				0);
 		
+		ClientLog.d(LOG_TAG, "adding "+taskId+" to prox alerts");
 		locationManager.addProximityAlert(latDbl, lonDbl, radius, expiration, proximityIntent);
 	}
 	

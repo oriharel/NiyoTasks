@@ -12,18 +12,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 
+import com.niyo.ClientLog;
 import com.niyo.R;
 import com.niyo.Utils;
 import com.niyo.tasks.CategoryTasksActivity;
 
 public class ProximityIntentReciever extends BroadcastReceiver {
 
+	private static final String LOG_TAG = ProximityIntentReciever.class.getSimpleName();
 	public static final String TASK_ID_PROXIMITY = "taskIdProx";
 	public static final String TASK_PROXIMITY_ALERT = "com.niyo.taskalert";
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		
+		ClientLog.d(LOG_TAG, "recived prox alert!");
 		String key = LocationManager.KEY_PROXIMITY_ENTERING;
 		
 		Boolean entering = intent.getBooleanExtra(key, false);
@@ -47,12 +50,6 @@ public class ProximityIntentReciever extends BroadcastReceiver {
 						
 						PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
 								notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-						
-//						Builder notification = new Builder(context);
-//						notification.setTicker("A task is near!");
-//						notification.setContentInfo(tasks.getJSONObject(i).getString("content"));
-//						notification.setSmallIcon(R.drawable.ic_launcher);
-//						notification.se |= Notification.FLAG_AUTO_CANCEL;
 						
 						long when = System.currentTimeMillis();
 						
@@ -80,5 +77,4 @@ public class ProximityIntentReciever extends BroadcastReceiver {
 			
 		}
 	}
-
 }

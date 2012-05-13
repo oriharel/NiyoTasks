@@ -139,7 +139,7 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 
 	public void showRelevantVenues(List<AutoVenue> result) 
 	{
-		Toast.makeText(this, "there are close venues which you have tasks to do in", Toast.LENGTH_SHORT).show();
+		
 		JSONArray venues = new JSONArray();
 		
 		for (AutoVenue autoVenue : result) {
@@ -148,8 +148,6 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 						", long:"+autoVenue.getLocation().getLon()+", name:\""+autoVenue.getName()+"\", taskContent:\""+autoVenue.getTaskContent()+"\"}");
 				venues.put(venue);
 				
-				
-				
 			} catch (JSONException e) {
 				ClientLog.e(LOG_TAG, "Error!", e);
 			}
@@ -157,7 +155,9 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 		
 		WebView webView = (WebView)findViewById(R.id.autoMapWebView);
 		ClientLog.d(LOG_TAG, "sending to webview "+venues);
+		
 		if (venues.length() > 0){
+			Toast.makeText(this, "there are close venues which you have tasks to do in", Toast.LENGTH_SHORT).show();
 			webView.loadUrl("javascript: addVenues("+venues+")");
 		}
 		else{
