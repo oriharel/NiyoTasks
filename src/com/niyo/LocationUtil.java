@@ -8,7 +8,7 @@ import com.niyo.auto.map.MyLocationListener;
 
 public class LocationUtil {
 	
-	public static void updateLocation(Context context){
+	public static void updateLocation(Context context, MyLocationListener gpsListener, MyLocationListener networkListener, MyLocationListener passiveListener){
 		
 		String locationContext = Context.LOCATION_SERVICE;
 		final LocationManager locationManager = (LocationManager)context.getSystemService(locationContext);
@@ -19,10 +19,6 @@ public class LocationUtil {
 		
 		int t = 5000; // milliseconds
 		int distance = 5; // meters
-		
-		MyLocationListener gpsListener = new MyLocationListener(context);
-		MyLocationListener networkListener = new MyLocationListener(context);
-		MyLocationListener passiveListener = new MyLocationListener(context);
 		
 		locationManager.requestLocationUpdates(gps, t, distance,
 				gpsListener);
@@ -53,5 +49,15 @@ public class LocationUtil {
 		}
 		
 		return location;
+	}
+
+	public static void removeLocationUpdates(Context context, MyLocationListener gpsListener, MyLocationListener networkListener, MyLocationListener passiveListener) {
+		String locationContext = Context.LOCATION_SERVICE;
+		final LocationManager locationManager = (LocationManager)context.getSystemService(locationContext);
+		
+		locationManager.removeUpdates(gpsListener);
+		locationManager.removeUpdates(networkListener);
+		locationManager.removeUpdates(passiveListener);
+		
 	}
 }

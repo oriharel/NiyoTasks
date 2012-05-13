@@ -12,14 +12,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +36,7 @@ import com.niyo.ServiceCaller;
 import com.niyo.SettingsManager;
 import com.niyo.StringUtils;
 import com.niyo.auto.map.AutoMapActivity;
+import com.niyo.auto.map.MyLocationListener;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
 import com.niyo.tasks.CategoryTasksActivity;
@@ -75,13 +80,19 @@ public class AutoActivity extends NiyoAbstractActivity {
 	private Map<Integer, String> mDefaultsTitles;
 	private Map<Integer, String> mDefaultsLocations;
 	
+	private MyLocationListener mGpsListener;
+	private MyLocationListener mNetworkListener;
+	private MyLocationListener mPassiveListener;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.where_to_layout);
         Log.d(LOG_TAG, "onCreate started");
-        
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         setupBoxBtnsListeners();
         saveDefaults();
         
@@ -101,10 +112,55 @@ public class AutoActivity extends NiyoAbstractActivity {
         
         getNextCalendarEvent();
         
+        setupOnClicksForOldSDK();
+        
+        initLocationListeners();
+        
     }
     
 
-    private void getNextCalendarEvent() 
+    private void initLocationListeners() {
+    	
+    	String gps = LocationManager.GPS_PROVIDER;
+		String network = LocationManager.GPS_PROVIDER;
+		String passive = LocationManager.GPS_PROVIDER;
+		
+    	mGpsListener = new MyLocationListener(this, gps);
+    	mNetworkListener = new MyLocationListener(this, network);
+    	mPassiveListener = new MyLocationListener(this, passive);
+	}
+
+
+	private void setupOnClicksForOldSDK() {
+    	
+    	final int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
+    	ClientLog.d(LOG_TAG, "sdk version is: "+sdkVersion);
+    	if (sdkVersion <= Build.VERSION_CODES.CUPCAKE) {
+    		
+    		findViewById(R.id.boxBtn1).setOnClickListener(getNavigateToListener());
+    		findViewById(R.id.boxBtn2).setOnClickListener(getNavigateToListener());
+    		findViewById(R.id.boxBtn3).setOnClickListener(getNavigateToListener());
+    		findViewById(R.id.boxBtn4).setOnClickListener(getNavigateToListener());
+    		findViewById(R.id.boxBtn5).setOnClickListener(getNavigateToListener());
+    		findViewById(R.id.boxBtn6).setOnClickListener(getNavigateToListener());
+    	}
+	}
+
+
+	private OnClickListener getNavigateToListener() {
+		
+		return new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				navigateTo(v);
+			}
+		};
+	}
+
+
+	private void getNextCalendarEvent() 
     {
 		ServiceCaller caller = new ServiceCaller() {
 			
@@ -139,6 +195,7 @@ public class AutoActivity extends NiyoAbstractActivity {
 
 	protected void setupSixBox(AutoEvent event) {
 		
+		ClientLog.d(LOG_TAG, "event getLat "+event.getLat());
 		if(!TextUtils.isEmpty(event.getLat()) && !TextUtils.isEmpty(event.getLon())){
 			TextView btn6 = (TextView)findViewById(R.id.boxBtn6);
 			btn6.setText(event.getTitle());
@@ -178,8 +235,14 @@ public class AutoActivity extends NiyoAbstractActivity {
     protected void onResume(){
     	super.onResume();
     	setupBoxes();
-    	LocationUtil.updateLocation(this);
+    	LocationUtil.updateLocation(this, mGpsListener, mNetworkListener, mPassiveListener);
     }
+	
+	@Override
+	protected void onPause(){
+		super.onPause();
+		LocationUtil.removeLocationUpdates(this, mGpsListener, mNetworkListener, mPassiveListener);
+	}
 	
 	
 	private void setupBoxes() {
@@ -416,6 +479,7 @@ public class AutoActivity extends NiyoAbstractActivity {
     
     public void navigateTo(View view) 
 	{
+    	ClientLog.d(LOG_TAG, "navigating to");
     	if (getTasksReady()){
     		String locationStr = (String)view.getTag();
     		TextView btn = (TextView)view;
@@ -430,6 +494,9 @@ public class AutoActivity extends NiyoAbstractActivity {
 				ClientLog.e(LOG_TAG, "Error!", e);
 			}
         	
+    	}
+    	else{
+    		ClientLog.d(LOG_TAG, "tasks are not ready");
     	}
     	
 	}

@@ -62,7 +62,7 @@ public class NextEventFetchTaskGingerbread extends AsyncTask<Void, Void, AutoEve
 			    Uri eventsUri = Uri.parse("content://com.android.calendar/events");
 			    Cursor eventCursor = mContext.getContentResolver().query(eventsUri, eventProjection, selection, null, null);
 			    
-			    if (eventCursor.moveToFirst()){
+			    if (eventCursor != null && eventCursor.moveToFirst()){
 			    	
 			    	
 			    	int titleColumn = eventCursor.getColumnIndex("title");
@@ -113,8 +113,10 @@ public class NextEventFetchTaskGingerbread extends AsyncTask<Void, Void, AutoEve
 			return event;
 		}
 		
+		if (eventCursor != null){
+			eventCursor.close();
+		}
 		
-		eventCursor.close();
 		
 		return null;
 	}

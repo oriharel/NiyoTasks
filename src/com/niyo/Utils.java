@@ -96,6 +96,9 @@ public class Utils {
 		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
 		locationManager.removeProximityAlert(PendingIntent.getBroadcast(context, -1, new Intent(ProximityIntentReciever.TASK_PROXIMITY_ALERT), 0));
 		
+		if (tasks == null){
+			return;
+		}
 		try {
 			JSONArray tasksArray = tasks.getJSONArray("tasks");
 			

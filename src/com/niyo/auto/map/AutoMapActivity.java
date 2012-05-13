@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -71,9 +72,16 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 		WebSettings settings = webView.getSettings();
 		settings.setJavaScriptEnabled(true);
 		settings.setJavaScriptCanOpenWindowsAutomatically(true);
-		settings.setLoadWithOverviewMode(true);
 		settings.setUseWideViewPort(true);
-		settings.setDomStorageEnabled(true);
+		
+		final int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
+    	ClientLog.d(LOG_TAG, "sdk is "+sdkVersion);
+    	if (sdkVersion >= Build.VERSION_CODES.ECLAIR_MR1) {
+//    		settings.setDomStorageEnabled(true);
+//    		settings.setLoadWithOverviewMode(true);
+    	}
+		
+		
 		webView.setWebViewClient(new AutoWVClient(this, getTo()));
 		JSInterface inter = new JSInterface(this, getCategryIdsToTaskContent());
 		webView.addJavascriptInterface(inter, "Native");
@@ -86,8 +94,6 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 		    }
 		});
 		
-		webView.getSettings().setAllowFileAccess(true);
-		webView.getSettings().setAppCacheEnabled(true);
         webView.loadUrl("file:///android_asset/html/test.html");
 		
 	}
