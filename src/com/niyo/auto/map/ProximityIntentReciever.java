@@ -43,7 +43,7 @@ public class ProximityIntentReciever extends BroadcastReceiver {
 				for (int i = 0; i < tasks.length(); i++){
 					
 					String id = tasks.getJSONObject(i).getString("id");
-					
+					ClientLog.d(LOG_TAG, "equalizing "+id+" with "+taskId);
 					if (id.equals(taskId)){
 						
 						Intent notifIntent = new Intent(context, CategoryTasksActivity.class);
@@ -53,6 +53,7 @@ public class ProximityIntentReciever extends BroadcastReceiver {
 						
 						long when = System.currentTimeMillis();
 						
+						ClientLog.d(LOG_TAG, "going to show notification");
 						Notification notification = new Notification(R.drawable.ic_launcher, "", when);
 						
 						notification.setLatestEventInfo(context, "A task is close by!", tasks.getJSONObject(i).getString("content"),
@@ -61,6 +62,7 @@ public class ProximityIntentReciever extends BroadcastReceiver {
 						notification.ledARGB = 0xff0000FF;
 						notification.ledOnMS = 300;
 						notification.ledOffMS = 1000;
+						notification.defaults = Notification.DEFAULT_ALL;
 						notification.flags |= Notification.FLAG_SHOW_LIGHTS;
 						notification.flags |= Notification.FLAG_AUTO_CANCEL;
 						

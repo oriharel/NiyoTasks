@@ -15,6 +15,8 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.JsResult;
@@ -37,6 +39,8 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 	private static final String LOG_TAG = AutoMapActivity.class.getSimpleName();
 	private static final String TO_EXTRA = "toExtra";
 	private static final String CATEGORY_IDS_EXTRA = "idsExtra";
+	private static final int SEND_LOGS_TO_ORI = 0;
+	private String mFoursquareUrl = "no foursquare url";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -98,6 +102,39 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 		
 	}
 	
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) 
+	{
+		ClientLog.d(LOG_TAG, "onCreateOptionsMenu started");
+		try {
+			MenuItem settingsMenuItem1 = menu.add(0, SEND_LOGS_TO_ORI, 0, "Send Logs to Ori");
+			settingsMenuItem1.setIcon(R.drawable.ic_menu_agenda);
+		} catch (Exception e) 
+		{
+			ClientLog.e(LOG_TAG, "Error!", e);
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem menuItem) 
+	{
+    	if (menuItem.getItemId() == SEND_LOGS_TO_ORI){
+    		
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("plain/text");
+			intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"ori.harel@gmail.com"});
+			intent.putExtra(Intent.EXTRA_SUBJECT, "From NIYO");
+			intent.putExtra(Intent.EXTRA_TEXT, mFoursquareUrl);
+			startActivity(Intent.createChooser(intent, "Send mail..."));
+        	return true;
+    	}
+    	else{
+    		return false;
+    	}
+    	
+	}
+	
 	private AutoPoint getTo(){
 		return (AutoPoint)getIntent().getSerializableExtra(TO_EXTRA);
 	}
@@ -137,9 +174,9 @@ public class AutoMapActivity extends NiyoAbstractActivity {
         return list.size() > 0;
     }
 
-	public void showRelevantVenues(List<AutoVenue> result) 
+	public void showRelevantVenues(List<AutoVenue> result, String foursquareUrl) 
 	{
-		
+		mFoursquareUrl = foursquareUrl;
 		JSONArray venues = new JSONArray();
 		
 		for (AutoVenue autoVenue : result) {
@@ -164,6 +201,15 @@ public class AutoMapActivity extends NiyoAbstractActivity {
 			ClientLog.e(LOG_TAG, "Error!, for some reason got 0 venues for the map");
 		}
 		
+	}
+
+	public void setFoursquareUrl(String foursquareUrl) {
+		mFoursquareUrl = foursquareUrl;
+	}
+
+	public void hideProgressBar() {
+		
+		findViewById(R.id.progressBar1).setVisibility(View.GONE);
 	}
 	
 	

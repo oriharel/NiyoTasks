@@ -291,6 +291,7 @@ public class CategoryTasksActivity extends NiyoAbstractActivity {
 		for (int i = 0; i < tasks.length(); i++){
 			
 			JSONObject task = tasks.getJSONObject(i);
+			ClientLog.d(LOG_TAG, "task is "+task);
 			if (task.getBoolean("done") == done){
 				result.put(task);
 			}

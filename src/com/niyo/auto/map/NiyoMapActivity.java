@@ -17,6 +17,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.niyo.ClientLog;
 import com.niyo.R;
+import com.niyo.tasks.map.AdGenericTaskActivity;
 import com.niyo.tasks.map.AutoItemizedOverlay;
 
 public abstract class NiyoMapActivity extends MapActivity {
@@ -63,6 +64,7 @@ public abstract class NiyoMapActivity extends MapActivity {
 		List<Overlay> overlays = mapView.getOverlays();
 		Resources r = getResources();
 		AutoItemizedOverlay markers = new AutoItemizedOverlay(r.getDrawable(R.drawable.marker));
+		markers.setActivity((AdGenericTaskActivity)this);
 		ClientLog.d(LOG_TAG, "got "+addresses.size()+" address");
 		for (Address address : addresses) {
 

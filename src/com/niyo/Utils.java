@@ -10,17 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.niyo.auto.AutoPoint;
-import com.niyo.auto.AutoVenue;
-import com.niyo.auto.map.ProximityIntentReciever;
-import com.niyo.data.JSONTableColumns;
-import com.niyo.data.NiyoContentProvider;
-
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -29,6 +22,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
+import com.niyo.auto.AutoPoint;
+import com.niyo.auto.AutoVenue;
+import com.niyo.auto.map.ProximityIntentReciever;
+import com.niyo.data.JSONTableColumns;
+import com.niyo.data.NiyoContentProvider;
 
 public class Utils {
 
@@ -91,7 +90,7 @@ public class Utils {
 	public static void setupProximityAlerts(Context context){
 		
 		JSONObject tasks = getTasksFromProvider(context);
-		float radius = 100f;
+		float radius = 250f;
 		long expiration = -1;
 		
 		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
@@ -110,7 +109,7 @@ public class Utils {
 				String lat = task.getString("lat");
 				String lon = task.getString("lon");
 				String taskId = task.getString("id");
-				String content = task.getString("content");
+//				String content = task.getString("content");
 				
 				if (!(TextUtils.isEmpty(lat) || TextUtils.isEmpty(lon))){
 					
@@ -131,8 +130,7 @@ public class Utils {
 		
 //		testProximity(context);
 		
-		IntentFilter filter = new IntentFilter(ProximityIntentReciever.TASK_PROXIMITY_ALERT);
-		context.registerReceiver(new ProximityIntentReciever(), filter);
+		
 	}
 	
 	private static void testProximity(Context context){
@@ -146,7 +144,7 @@ public class Utils {
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		
 		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-		locationManager.addProximityAlert(32.182369, 34.853032, 100f, -1, proximityIntent);
+		locationManager.addProximityAlert(32.182369, 34.853032, 250f, -1, proximityIntent);
 	}
 
 	private static void addTaskProximityAlert(Context context, float radius,
@@ -158,10 +156,10 @@ public class Utils {
 		
 		PendingIntent proximityIntent = PendingIntent.getBroadcast(context, -1,
 				intent,
-				0);
+				PendingIntent.FLAG_UPDATE_CURRENT);
 		
 		ClientLog.d(LOG_TAG, "adding "+taskId+" to prox alerts");
-		locationManager.addProximityAlert(latDbl, lonDbl, radius, expiration, proximityIntent);
+//		locationManager.addProximityAlert(latDbl, lonDbl, radius, expiration, proximityIntent);
 	}
 	
 	public static JSONObject getTasksFromProvider(Context context){
@@ -222,7 +220,7 @@ public class Utils {
 					
 //					ClientLog.d(LOG_TAG, "distance is "+distance);
 					
-					if (distance < 100)
+					if (distance < 250)
 					{
 						autoVenue.setDistance(distance);
 						return true;

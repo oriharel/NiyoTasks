@@ -18,4 +18,13 @@
         android:layout_height="wrap_content"
         android:text="@string/startNav" android:layout_centerHorizontal="true" android:layout_alignParentBottom="true" android:background="@drawable/nav_btn_selector" android:padding="20dip" android:textSize="18sp"/>
 
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleLargeInverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="176dp" />
+
 </RelativeLayout>

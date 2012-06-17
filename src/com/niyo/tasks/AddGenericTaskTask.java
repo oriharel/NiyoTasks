@@ -60,6 +60,7 @@ public class AddGenericTaskTask extends AsyncTask<LocationTask, Void, Boolean> {
 			
 			
 			Utils.setTasksInProvider(result, mContext);
+			Utils.setupProximityAlerts(mContext);
 			
 		} catch (JSONException e) {
 			ClientLog.e(LOG_TAG, "Error!", e);

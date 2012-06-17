@@ -323,6 +323,10 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 		
 		return result;
 	}
+	
+	public void setSelectedAddress(GeoPoint point){
+		mSeletctedAddress = point;
+	}
 
 	private boolean isEditMode() {
 		return getIntent().getStringExtra(TASK_ID_EXTRA) != null;
@@ -448,6 +452,7 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 		List<Overlay> overlays = mapView.getOverlays();
 		Resources r = getResources();
 		AutoItemizedOverlay markers = new AutoItemizedOverlay(r.getDrawable(R.drawable.marker));
+		markers.setActivity(this);
 		ClientLog.d(LOG_TAG, "got "+venues.size()+" address");
 		for (AutoVenue venue : venues) {
 

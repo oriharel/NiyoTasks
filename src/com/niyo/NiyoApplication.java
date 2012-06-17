@@ -9,13 +9,16 @@ import org.json.JSONObject;
 
 import android.app.Application;
 import android.content.Intent;
+import android.content.IntentFilter;
 
+import com.niyo.auto.map.ProximityIntentReciever;
 import com.niyo.data.JsonFetchIntentService;
 
 public class NiyoApplication extends Application {
 
 	private static final String LOG_TAG = NiyoApplication.class.getSimpleName();
 	private static Boolean s_logEnabled = true;
+//	private static Boolean s_logEnabled = false;
 	private JSONArray mFoursqaureVenues;
 	public static boolean isLogEnabled() {
 		return s_logEnabled;
@@ -32,6 +35,10 @@ public class NiyoApplication extends Application {
 	
 	private void setupProximityAlerts() {
 		
+		//for rebuild
+		IntentFilter filter = new IntentFilter(ProximityIntentReciever.TASK_PROXIMITY_ALERT);
+		ProximityIntentReciever reciever = new ProximityIntentReciever();
+		registerReceiver(reciever, filter);
 		Utils.setupProximityAlerts(this);
 		
 	}

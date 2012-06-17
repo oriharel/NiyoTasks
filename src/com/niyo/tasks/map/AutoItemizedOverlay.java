@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.view.View.OnClickListener;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
@@ -16,6 +17,7 @@ public class AutoItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 
 	private static final String LOG_TAG = AutoItemizedOverlay.class.getSimpleName();
 	private ArrayList<OverlayItem> items;
+	private AdGenericTaskActivity mActivity;
 	
 	public AutoItemizedOverlay(Drawable defaultMarker) {
 
@@ -46,19 +48,39 @@ public class AutoItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		return items.size();
 	}
 	
-//	@Override
-//	public boolean onTap(GeoPoint point, MapView mapView){
-//		
-//		MapView.LayoutParams geoLP = new MapView.LayoutParams(MapView.LayoutParams.WRAP_CONTENT,
-//				MapView.LayoutParams.WRAP_CONTENT,
-//				point,
-//				MapView.LayoutParams.BOTTOM_CENTER);
-//		
-//		Activity context = (Activity)mapView.getContext();
-//		View baloon = context.getLayoutInflater().inflate(R.layout.marker_baloon, null);
-//		
-//		mapView.addView(baloon, geoLP);
-//		return false;
-//	}
+	@Override
+	public boolean onTap(final GeoPoint point, MapView mapView){
+		
+		if (mActivity != null){
+			
+			MapView.LayoutParams geoLP = new MapView.LayoutParams(MapView.LayoutParams.WRAP_CONTENT,
+					MapView.LayoutParams.WRAP_CONTENT,
+					point,
+					MapView.LayoutParams.BOTTOM_CENTER);
+			
+			Activity context = (Activity)mapView.getContext();
+			View baloon = context.getLayoutInflater().inflate(R.layout.marker_baloon, null);
+			baloon.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					
+					mActivity.setSelectedAddress(point);
+				}
+			});
+			mapView.addView(baloon, geoLP);
+			return true;
+		}
+		
+		return false;
+	}
+
+	public AdGenericTaskActivity getActivity() {
+		return mActivity;
+	}
+
+	public void setActivity(AdGenericTaskActivity activity) {
+		mActivity = activity;
+	}
 
 }

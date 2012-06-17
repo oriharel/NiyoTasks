@@ -146,7 +146,7 @@ public class JSInterface {
 		}
 
 		if (closeVenues.size() > 0){
-			mActivity.showRelevantVenues(closeVenues);
+			mActivity.showRelevantVenues(closeVenues, null);
 		}
 
 	}

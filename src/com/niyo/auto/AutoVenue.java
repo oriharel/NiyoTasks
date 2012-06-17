@@ -22,7 +22,14 @@ public class AutoVenue implements Comparable<AutoVenue>{
 	}
 
 	public void setName(String name) {
-		mName = name;
+		
+		if (name.contains("\"")){
+			mName = name.replace("\"", "");
+		}
+		else{
+			mName = name;
+		}
+		
 	}
 
 	public Double getDistance() {
