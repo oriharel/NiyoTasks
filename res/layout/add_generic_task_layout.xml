@@ -82,7 +82,7 @@
         android:id="@+id/map_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:apiKey="0nHnZCjh1Wz9c8IhW-mvK1uPtudMEp-sYz-bqng"
+        android:apiKey="0nHnZCjh1Wz8vCPp2ZVjclTeaGMdCpTigvKGv8w"
         android:clickable="true"
         android:enabled="true"
         android:visibility="gone" />
