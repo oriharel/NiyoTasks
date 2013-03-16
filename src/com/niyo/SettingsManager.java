@@ -1,11 +1,17 @@
 package com.niyo;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.niyo.auto.AppLauncher;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SettingsManager {
 
 	private static final String PREFERENCES_FILE_NAME = "settings_data";
+	private static final String LOG_TAG = SettingsManager.class.getSimpleName();
 	
 	public static void resetValues(Context context, String key) {
 		SettingsManager.setInt(context, key, 0);
@@ -16,6 +22,13 @@ public class SettingsManager {
 	{
 		SharedPreferences settings = context.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
 		String value = settings.getString(key, null);
+		return value;
+	}
+	
+	public static Set<String> getStringSet(Context context, String setKey) 
+	{
+		SharedPreferences settings = context.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+		Set<String> value = settings.getStringSet(setKey, null);
 		return value;
 	}
 
@@ -61,6 +74,27 @@ public class SettingsManager {
 		SharedPreferences settings = context.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(key, value);
+		editor.commit();
+	}
+	
+	public static void addToStringSet(Context context, String setKey, String key, String value) 
+	{
+		ClientLog.d(LOG_TAG, "adding "+value+" to "+setKey+" set");
+		if (value == null)
+		{
+			removeKey(context, key);
+			return;
+		}
+		SharedPreferences settings = context.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+		Set<String> set = settings.getStringSet(setKey, null);
+		if (set == null) {
+			set = new HashSet<String>();
+		}
+		set.add(value);
+		
+		SharedPreferences.Editor editor = settings.edit();
+		editor.remove(setKey);
+		editor.putStringSet(setKey, set);
 		editor.commit();
 	}
 

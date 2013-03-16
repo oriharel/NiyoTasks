@@ -4,7 +4,7 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="5" />
+    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="17"/>
     <uses-permission
         android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission
@@ -18,8 +18,6 @@
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission
-        android:name="android.permission.WRITE_SECURE_SETTINGS" />
-    <uses-permission
         android:name="android.permission.READ_CONTACTS" />
     <uses-permission
         android:name="android.permission.WRITE_CONTACTS" />
@@ -32,16 +30,22 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.BLUETOOTH" />
-	<uses-permission android:name="android.permission.READ_CALENDAR">
-	    
-  </uses-permission>
+	<uses-permission android:name="android.permission.READ_CALENDAR"/>
 	<uses-permission android:name="android.permission.READ_LOGS"/>
 	<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+	<uses-permission android:name="com.niyo.permission.MAPS_RECEIVE"/>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-feature android:glEsVersion="0x00020000" android:required="true"/>
+	<permission
+        android:name="com.niyo.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature"/>
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" android:name="NiyoApplication" android:theme="@android:style/Theme.NoTitleBar">
         <activity
-            android:name=".tasks.CategoryTasksActivity"
+            android:name=".auto.AutoActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -62,7 +66,7 @@
             -->
         </activity>
         <activity android:name=".tasks.AddTaskActivity"></activity>
-        <activity android:name=".auto.AutoActivity"></activity>
+        <activity android:name=".tasks.CategoryTasksActivity"></activity>
         <service android:name=".data.JsonFetchIntentService"></service>
         <service 
             android:name=".data.SyncService"
@@ -100,11 +104,11 @@
         <activity android:name=".auto.map.AutoMapActivity"></activity>
         <activity android:name=".tasks.map.AdGenericTaskActivity"></activity>
         
-        <uses-library android:name="com.google.android.maps" />
+        <!-- <uses-library android:name="com.google.android.maps" /> -->
         <activity android:name=".auto.CreateAutoBoxAcitivty"></activity>
         <activity android:name=".auto.BtPairActivity"></activity>
         <receiver android:name=".auto.map.ProximityIntentReciever"></receiver>
-        
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAc14bkNAHTZ5-1YUzwZPxs_aWSPH18amw"/>
     </application>
 
 </manifest>

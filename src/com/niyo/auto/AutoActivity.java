@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -30,6 +31,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.niyo.ClientLog;
 import com.niyo.LocationUtil;
 import com.niyo.NiyoAbstractActivity;
@@ -110,9 +113,9 @@ public class AutoActivity extends NiyoAbstractActivity {
 		
 		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
 		setUri(uri);
-        loadTasksFromDb();
+//        loadTasksFromDb();
         
-        getNextCalendarEvent();
+//        getNextCalendarEvent();
         
         setupOnClicksForOldSDK();
         
@@ -356,15 +359,26 @@ public class AutoActivity extends NiyoAbstractActivity {
 
 	private OnLongClickListener getBoxLongClickListener() {
 		
+		final AutoActivity context = this;
 		OnLongClickListener result = new OnLongClickListener() {
 			
 			@Override
 			public boolean onLongClick(View v) {
 				
 				ClientLog.d(LOG_TAG, "locations of button is "+v.getTag());
-				Intent intent = CreateAutoBoxAcitivty.getCreationIntent(AutoActivity.this, getTitleKey(v), getLatKey(v), getLonKey(v));
-				startActivity(intent);
+				int playAvailabilityCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+				if (playAvailabilityCode == ConnectionResult.SUCCESS) {
+					Intent intent = CreateAutoBoxAcitivty.getCreationIntent(AutoActivity.this, getTitleKey(v), getLatKey(v), getLonKey(v));
+					startActivity(intent);
+					
+				}
+				else {
+//					Toast.makeText(context, "You must have Google Play installed", Toast.LENGTH_LONG).show();
+					GooglePlayServicesUtil.getErrorDialog(playAvailabilityCode, context, 0);
+				}
+				
 				return true;
+				
 			}
 		};
 		return result;

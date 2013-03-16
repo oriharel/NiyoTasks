@@ -1,12 +1,17 @@
 package com.niyo.auto;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
+import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.SettingsManager;
@@ -14,14 +19,38 @@ import com.niyo.SettingsManager;
 public class BtPairActivity extends NiyoAbstractActivity {
 
 	private static final String BT_INFO_EXTRA = "btInfo";
+	private static final String LOG_TAG = BtPairActivity.class.getSimpleName();
 
+	@Override
+	public void onPause() {
+		super.onPause();
+//		unregisterReceiver(receiver);
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.bt_pair_layout);
-		TextView info = (TextView)findViewById(R.id.deviceMacAddress);
+		final TextView info = (TextView)findViewById(R.id.deviceMacAddress);
 		info.setText(getIntent().getStringExtra(BT_INFO_EXTRA));
+		
+//		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_NAME_CHANGED);
+		BluetoothAdapter mAdapter = BluetoothAdapter.getDefaultAdapter();
+		BluetoothDevice device = mAdapter.getRemoteDevice(getIntent().getStringExtra(BT_INFO_EXTRA));
+		if (device != null && device.getName() != null) {
+			info.setText(device.getName());
+		}
+		ClientLog.d(LOG_TAG, "device is "+device.getName()+" for address "+getIntent().getStringExtra(BT_INFO_EXTRA));
+//		registerReceiver(new BroadcastReceiver(){
+//
+//			@Override
+//			public void onReceive(Context context, Intent intent) {
+//				ClientLog.d(LOG_TAG, "got action name changed");
+//				info.setText(intent.getStringExtra(BluetoothDevice.EXTRA_NAME));
+//				
+//			}
+//			
+//		}, filter);
 		
 		findViewById(R.id.btNo).setOnClickListener(new OnClickListener() {
 			
@@ -36,7 +65,8 @@ public class BtPairActivity extends NiyoAbstractActivity {
 			
 			@Override
 			public void onClick(View v) {
-				SettingsManager.setString(BtPairActivity.this, AppLauncher.BT_MAC_ADDRESS, getIntent().getStringExtra(BtPairActivity.BT_INFO_EXTRA));
+				SettingsManager.addToStringSet(BtPairActivity.this, AppLauncher.BT_MAC_ADDRESS_SET,
+						AppLauncher.BT_MAC_ADDRESS_SET, getIntent().getStringExtra(BtPairActivity.BT_INFO_EXTRA));
 				Intent intent2Launch = new Intent(BtPairActivity.this, AutoActivity.class);
 				intent2Launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				BtPairActivity.this.startActivity(intent2Launch);

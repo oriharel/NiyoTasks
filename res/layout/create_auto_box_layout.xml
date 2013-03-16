@@ -58,12 +58,10 @@
             android:src="@drawable/ic_btn_search" />
     </LinearLayout>
 
-    <com.google.android.maps.MapView
-        android:id="@+id/boxMapView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:apiKey="0nHnZCjh1Wz9c8IhW-mvK1uPtudMEp-sYz-bqng"
-        android:clickable="true"
-        android:enabled="true" />
+    <fragment
+          android:id="@+id/map"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:name="com.google.android.gms.maps.MapFragment"/>
 
 </LinearLayout>

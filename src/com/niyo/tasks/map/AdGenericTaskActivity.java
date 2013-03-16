@@ -482,12 +482,6 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 
 	
 
-	@Override
-	protected boolean isRouteDisplayed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public CategoriesListAdapter getCategoriesAdapter() {
 		return mCategoriesAdapter;
 	}

@@ -16,11 +16,12 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.niyo.ClientLog;
+import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.tasks.map.AdGenericTaskActivity;
 import com.niyo.tasks.map.AutoItemizedOverlay;
 
-public abstract class NiyoMapActivity extends MapActivity {
+public abstract class NiyoMapActivity extends NiyoAbstractActivity {
 	
 	private static String LOG_TAG = NiyoMapActivity.class.getSimpleName();
 	protected GeoPoint mSeletctedAddress;
@@ -68,8 +69,8 @@ public abstract class NiyoMapActivity extends MapActivity {
 		ClientLog.d(LOG_TAG, "got "+addresses.size()+" address");
 		for (Address address : addresses) {
 
-			Double lat1E6 = new Double(address.getLatitude()*1E6);
-			Double lon1E6 = new Double(address.getLongitude()*1E6);
+			Double lat1E6 = Double.valueOf(address.getLatitude()*1E6);
+			Double lon1E6 = Double.valueOf(address.getLongitude()*1E6);
 			GeoPoint point = new GeoPoint(lat1E6.intValue(), lon1E6.intValue());
 
 			markers.addNewItem(point, "markerText", "snippet");
@@ -86,8 +87,8 @@ public abstract class NiyoMapActivity extends MapActivity {
 		MapView mapView = (MapView)findViewById(getMapViewId());
 		MapController mapController = mapView.getController();
 
-		Double lat1E6 = new Double(addresses.get(0).getLatitude()*1E6);
-		Double lon1E6 = new Double(addresses.get(0).getLongitude()*1E6);
+		Double lat1E6 = Double.valueOf(addresses.get(0).getLatitude()*1E6);
+		Double lon1E6 = Double.valueOf(addresses.get(0).getLongitude()*1E6);
 		GeoPoint point = new GeoPoint(lat1E6.intValue(), lon1E6.intValue());
 
 		mapController.setCenter(point);
@@ -97,8 +98,8 @@ public abstract class NiyoMapActivity extends MapActivity {
 	
 	private GeoPoint createGeoPoint(Address address) {
 
-		Double lat1e6 = new Double(address.getLatitude()*1e6);
-		Double lon1e6 = new Double(address.getLongitude()*1e6);
+		Double lat1e6 = Double.valueOf(address.getLatitude()*1e6);
+		Double lon1e6 = Double.valueOf(address.getLongitude()*1e6);
 
 		GeoPoint result = new GeoPoint(lat1e6.intValue(), lon1e6.intValue());
 		return result;

@@ -147,17 +147,12 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickLis
 
 	private void setupMap() {
 		
-		MapView mapView = (MapView)findViewById(R.id.boxMapView);
+//		MapView mapView = (MapView)findViewById(R.id.boxMapView);
 		
-		mapView.displayZoomControls(true);
+//		mapView.displayZoomControls(true);
 		
 	}
 
-	@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}
-	
 	public static Intent getCreationIntent(Activity acitivity, String titleKey, String latKey, String lonKey){
 		
 		Intent intent = new Intent(acitivity, CreateAutoBoxAcitivty.class);
@@ -178,7 +173,7 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickLis
 
 	@Override
 	protected int getMapViewId() {
-		return R.id.boxMapView;
+		return R.id.map;
 	}
 	
 	

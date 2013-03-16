@@ -30,7 +30,7 @@
                 android:layout_weight="2"
                 android:background="@drawable/nav_btn_selector"
                 android:onClick="navigateTo"
-                android:tag="32.179457,34.91667"
+                android:tag="32.10104,34.85008"
                 android:text="Work"
                 android:textColor="@color/text_color"
                 android:textSize="24sp" />
@@ -49,7 +49,7 @@
                 android:layout_weight="2"
                 android:background="@drawable/nav_btn_selector"
                 android:onClick="navigateTo"
-                android:tag="32.179366,34.858251"
+                android:tag="32.188857,34.896569"
                 android:text="Home"
                 android:textColor="@color/text_color"
                 android:textSize="24sp" />
@@ -91,7 +91,7 @@
                 android:layout_weight="2"
                 android:background="@drawable/nav_btn_selector"
                 android:onClick="navigateTo"
-                android:tag="32.192033,34.876774"
+                android:tag="32.167724,34.874966"
                 android:text="Noa"
                 android:textColor="@color/text_color"
                 android:textSize="24sp" />
