@@ -5,6 +5,7 @@ import java.util.Set;
 import com.niyo.ClientLog;
 import com.niyo.SettingsManager;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,6 +23,8 @@ public class AppLauncher extends BroadcastReceiver {
 		ClientLog.d(LOG_TAG, "recieved AppLauncher with "+intent.getAction());
 		Bundle deviceInfo = intent.getExtras();
 		Object extraDevice = deviceInfo.get(BluetoothDevice.EXTRA_DEVICE);
+		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+		BluetoothDevice device = adapter.getRemoteDevice(extraDevice.toString());
 		ClientLog.d(LOG_TAG, "device is "+extraDevice);
 		Object extraName = deviceInfo.get(BluetoothDevice.EXTRA_NAME);
 		ClientLog.d(LOG_TAG, "name is "+extraName);
@@ -34,7 +37,7 @@ public class AppLauncher extends BroadcastReceiver {
 			ClientLog.d(LOG_TAG, "set has "+storedMacAddressSet.size()+" items");
 			for (String storedMacAddress : storedMacAddressSet) {
 				ClientLog.d(LOG_TAG, "stored mac is "+storedMacAddress);
-				if (storedMacAddress != null && storedMacAddress.toString().equals(extraDevice.toString())){
+				if (storedMacAddress != null && storedMacAddress.toString().equals(device.getName())){
 					Intent intent2Launch = new Intent(context, AutoActivity.class);
 					intent2Launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					context.startActivity(intent2Launch);

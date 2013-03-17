@@ -94,6 +94,7 @@ public class SettingsManager {
 		
 		SharedPreferences.Editor editor = settings.edit();
 		editor.remove(setKey);
+		editor.commit();
 		editor.putStringSet(setKey, set);
 		editor.commit();
 	}

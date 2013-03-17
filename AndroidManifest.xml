@@ -97,7 +97,6 @@
         <receiver android:name=".auto.AppLauncher">
             <intent-filter>
                 <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
-                <category android:name="com.appcard" />
             </intent-filter>
         </receiver>
         <activity android:name=".categories.AddCategoryActivity"></activity>

@@ -36,7 +36,7 @@ public class BtPairActivity extends NiyoAbstractActivity {
 		
 //		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_NAME_CHANGED);
 		BluetoothAdapter mAdapter = BluetoothAdapter.getDefaultAdapter();
-		BluetoothDevice device = mAdapter.getRemoteDevice(getIntent().getStringExtra(BT_INFO_EXTRA));
+		final BluetoothDevice device = mAdapter.getRemoteDevice(getIntent().getStringExtra(BT_INFO_EXTRA));
 		if (device != null && device.getName() != null) {
 			info.setText(device.getName());
 		}
@@ -66,7 +66,7 @@ public class BtPairActivity extends NiyoAbstractActivity {
 			@Override
 			public void onClick(View v) {
 				SettingsManager.addToStringSet(BtPairActivity.this, AppLauncher.BT_MAC_ADDRESS_SET,
-						AppLauncher.BT_MAC_ADDRESS_SET, getIntent().getStringExtra(BtPairActivity.BT_INFO_EXTRA));
+						AppLauncher.BT_MAC_ADDRESS_SET, device.getName());
 				Intent intent2Launch = new Intent(BtPairActivity.this, AutoActivity.class);
 				intent2Launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				BtPairActivity.this.startActivity(intent2Launch);
