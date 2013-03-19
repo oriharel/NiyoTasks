@@ -300,7 +300,7 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 			Double lat1e6 = latDbl*1e6;
 			Double lon1e6 = lonDbl*1e6;
 			
-			mSeletctedAddress = new GeoPoint(lat1e6.intValue(), lon1e6.intValue());
+//			mSeletctedAddress = new GeoPoint(lat1e6.intValue(), lon1e6.intValue());
 			
 		}
 		
@@ -325,7 +325,7 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 	}
 	
 	public void setSelectedAddress(GeoPoint point){
-		mSeletctedAddress = point;
+//		mSeletctedAddress = point;
 	}
 
 	private boolean isEditMode() {
@@ -371,12 +371,12 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 				else{
 					id = generateId().toString();
 				}
-				LocationTask locTask = new LocationTask(id, mSeletctedAddress, taskTitle.getText().toString(),
-						addressInput.getText().toString(), removeAddItem(getCategories()));
-				LocationTask[] params = new LocationTask[]{locTask};
+//				LocationTask locTask = new LocationTask(id, mSeletctedAddress, taskTitle.getText().toString(),
+//						addressInput.getText().toString(), removeAddItem(getCategories()));
+//				LocationTask[] params = new LocationTask[]{locTask};
 				
 				AddGenericTaskTask task = new AddGenericTaskTask(AdGenericTaskActivity.this, caller);
-				task.execute(params);
+//				task.execute(params);
 			}
 		};
 		return result;

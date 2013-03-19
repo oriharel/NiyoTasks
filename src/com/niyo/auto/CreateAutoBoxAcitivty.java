@@ -1,27 +1,19 @@
 package com.niyo.auto;
 
-import java.util.List;
-
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.location.Address;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
-import com.niyo.ClientLog;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.niyo.R;
-import com.niyo.ServiceCaller;
 import com.niyo.SettingsManager;
 import com.niyo.auto.map.NiyoMapActivity;
-import com.niyo.tasks.map.AddressGeocodingTask;
-import com.niyo.tasks.map.AutoItemizedOverlay;
 
 public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickListener {
 
@@ -47,62 +39,62 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickLis
 
 	private void setupEditMode() {
 		
-		TextView title = (TextView)findViewById(R.id.boxTitleEdit);
-		title.setText(SettingsManager.getString(this, getTitleKey()));
-		
-		Float lat = SettingsManager.getFloat(this, getLatKey(), 0);
-		Float lon = SettingsManager.getFloat(this, getLonKey(), 0);
-		
-		ClientLog.d(LOG_TAG, "lat = "+lat);
-		ClientLog.d(LOG_TAG, "lon = "+lon);
-		
-		if (!(lat == 0 || lon == 0)){
-			
-			Double latDbl = lat*1e6;
-			Double lonDbl = lon*1e6;
-			mSeletctedAddress = new GeoPoint(latDbl.intValue(), lonDbl.intValue());
-			
-			MapView mapView = (MapView)findViewById(getMapViewId());
-			List<Overlay> overlays = mapView.getOverlays();
-			Resources r = getResources();
-			AutoItemizedOverlay markers = new AutoItemizedOverlay(r.getDrawable(R.drawable.marker));
-			GeoPoint point = new GeoPoint(latDbl.intValue(), lonDbl.intValue());
-			markers.addNewItem(point, "markerText", "snippet");
-			
-			overlays.add(markers);
-			
-			mapView.getController().setCenter(point);
-			mapView.getController().setZoom(18);
-			
-			ServiceCaller caller = new ServiceCaller() {
-
-				@Override
-				public void success(Object data) {
-
-					if (data != null){
-
-						List<Address> addresses = (List<Address>)data;
-						if (addresses != null && addresses.size() > 0){
-
-							EditText addressSearch = (EditText)findViewById(R.id.boxSearchEdit);
-							addressSearch.setText(addresses.get(0).getAddressLine(0));
-						}
-					}
-				}
-
-				@Override
-				public void failure(Object data, String description) {
-					// TODO Auto-generated method stub
-
-				}
-			};
-			
-			AddressGeocodingTask task = new AddressGeocodingTask(this, caller);
-			Double[] params = new Double[2];
-			params[0] = lat.doubleValue();
-			params[1] = lon.doubleValue();
-			task.execute(params);
-		}
+//		TextView title = (TextView)findViewById(R.id.boxTitleEdit);
+//		title.setText(SettingsManager.getString(this, getTitleKey()));
+//		
+//		Float lat = SettingsManager.getFloat(this, getLatKey(), 0);
+//		Float lon = SettingsManager.getFloat(this, getLonKey(), 0);
+//		
+//		ClientLog.d(LOG_TAG, "lat = "+lat);
+//		ClientLog.d(LOG_TAG, "lon = "+lon);
+//		
+//		if (!(lat == 0 || lon == 0)){
+//			
+//			Double latDbl = lat*1e6;
+//			Double lonDbl = lon*1e6;
+//			mSeletctedAddress = new GeoPoint(latDbl.intValue(), lonDbl.intValue());
+//			
+//			MapView mapView = (MapView)findViewById(getMapViewId());
+//			List<Overlay> overlays = mapView.getOverlays();
+//			Resources r = getResources();
+//			AutoItemizedOverlay markers = new AutoItemizedOverlay(r.getDrawable(R.drawable.marker));
+//			GeoPoint point = new GeoPoint(latDbl.intValue(), lonDbl.intValue());
+//			markers.addNewItem(point, "markerText", "snippet");
+//			
+//			overlays.add(markers);
+//			
+//			mapView.getController().setCenter(point);
+//			mapView.getController().setZoom(18);
+//			
+//			ServiceCaller caller = new ServiceCaller() {
+//
+//				@Override
+//				public void success(Object data) {
+//
+//					if (data != null){
+//
+//						List<Address> addresses = (List<Address>)data;
+//						if (addresses != null && addresses.size() > 0){
+//
+//							EditText addressSearch = (EditText)findViewById(R.id.boxSearchEdit);
+//							addressSearch.setText(addresses.get(0).getAddressLine(0));
+//						}
+//					}
+//				}
+//
+//				@Override
+//				public void failure(Object data, String description) {
+//					// TODO Auto-generated method stub
+//
+//				}
+//			};
+//			
+//			AddressGeocodingTask task = new AddressGeocodingTask(this, caller);
+//			Double[] params = new Double[2];
+//			params[0] = lat.doubleValue();
+//			params[1] = lon.doubleValue();
+//			task.execute(params);
+//		}
 		
 	}
 
@@ -117,16 +109,16 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickLis
 				String titleStr = title.getText().toString();
 				Double latDbl = null;
 				Double lonDbl = null;
-				if (mSeletctedAddress != null){
-					latDbl = mSeletctedAddress.getLatitudeE6()/1e6;
-					lonDbl = mSeletctedAddress.getLongitudeE6()/1e6;
-					SettingsManager.setFloat(CreateAutoBoxAcitivty.this, getLatKey(), latDbl.floatValue());
-					SettingsManager.setFloat(CreateAutoBoxAcitivty.this, getLonKey(), lonDbl.floatValue());
-				}
-				
+//				if (mSeletctedAddress != null){
+//					latDbl = mSeletctedAddress.getLatitudeE6()/1e6;
+//					lonDbl = mSeletctedAddress.getLongitudeE6()/1e6;
+//					SettingsManager.setFloat(CreateAutoBoxAcitivty.this, getLatKey(), latDbl.floatValue());
+//					SettingsManager.setFloat(CreateAutoBoxAcitivty.this, getLonKey(), lonDbl.floatValue());
+//				}
+//				
 				SettingsManager.setString(CreateAutoBoxAcitivty.this, getTitleKey(), titleStr);
-				SettingsManager.setBoolean(CreateAutoBoxAcitivty.this, AutoActivity.SIX_PACK_CHANGED, true);
-				finish();
+//				SettingsManager.setBoolean(CreateAutoBoxAcitivty.this, AutoActivity.SIX_PACK_CHANGED, true);
+//				finish();
 			}
 		};
 				
@@ -147,9 +139,9 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickLis
 
 	private void setupMap() {
 		
-//		MapView mapView = (MapView)findViewById(R.id.boxMapView);
+		GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
 		
-//		mapView.displayZoomControls(true);
+		map.getUiSettings().setZoomControlsEnabled(true);
 		
 	}
 
@@ -167,7 +159,8 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickLis
 		
 		EditText addressEdit = (EditText)findViewById(R.id.boxSearchEdit);
 		String userAddress = addressEdit.getText().toString();
-		
+		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 		showMarker(userAddress);
 	}
 

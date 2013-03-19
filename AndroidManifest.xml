@@ -107,7 +107,7 @@
         <activity android:name=".auto.CreateAutoBoxAcitivty"></activity>
         <activity android:name=".auto.BtPairActivity"></activity>
         <receiver android:name=".auto.map.ProximityIntentReciever"></receiver>
-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAc14bkNAHTZ5-1YUzwZPxs_aWSPH18amw"/>
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAqXvw-k9Si7r-SlGmVCiGQzGij8s_pE2E"/>
     </application>
 
 </manifest>
