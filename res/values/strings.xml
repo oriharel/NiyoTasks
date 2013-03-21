@@ -92,5 +92,7 @@
     <string name="btWelcome2">Launch NIYO Tasks?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="searchAdress">Search Address...</string>
+    <string name="done">Done</string>
 
 </resources>

@@ -1,9 +1,12 @@
 package com.niyo.auto;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -15,7 +18,7 @@ import com.niyo.R;
 import com.niyo.SettingsManager;
 import com.niyo.auto.map.NiyoMapActivity;
 
-public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickListener {
+public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 
 	private static final String LOG_TAG = CreateAutoBoxAcitivty.class.getSimpleName();
 	private static final String BOX_TITLE_KEY_EXTRA = "titleExtra";
@@ -27,14 +30,35 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickLis
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.create_auto_box_layout);
+		final ActionBar actionBar = getActionBar();
+        actionBar.setNavigationMode(ActionBar.DISPLAY_HOME_AS_UP);
 		
-		findViewById(R.id.boxSearchBtn).setOnClickListener(this);
+		findViewById(R.id.boxSearchBtn).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				EditText addressEdit = (EditText)findViewById(R.id.boxSearchEdit);
+				String userAddress = addressEdit.getText().toString();
+				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+				showMarker(userAddress);
+				
+			}
+		});
 		
 		setupEditMode();
 		
 		setupMap();
 		
-		findViewById(R.id.addBox).setOnClickListener(getSetBoxListener());
+//		findViewById(R.id.addBox).setOnClickListener(getSetBoxListener());
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.actions, menu);
+	    return true;
 	}
 
 	private void setupEditMode() {
@@ -105,8 +129,8 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickLis
 			@Override
 			public void onClick(View v) {
 				
-				TextView title = (TextView)findViewById(R.id.boxTitleEdit);
-				String titleStr = title.getText().toString();
+//				TextView title = (TextView)findViewById(R.id.boxTitleEdit);
+//				String titleStr = title.getText().toString();
 				Double latDbl = null;
 				Double lonDbl = null;
 //				if (mSeletctedAddress != null){
@@ -116,7 +140,7 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickLis
 //					SettingsManager.setFloat(CreateAutoBoxAcitivty.this, getLonKey(), lonDbl.floatValue());
 //				}
 //				
-				SettingsManager.setString(CreateAutoBoxAcitivty.this, getTitleKey(), titleStr);
+//				SettingsManager.setString(CreateAutoBoxAcitivty.this, getTitleKey(), titleStr);
 //				SettingsManager.setBoolean(CreateAutoBoxAcitivty.this, AutoActivity.SIX_PACK_CHANGED, true);
 //				finish();
 			}
@@ -154,20 +178,19 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity implements OnClickLis
 		return intent;
 	}
 
-	@Override
 	public void onClick(View v) {
 		
-		EditText addressEdit = (EditText)findViewById(R.id.boxSearchEdit);
-		String userAddress = addressEdit.getText().toString();
-		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-		showMarker(userAddress);
+//		EditText addressEdit = (EditText)findViewById(R.id.boxSearchEdit);
+//		String userAddress = addressEdit.getText().toString();
+//		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//		imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+//		showMarker(userAddress);
 	}
 
 	@Override
 	protected int getMapViewId() {
 		return R.id.map;
 	}
-	
+
 	
 }
