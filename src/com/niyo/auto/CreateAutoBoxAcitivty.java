@@ -1,10 +1,19 @@
 package com.niyo.auto;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -13,7 +22,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.MapFragment;
+import com.niyo.ClientLog;
 import com.niyo.R;
 import com.niyo.SettingsManager;
 import com.niyo.auto.map.NiyoMapActivity;
@@ -22,6 +36,7 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 
 	private static final String LOG_TAG = CreateAutoBoxAcitivty.class.getSimpleName();
 	private static final String BOX_TITLE_KEY_EXTRA = "titleExtra";
+	private static final String BOX_TITLE_DEFAULT_EXTRA = "titleDefaultExtra";
 	private static final String BOX_LAT_EXTRA = "latExtra";
 	private static final String BOX_LON_EXTRA = "lonExtra";
 	
@@ -63,26 +78,38 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 
 	private void setupEditMode() {
 		
-//		TextView title = (TextView)findViewById(R.id.boxTitleEdit);
-//		title.setText(SettingsManager.getString(this, getTitleKey()));
-//		
-//		Float lat = SettingsManager.getFloat(this, getLatKey(), 0);
-//		Float lon = SettingsManager.getFloat(this, getLonKey(), 0);
-//		
-//		ClientLog.d(LOG_TAG, "lat = "+lat);
-//		ClientLog.d(LOG_TAG, "lon = "+lon);
-//		
-//		if (!(lat == 0 || lon == 0)){
-//			
-//			Double latDbl = lat*1e6;
-//			Double lonDbl = lon*1e6;
-//			mSeletctedAddress = new GeoPoint(latDbl.intValue(), lonDbl.intValue());
-//			
-//			MapView mapView = (MapView)findViewById(getMapViewId());
-//			List<Overlay> overlays = mapView.getOverlays();
-//			Resources r = getResources();
-//			AutoItemizedOverlay markers = new AutoItemizedOverlay(r.getDrawable(R.drawable.marker));
-//			GeoPoint point = new GeoPoint(latDbl.intValue(), lonDbl.intValue());
+		Float lat = SettingsManager.getFloat(this, getLatKey(), 0);
+		Float lon = SettingsManager.getFloat(this, getLonKey(), 0);
+		
+		ClientLog.d(LOG_TAG, "lat = "+lat);
+		ClientLog.d(LOG_TAG, "lon = "+lon);
+		
+		if (!(lat == 0 || lon == 0)){
+			
+			Double latDbl = lat.doubleValue();
+			Double lonDbl = lon.doubleValue();
+//			LatLng latLbg = new LatLng(latDbl, lonDbl);
+			
+//			final GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
+			Geocoder coder = new Geocoder(this, Locale.getDefault());
+			EditText addressEdit = (EditText)findViewById(R.id.boxSearchEdit);
+			try {
+				List<Address> currentAddress = coder.getFromLocation(latDbl, lonDbl, 5);
+//				for (Address address : currentAddress) {
+					
+//					showAddressResults(currentAddress);
+					
+					Address selectedAddress = currentAddress.get(0);
+					StringBuffer addressName = new StringBuffer();
+					addressName.append(selectedAddress.getAddressLine(0)+" ");
+					addressName.append(selectedAddress.getAddressLine(1)+" ");
+					addressName.append(selectedAddress.getAddressLine(2)+" ");
+					addressEdit.setText(addressName);
+//				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 //			markers.addNewItem(point, "markerText", "snippet");
 //			
 //			overlays.add(markers);
@@ -118,7 +145,10 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 //			params[0] = lat.doubleValue();
 //			params[1] = lon.doubleValue();
 //			task.execute(params);
-//		}
+		}
+		
+		
+		
 		
 	}
 
@@ -152,6 +182,11 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 	private String getTitleKey() {
 		return getIntent().getStringExtra(BOX_TITLE_KEY_EXTRA);
 	}
+
+	private String getTitleDefault() {
+		return getIntent().getStringExtra(BOX_TITLE_DEFAULT_EXTRA);
+	}
+
 	
 	private String getLatKey(){
 		return getIntent().getStringExtra(BOX_LAT_EXTRA);
@@ -169,12 +204,13 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 		
 	}
 
-	public static Intent getCreationIntent(Activity acitivity, String titleKey, String latKey, String lonKey){
+	public static Intent getCreationIntent(Activity acitivity, String titleKey, String latKey, String lonKey, String titleDefault){
 		
 		Intent intent = new Intent(acitivity, CreateAutoBoxAcitivty.class);
 		intent.putExtra(BOX_TITLE_KEY_EXTRA, titleKey);
 		intent.putExtra(BOX_LAT_EXTRA, latKey);
 		intent.putExtra(BOX_LON_EXTRA, lonKey);
+		intent.putExtra(BOX_TITLE_DEFAULT_EXTRA, titleDefault);
 		return intent;
 	}
 
@@ -190,6 +226,74 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 	@Override
 	protected int getMapViewId() {
 		return R.id.map;
+	}
+
+	@Override
+	protected OnMarkerClickListener getOnMarkerClickListener() {
+		
+		final CreateAutoBoxAcitivty context = this;
+		
+		OnMarkerClickListener result = new OnMarkerClickListener() {
+			
+			@Override
+			public boolean onMarkerClick(Marker marker) {
+				
+				LatLng ltLng = marker.getPosition();
+				Double latDbl = ltLng.latitude;
+				Double lonDbl = ltLng.longitude;
+				ClientLog.d(LOG_TAG, "setting "+latDbl+" and "+lonDbl+" for key "+getLatKey()+" and "+getLonKey());
+				SettingsManager.setFloat(CreateAutoBoxAcitivty.this, getLatKey(), latDbl.floatValue());
+				SettingsManager.setFloat(CreateAutoBoxAcitivty.this, getLonKey(), lonDbl.floatValue());
+				SettingsManager.setBoolean(CreateAutoBoxAcitivty.this, AutoActivity.SIX_PACK_CHANGED, true);
+//				context.finish();
+				AlertDialog.Builder builder = new AlertDialog.Builder(context);
+				builder.setMessage("Edit Destination Name");
+				View dialogView = context.getLayoutInflater().inflate(R.layout.box_name_dialog, null);
+				final EditText nameEdit = (EditText)dialogView.findViewById(R.id.username);
+				nameEdit.setText(getTitleDefault());
+				builder.setView(dialogView);
+				
+				builder.setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			        	   
+			        	   ClientLog.d(LOG_TAG, "setting "+nameEdit.getText());
+			        	   SettingsManager.setString(CreateAutoBoxAcitivty.this, getTitleKey(), nameEdit.getText().toString());
+			               dialog.dismiss();
+			        	   context.finish();
+			           }
+			       });
+				builder.setNegativeButton(R.string.cancel_button_label, new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			               dialog.cancel();
+			           }
+			       });
+				AlertDialog dialog = builder.create();
+				dialog.show();
+				return true;
+			}
+		};
+		
+		return result;
+	}
+
+	protected InfoWindowAdapter getInfoWindowAdapter() {
+		
+		InfoWindowAdapter result = new InfoWindowAdapter() {
+			
+			@Override
+			public View getInfoWindow(Marker marker) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public View getInfoContents(Marker marker) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
+		
+		return result;
 	}
 
 	

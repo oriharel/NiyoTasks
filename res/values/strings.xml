@@ -94,5 +94,8 @@
     <string name="no">No</string>
     <string name="searchAdress">Search Address...</string>
     <string name="done">Done</string>
+    <string name="mosheSne2">משה סנה 5, כפר סבא</string>
+    <string name="setBoxName">Set destination name...</string>
+    <string name="addDest">Add New Destination</string>
 
 </resources>

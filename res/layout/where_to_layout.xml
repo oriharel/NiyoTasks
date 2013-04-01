@@ -18,42 +18,108 @@
             android:id="@+id/firstRow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/landscapeMargin"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:paddingLeft="20dip"
             android:paddingRight="20dip"
             android:weightSum="5" >
 
-            <Button
+            <LinearLayout
                 android:id="@+id/boxBtn1"
                 android:layout_width="0dip"
                 android:layout_height="100dip"
+                android:layout_gravity="center"
                 android:layout_weight="2"
                 android:background="@drawable/nav_btn_selector"
+                android:gravity="center"
                 android:onClick="navigateTo"
-                android:tag="32.163043,34.931545"
-                android:text="Work"
-                android:textColor="@color/text_color"
-                android:textSize="24sp" />
+                android:orientation="vertical" >
 
-            <View
+                <FrameLayout
+                    android:id="@+id/addNewCross1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" >
+
+                    <View
+                        android:id="@+id/view2"
+                        android:layout_width="2dip"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/crossMargin"
+                        android:background="@color/textColor" />
+
+                    <View
+                        android:id="@+id/view3"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dip"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/crossMargin"
+                        android:background="@color/textColor" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/box1Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/addDest"
+                    android:textColor="@color/textColor"
+                    android:textSize="@dimen/boxFontSize" />
+            
+            </LinearLayout>
+				<View
                 android:id="@+id/View02"
                 android:layout_width="0dip"
                 android:layout_height="10dip"
                 android:layout_weight="1"
                 android:visibility="visible" />
 
-            <Button
-                android:id="@+id/boxBtn2"
-                android:layout_width="0dip"
-                android:layout_height="100dip"
-                android:layout_weight="2"
-                android:background="@drawable/nav_btn_selector"
-                android:onClick="navigateTo"
-                android:tag="32.188857,34.896569"
-                android:text="Home"
-                android:textColor="@color/text_color"
-                android:textSize="24sp" />
+                <LinearLayout
+                    android:id="@+id/boxBtn2"
+                    android:layout_width="0dip"
+                    android:layout_height="100dip"
+                    android:layout_weight="2"
+                    android:background="@drawable/nav_btn_selector"
+                    android:gravity="center"
+                    android:onClick="navigateTo"
+                    android:orientation="vertical" >
+                <FrameLayout
+                    android:id="@+id/addNewCross2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <View
+                        android:id="@+id/view2"
+                        android:layout_width="2dip"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/crossMargin"
+                        android:background="@color/textColor" />
+
+                    <View
+                        android:id="@+id/view3"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dip"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/crossMargin"
+                        android:background="@color/textColor" />
+
+                </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/box2Name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TextView"
+                        android:textColor="@color/textColor"
+                        android:textSize="@dimen/boxFontSize" />
+
+            </LinearLayout>
+
+            
 
         </TableRow>
 
@@ -61,23 +127,54 @@
             android:id="@+id/secondRow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/landscapeMargin"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:paddingLeft="20dip"
             android:paddingRight="20dip"
             android:weightSum="5" >
 
-            <Button
+            <LinearLayout
                 android:id="@+id/boxBtn3"
                 android:layout_width="0dip"
                 android:layout_height="100dip"
                 android:layout_weight="2"
                 android:background="@drawable/nav_btn_selector"
+                android:gravity="center"
                 android:onClick="navigateTo"
-                android:tag="32.167724,34.874966"
-                android:text="Itchuk"
-                android:textColor="@color/text_color"
-                android:textSize="24sp" />
+                android:orientation="vertical" >
+                    <FrameLayout
+                    android:id="@+id/addNewCross3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <View
+                        android:id="@+id/view2"
+                        android:layout_width="2dip"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/crossMargin"
+                        android:background="@color/textColor" />
+
+                    <View
+                        android:id="@+id/view3"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dip"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/crossMargin"
+                        android:background="@color/textColor" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/box3Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textColor="@color/textColor"
+                    android:textSize="@dimen/boxFontSize" />
+
+</LinearLayout>
 
             <View
                 android:id="@+id/View01"
@@ -85,17 +182,47 @@
                 android:layout_height="10dip"
                 android:layout_weight="1" />
 
-            <Button
+            <LinearLayout
                 android:id="@+id/boxBtn4"
                 android:layout_width="0dip"
                 android:layout_height="100dip"
                 android:layout_weight="2"
                 android:background="@drawable/nav_btn_selector"
+                android:gravity="center"
                 android:onClick="navigateTo"
-                android:tag="32.167724,34.874966"
-                android:text="Noa"
-                android:textColor="@color/text_color"
-                android:textSize="24sp" />
+                android:orientation="vertical" >
+                <FrameLayout
+                    android:id="@+id/addNewCross4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <View
+                        android:id="@+id/view2"
+                        android:layout_width="2dip"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/crossMargin"
+                        android:background="@color/textColor" />
+
+                    <View
+                        android:id="@+id/view3"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dip"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/crossMargin"
+                        android:background="@color/textColor" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/box4Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textColor="@color/textColor"
+                    android:textSize="@dimen/boxFontSize" />
+
+</LinearLayout>
 
         </TableRow>
 
@@ -109,17 +236,47 @@
             android:paddingRight="20dip"
             android:weightSum="5" >
 
-            <Button
+            <LinearLayout
                 android:id="@+id/boxBtn5"
                 android:layout_width="0dip"
                 android:layout_height="100dip"
                 android:layout_weight="2"
                 android:background="@drawable/nav_btn_selector"
+                android:gravity="center"
                 android:onClick="navigateTo"
-                android:tag="32.197249,34.878234"
-                android:text="Renanim"
-                android:textColor="@color/text_color"
-                android:textSize="24sp" />
+                android:orientation="vertical" >
+                <FrameLayout
+                    android:id="@+id/addNewCross5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <View
+                        android:id="@+id/view2"
+                        android:layout_width="2dip"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/crossMargin"
+                        android:background="@color/textColor" />
+
+                    <View
+                        android:id="@+id/view3"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dip"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/crossMargin"
+                        android:background="@color/textColor" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/box5Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textColor="@color/textColor"
+                    android:textSize="@dimen/boxFontSize" />
+
+</LinearLayout>
 
             <View
                 android:id="@+id/view1"
@@ -127,17 +284,48 @@
                 android:layout_height="10dip"
                 android:layout_weight="1" />
 
-            <Button
+            <LinearLayout
                 android:id="@+id/boxBtn6"
                 android:layout_width="0dip"
                 android:layout_height="100dip"
                 android:layout_weight="2"
                 android:background="@drawable/nav_btn_selector"
+                android:gravity="center"
                 android:onClick="navigateTo"
-                android:tag="32.186957,34.928117"
-                android:text="Ferber"
-                android:textColor="@color/text_color"
-                android:textSize="24sp" />
+                android:orientation="vertical" >
+
+                <FrameLayout
+                    android:id="@+id/addNewCross6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <View
+                        android:id="@+id/view2"
+                        android:layout_width="2dip"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/crossMargin"
+                        android:background="@color/textColor" />
+
+                    <View
+                        android:id="@+id/view3"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dip"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/crossMargin"
+                        android:background="@color/textColor" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/box6Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textColor="@color/textColor"
+                    android:textSize="@dimen/boxFontSize" />
+
+</LinearLayout>
 
         </TableRow>
     </TableLayout>

@@ -13,10 +13,14 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.CancelableCallback;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.LatLngBoundsCreator;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.niyo.ClientLog;
 import com.niyo.NiyoAbstractActivity;
@@ -43,14 +47,9 @@ public abstract class NiyoMapActivity extends NiyoAbstractActivity {
 				
 			}
 			else{
-				List<LatLng> latlngs = new ArrayList<LatLng>();
-				for (Address address : addresses) {
-					double lat = addresses.get(0).getLatitude();
-					double lon = addresses.get(0).getLongitude();
-					latlngs.add(new LatLng(lat, lon));
-				}
+				
 					
-				showAddressResults(latlngs);
+				showAddressResults(addresses);
 			}
 			
 		} catch (IOException e) {
@@ -63,17 +62,32 @@ public abstract class NiyoMapActivity extends NiyoAbstractActivity {
 		Toast.makeText(this, "No results for "+userAddress, Toast.LENGTH_LONG).show();
 	}
 
-	private void showAddressResults(List<LatLng> latlngs) {
+	protected void showAddressResults(List<Address> addresses) {
 		
-		GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
+		final GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
 		LatLngBounds.Builder boundsBuilder = LatLngBounds.builder();
-		for (LatLng latLng : latlngs) {
+		
+//		List<LatLng> latlngs = new ArrayList<LatLng>();
+		for (Address address : addresses) {
+			double lat = address.getLatitude();
+			double lon = address.getLongitude();
+			LatLng latLng = new LatLng(lat, lon);
+//			latlngs.add(new LatLng(lat, lon));
 			boundsBuilder.include(latLng);
+			ClientLog.d(LOG_TAG, "address is "+address);
 			map.addMarker(new MarkerOptions().position(latLng));
 		}
+//		for (LatLng latLng : latlngs) {
+			
+//		}
 		
-		CameraUpdate update = CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 2);
+		map.setOnMarkerClickListener(getOnMarkerClickListener());
+//		map.setInfoWindowAdapter(getInfoWindowAdapter());
+		
+		CameraUpdate update = CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 200);
+		
 		map.animateCamera(update);
+		
 
 //		MapView mapView = (MapView)findViewById(getMapViewId());
 //		List<Overlay> overlays = mapView.getOverlays();
@@ -94,6 +108,10 @@ public abstract class NiyoMapActivity extends NiyoAbstractActivity {
 //		centerAndZoom(addresses);
 	}
 	
+//	protected abstract InfoWindowAdapter getInfoWindowAdapter();
+
+	protected abstract OnMarkerClickListener getOnMarkerClickListener();
+
 	protected abstract int getMapViewId();
 
 	protected void centerAndZoom(List<Address> addresses) {

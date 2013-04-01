@@ -82,8 +82,8 @@ public class AutoActivity extends NiyoAbstractActivity {
 	private JSONArray mTasks;
 	private Boolean mTasksReady = false;
 	
-	private Map<Integer, String> mDefaultsTitles;
-	private Map<Integer, String> mDefaultsLocations;
+//	private Map<Integer, String> mDefaultsTitles;
+//	private Map<Integer, String> mDefaultsLocations;
 	
 	private MyLocationListener mGpsListener;
 	private MyLocationListener mNetworkListener;
@@ -99,7 +99,7 @@ public class AutoActivity extends NiyoAbstractActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         setupBoxBtnsListeners();
-        saveDefaults();
+        
         
         URL url= null;
         
@@ -211,25 +211,40 @@ public class AutoActivity extends NiyoAbstractActivity {
 	}
 
 
-	private void saveDefaults() {
+	private void initializeBoxes() {
 		
-    	mDefaultsTitles = new HashMap<Integer, String>();
-    	mDefaultsLocations = new HashMap<Integer, String>();
-    	
-    	List<Integer> boxIds = new ArrayList<Integer>();
-    	
-    	boxIds.add(R.id.boxBtn1);
-    	boxIds.add(R.id.boxBtn2);
-    	boxIds.add(R.id.boxBtn3);
-    	boxIds.add(R.id.boxBtn4);
-    	boxIds.add(R.id.boxBtn5);
-    	boxIds.add(R.id.boxBtn6);
-    	
-    	for (Integer boxId : boxIds) {
+		for (int i = 1; i < 7; i++) {
+			String currBoxTitle = "boxTitle"+i;
+			String currBoxLat = "boxLat"+i;
+			String currBoxLon = "boxLon"+i;
 			
-    		Button box = (Button)findViewById(boxId);
-    		mDefaultsTitles.put(box.getId(), box.getText().toString());
-    		mDefaultsLocations.put(box.getId(), (String)box.getTag());
+			ClientLog.d(LOG_TAG, "currBoxTitle="+currBoxTitle+" currBoxLat="+currBoxLat+" currBoxLon="+currBoxLon);
+			
+			Float storedLat = SettingsManager.getFloat(this, currBoxLat, 0);
+			Float storedLon = SettingsManager.getFloat(this, currBoxLon, 0);
+			String storedTitle = SettingsManager.getString(this, currBoxTitle);
+			ClientLog.d(LOG_TAG, "storedLat="+storedLat+" storedLon="+storedLon+" storedTitle="+storedTitle);
+			
+			int crossId = getResources().getIdentifier("id/addNewCross"+i, null, getPackageName());
+			int nameId = getResources().getIdentifier("id/box"+i+"Name", null, getPackageName());
+			int boxId = getResources().getIdentifier("id/boxBtn"+i, null, getPackageName());
+			ClientLog.d(LOG_TAG, "crossId="+crossId+" nameId="+nameId+" boxId="+boxId);
+			View boxView = findViewById(boxId);
+			
+			if (storedLat != 0 && storedLon != 0) {
+				
+				findViewById(crossId).setVisibility(View.GONE);
+				TextView boxName = (TextView)findViewById(nameId);
+				boxName.setVisibility(View.VISIBLE);
+				boxView.setTag(storedLat+","+storedLon);
+				boxName.setText(storedTitle);
+				
+			}
+			else {
+				
+				findViewById(crossId).setVisibility(View.VISIBLE);
+				findViewById(nameId).setVisibility(View.GONE);
+			}
 		}
     	
     	
@@ -239,7 +254,8 @@ public class AutoActivity extends NiyoAbstractActivity {
 	@Override
     protected void onResume(){
     	super.onResume();
-    	setupBoxes();
+//    	setupBoxes();
+    	initializeBoxes();
     	LocationUtil.updateLocation(this, mGpsListener, mNetworkListener, mPassiveListener);
     }
 	
@@ -252,31 +268,35 @@ public class AutoActivity extends NiyoAbstractActivity {
 	
 	private void setupBoxes() {
     	
-		if (hasUSerChanged()){
-			List<Integer> boxIds = new ArrayList<Integer>();
-	    	
-	    	boxIds.add(R.id.boxBtn1);
-	    	boxIds.add(R.id.boxBtn2);
-	    	boxIds.add(R.id.boxBtn3);
-	    	boxIds.add(R.id.boxBtn4);
-	    	boxIds.add(R.id.boxBtn5);
-	    	boxIds.add(R.id.boxBtn6);
-	    	
-	    	for (Integer boxId : boxIds) {
-				
-	    		Button btn = (Button)findViewById(boxId);
-	    		
-	    		String title = SettingsManager.getString(this, getTitleKey(btn));
-	    		btn.setText(title);
-	    		Float lat = SettingsManager.getFloat(this, getLatKey(btn), 0);
-	    		Float lon = SettingsManager.getFloat(this, getLonKey(btn), 0);
-	    		
-	    		if (! (lat == 0 || lon == 0)){
-	    			String tag = lat+","+lon;
-	    			btn.setTag(tag);
-	    		}
-			}
-		}
+//		if (hasUSerChanged()){
+//			List<Integer> boxIds = new ArrayList<Integer>();
+//	    	
+//	    	boxIds.add(R.id.boxBtn1);
+//	    	boxIds.add(R.id.boxBtn2);
+//	    	boxIds.add(R.id.boxBtn3);
+//	    	boxIds.add(R.id.boxBtn4);
+//	    	boxIds.add(R.id.boxBtn5);
+//	    	boxIds.add(R.id.boxBtn6);
+//	    	
+//	    	for (Integer boxId : boxIds) {
+//				
+//	    		Button btn = (Button)findViewById(boxId);
+//	    		
+//	    		String title = SettingsManager.getString(this, getTitleKey(btn));
+//	    		
+//	    		if (title != null && !title.equals("")){
+//	    			btn.setText(title);
+//	    		}
+//	    		
+//	    		Float lat = SettingsManager.getFloat(this, getLatKey(btn), 0);
+//	    		Float lon = SettingsManager.getFloat(this, getLonKey(btn), 0);
+//	    		ClientLog.d(LOG_TAG, "for "+boxId+" I got lat "+lat+" and lon "+lon);
+//	    		if (! (lat == 0 || lon == 0)){
+//	    			String tag = lat+","+lon;
+//	    			btn.setTag(tag);
+//	    		}
+//			}
+//		}
     	
 		
 	}
@@ -324,26 +344,6 @@ public class AutoActivity extends NiyoAbstractActivity {
 
 	private void resotreDefaults() {
 		
-		List<Integer> boxIds = new ArrayList<Integer>();
-    	
-    	boxIds.add(R.id.boxBtn1);
-    	boxIds.add(R.id.boxBtn2);
-    	boxIds.add(R.id.boxBtn3);
-    	boxIds.add(R.id.boxBtn4);
-    	boxIds.add(R.id.boxBtn5);
-    	boxIds.add(R.id.boxBtn6);
-    	for (Integer boxId : boxIds) {
-			Button btn = (Button)findViewById(boxId);
-			
-			btn.setText(mDefaultsTitles.get(boxId));
-			btn.setTag(mDefaultsLocations.get(boxId));
-			
-			SettingsManager.removeKey(this, getTitleKey(btn));
-			SettingsManager.removeKey(this, getLatKey(btn));
-			SettingsManager.removeKey(this, getLonKey(btn));
-		}
-    	
-    	SettingsManager.setBoolean(this, SIX_PACK_CHANGED, false);
 	}
 
 
@@ -359,29 +359,36 @@ public class AutoActivity extends NiyoAbstractActivity {
 
 	private OnLongClickListener getBoxLongClickListener() {
 		
-		final AutoActivity context = this;
+		
 		OnLongClickListener result = new OnLongClickListener() {
 			
 			@Override
 			public boolean onLongClick(View v) {
 				
 				ClientLog.d(LOG_TAG, "locations of button is "+v.getTag());
-				int playAvailabilityCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-				if (playAvailabilityCode == ConnectionResult.SUCCESS) {
-					Intent intent = CreateAutoBoxAcitivty.getCreationIntent(AutoActivity.this, getTitleKey(v), getLatKey(v), getLonKey(v));
-					startActivity(intent);
-					
-				}
-				else {
-//					Toast.makeText(context, "You must have Google Play installed", Toast.LENGTH_LONG).show();
-					GooglePlayServicesUtil.getErrorDialog(playAvailabilityCode, context, 0);
-				}
+				startBoxConfigActivity(v);
 				
 				return true;
 				
 			}
 		};
 		return result;
+	}
+	
+	private void startBoxConfigActivity(View v) {
+		
+		int playAvailabilityCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+		if (playAvailabilityCode == ConnectionResult.SUCCESS) {
+//			Button btn = (Button)v;
+//			String currentName = btn.getText().toString();
+			Intent intent = CreateAutoBoxAcitivty.getCreationIntent(AutoActivity.this,
+					getTitleKey(v), getLatKey(v), getLonKey(v), "");
+			startActivity(intent);
+			
+		}
+		else {
+			GooglePlayServicesUtil.getErrorDialog(playAvailabilityCode, this, 0);
+		}
 	}
 
 	protected String getLonKey(View v) {
@@ -496,25 +503,25 @@ public class AutoActivity extends NiyoAbstractActivity {
     public void navigateTo(View view) 
 	{
     	ClientLog.d(LOG_TAG, "navigating to");
-    	if (getTasksReady() && getTasks().length() > 0){
-    		String locationStr = (String)view.getTag();
-    		TextView btn = (TextView)view;
-    		
-        	String[] coordinsatesStrArray = locationStr.split(",");
-        	AutoPoint to = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]), btn.getText().toString());
-        	Intent intent;
-			try {
-				intent = AutoMapActivity.getCreationIntent(this, to, getCategoryIdsToTaskContent());
-				startActivity(intent);
-			} catch (JSONException e) {
-				ClientLog.e(LOG_TAG, "Error!", e);
-			}
-        	
-    	}
-    	else{
+//    	if (getTasksReady() && getTasks().length() > 0){
+//    		String locationStr = (String)view.getTag();
+//    		TextView btn = (TextView)view;
+//    		
+//        	String[] coordinsatesStrArray = locationStr.split(",");
+//        	AutoPoint to = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]), btn.getText().toString());
+//        	Intent intent;
+//			try {
+//				intent = AutoMapActivity.getCreationIntent(this, to, getCategoryIdsToTaskContent());
+//				startActivity(intent);
+//			} catch (JSONException e) {
+//				ClientLog.e(LOG_TAG, "Error!", e);
+//			}
+//        	
+//    	}
+//    	else{
     		ClientLog.d(LOG_TAG, "tasks are not ready");
     		onWithTheNav(view);
-    	}
+//    	}
     	
 	}
     
@@ -522,20 +529,30 @@ public class AutoActivity extends NiyoAbstractActivity {
 	private void onWithTheNav(View view) {
 		
 		String locationStr = (String)view.getTag();
-		TextView btn = (TextView)view;
 		
-    	String[] coordinsatesStrArray = locationStr.split(",");
-    	AutoPoint point = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]), btn.getText().toString());
-    	String geoQuery = "geo:"+point.getLat()+","+point.getLon();
-    	Intent intent = new Intent (Intent.ACTION_VIEW, Uri.parse(geoQuery)); 
-    	if (isCallable(intent))
-    	{
-    		startActivity(intent);
-    	}
-    	else
-    	{
-    		Toast.makeText(this, "Go get yourself a map app", Toast.LENGTH_LONG).show();
-    	}
+		ClientLog.d(LOG_TAG, "onWithTheNav with "+locationStr);
+		
+		if (locationStr == null || locationStr.equals("")) {
+			startBoxConfigActivity(view);
+		}
+		else {
+			
+//			TextView btn = (TextView)view;
+			
+	    	String[] coordinsatesStrArray = locationStr.split(",");
+	    	AutoPoint point = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]), "getItFromSM!");
+	    	String geoQuery = "geo:"+point.getLat()+","+point.getLon();
+	    	Intent intent = new Intent (Intent.ACTION_VIEW, Uri.parse(geoQuery)); 
+	    	if (isCallable(intent))
+	    	{
+	    		startActivity(intent);
+	    	}
+	    	else
+	    	{
+	    		Toast.makeText(this, "Go get yourself a map app", Toast.LENGTH_LONG).show();
+	    	}
+		}
+		
 	}
 	
 	private boolean isCallable(Intent intent) {
