@@ -15,6 +15,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -61,6 +62,15 @@ public abstract class NiyoMapActivity extends NiyoAbstractActivity {
 		
 		Toast.makeText(this, "No results for "+userAddress, Toast.LENGTH_LONG).show();
 	}
+	
+	protected String getAddressString(Address selectedAddress) {
+		StringBuffer addressName = new StringBuffer();
+		addressName.append(selectedAddress.getAddressLine(0)+" ");
+		addressName.append(selectedAddress.getAddressLine(1)+" ");
+		addressName.append(selectedAddress.getAddressLine(2)+" ");
+		
+		return addressName.toString();
+	}
 
 	protected void showAddressResults(List<Address> addresses) {
 		
@@ -74,14 +84,16 @@ public abstract class NiyoMapActivity extends NiyoAbstractActivity {
 			LatLng latLng = new LatLng(lat, lon);
 //			latlngs.add(new LatLng(lat, lon));
 			boundsBuilder.include(latLng);
-			ClientLog.d(LOG_TAG, "address is "+address);
-			map.addMarker(new MarkerOptions().position(latLng));
+			String addressToShow = getAddressString(address);
+			ClientLog.d(LOG_TAG, "getAddressString(address) is "+addressToShow);
+			map.addMarker(new MarkerOptions().position(latLng).title(addressToShow).snippet("Tap here tp add!"));
 		}
 //		for (LatLng latLng : latlngs) {
 			
 //		}
 		
-		map.setOnMarkerClickListener(getOnMarkerClickListener());
+//		map.setOnMarkerClickListener(getOnMarkerClickListener());
+		map.setOnInfoWindowClickListener(getOnInfoClickListener());
 //		map.setInfoWindowAdapter(getInfoWindowAdapter());
 		
 		CameraUpdate update = CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 200);
@@ -110,7 +122,7 @@ public abstract class NiyoMapActivity extends NiyoAbstractActivity {
 	
 //	protected abstract InfoWindowAdapter getInfoWindowAdapter();
 
-	protected abstract OnMarkerClickListener getOnMarkerClickListener();
+	protected abstract OnInfoWindowClickListener getOnInfoClickListener();
 
 	protected abstract int getMapViewId();
 

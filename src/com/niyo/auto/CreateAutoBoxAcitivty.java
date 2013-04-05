@@ -13,17 +13,13 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.MapFragment;
@@ -31,6 +27,7 @@ import com.niyo.ClientLog;
 import com.niyo.R;
 import com.niyo.SettingsManager;
 import com.niyo.auto.map.NiyoMapActivity;
+import com.niyo.auto.map.PopupAdapter;
 
 public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 
@@ -45,6 +42,7 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.create_auto_box_layout);
+		setTitle("Create A Destination");
 		final ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.DISPLAY_HOME_AS_UP);
 		
@@ -69,12 +67,12 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 //		findViewById(R.id.addBox).setOnClickListener(getSetBoxListener());
 	}
 	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.actions, menu);
-	    return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//	    MenuInflater inflater = getMenuInflater();
+//	    inflater.inflate(R.menu.actions, menu);
+//	    return true;
+//	}
 
 	private void setupEditMode() {
 		
@@ -104,11 +102,12 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 					addressName.append(selectedAddress.getAddressLine(0)+" ");
 					addressName.append(selectedAddress.getAddressLine(1)+" ");
 					addressName.append(selectedAddress.getAddressLine(2)+" ");
+					ClientLog.d(LOG_TAG, "edit address "+addressName);
 					addressEdit.setText(addressName);
 //				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ClientLog.e(LOG_TAG, "can't extract address ", e);
 			}
 //			markers.addNewItem(point, "markerText", "snippet");
 //			
@@ -201,6 +200,7 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 		GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
 		
 		map.getUiSettings().setZoomControlsEnabled(true);
+		map.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
 		
 	}
 
@@ -229,14 +229,14 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 	}
 
 	@Override
-	protected OnMarkerClickListener getOnMarkerClickListener() {
+	protected OnInfoWindowClickListener getOnInfoClickListener() {
 		
 		final CreateAutoBoxAcitivty context = this;
 		
-		OnMarkerClickListener result = new OnMarkerClickListener() {
+		OnInfoWindowClickListener result = new OnInfoWindowClickListener() {
 			
 			@Override
-			public boolean onMarkerClick(Marker marker) {
+			public void onInfoWindowClick(Marker marker) {
 				
 				LatLng ltLng = marker.getPosition();
 				Double latDbl = ltLng.latitude;
@@ -247,7 +247,7 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 				SettingsManager.setBoolean(CreateAutoBoxAcitivty.this, AutoActivity.SIX_PACK_CHANGED, true);
 //				context.finish();
 				AlertDialog.Builder builder = new AlertDialog.Builder(context);
-				builder.setMessage("Edit Destination Name");
+				builder.setMessage("Destination Name");
 				View dialogView = context.getLayoutInflater().inflate(R.layout.box_name_dialog, null);
 				final EditText nameEdit = (EditText)dialogView.findViewById(R.id.username);
 				nameEdit.setText(getTitleDefault());
@@ -269,8 +269,8 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 			       });
 				AlertDialog dialog = builder.create();
 				dialog.show();
-				return true;
 			}
+
 		};
 		
 		return result;

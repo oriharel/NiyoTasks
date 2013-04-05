@@ -3,4 +3,5 @@
     <dimen name="crossMargin">10dip</dimen>
     <dimen name="boxFontSize">20sp</dimen>
     <dimen name="landscapeMargin">5dip</dimen>
+    <dimen name="popupTextSize">20sp</dimen>
 </resources>

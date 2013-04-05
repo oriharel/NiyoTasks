@@ -34,6 +34,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
@@ -527,7 +528,7 @@ public class AdGenericTaskActivity extends NiyoMapActivity implements OnClickLis
 	}
 
 	@Override
-	protected OnMarkerClickListener getOnMarkerClickListener() {
+	protected OnInfoWindowClickListener getOnInfoClickListener() {
 		// TODO Auto-generated method stub
 		return null;
 	}

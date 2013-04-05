@@ -306,41 +306,41 @@ public class AutoActivity extends NiyoAbstractActivity {
 	}
 
 
-	@Override
-    public boolean onCreateOptionsMenu(Menu menu) 
-	{
-		ClientLog.d(LOG_TAG, "onCreateOptionsMenu started");
-		try {
-			MenuItem settingsMenuItem1 = menu.add(0, GO_TO_TODO_LIST_CONTEXT_MENU_ITEM, 0, "Go To List");
-			MenuItem settingsMenuItem2 = menu.add(0, RESTORE_DEFAULTS_CONTEXT_MENU_ITEM, 0, "Restore Defaults");
-			settingsMenuItem1.setIcon(R.drawable.ic_menu_agenda);
-			settingsMenuItem2.setIcon(R.drawable.ic_menu_preferences);
-		} catch (Exception e) 
-		{
-			ClientLog.e(LOG_TAG, "Error!", e);
-		}
-		return true;
-	}
-    
-    @Override
-	public boolean onOptionsItemSelected(MenuItem menuItem) 
-	{
-    	if (menuItem.getItemId() == GO_TO_TODO_LIST_CONTEXT_MENU_ITEM){
-    		
-    		Intent intent = CategoryTasksActivity.getCreationIntent(this);
-        	startActivity(intent);
-        	return true;
-    	}
-    	else if (menuItem.getItemId() == RESTORE_DEFAULTS_CONTEXT_MENU_ITEM){
-    		
-    		resotreDefaults();
-        	return true;
-    	}
-    	else{
-    		return false;
-    	}
-    	
-	}
+//	@Override
+//    public boolean onCreateOptionsMenu(Menu menu) 
+//	{
+//		ClientLog.d(LOG_TAG, "onCreateOptionsMenu started");
+//		try {
+//			MenuItem settingsMenuItem1 = menu.add(0, GO_TO_TODO_LIST_CONTEXT_MENU_ITEM, 0, "Go To List");
+//			MenuItem settingsMenuItem2 = menu.add(0, RESTORE_DEFAULTS_CONTEXT_MENU_ITEM, 0, "Restore Defaults");
+//			settingsMenuItem1.setIcon(R.drawable.ic_menu_agenda);
+//			settingsMenuItem2.setIcon(R.drawable.ic_menu_preferences);
+//		} catch (Exception e) 
+//		{
+//			ClientLog.e(LOG_TAG, "Error!", e);
+//		}
+//		return true;
+//	}
+//    
+//    @Override
+//	public boolean onOptionsItemSelected(MenuItem menuItem) 
+//	{
+//    	if (menuItem.getItemId() == GO_TO_TODO_LIST_CONTEXT_MENU_ITEM){
+//    		
+//    		Intent intent = CategoryTasksActivity.getCreationIntent(this);
+//        	startActivity(intent);
+//        	return true;
+//    	}
+//    	else if (menuItem.getItemId() == RESTORE_DEFAULTS_CONTEXT_MENU_ITEM){
+//    		
+//    		resotreDefaults();
+//        	return true;
+//    	}
+//    	else{
+//    		return false;
+//    	}
+//    	
+//	}
 
 	private void resotreDefaults() {
 		

@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, CategoriesActivity!</string>
-    <string name="app_name">NiyoTasks</string>
+    <string name="app_name">Niyo Go!</string>
     
     <string
         name="label">NIYO Tasks</string>
@@ -97,5 +97,6 @@
     <string name="mosheSne2">משה סנה 5, כפר סבא</string>
     <string name="setBoxName">Set destination name...</string>
     <string name="addDest">Add New Destination</string>
+    <string name="tapHere">Please tap here to add!</string>
 
 </resources>
