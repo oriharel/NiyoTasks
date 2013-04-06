@@ -19,6 +19,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -38,9 +39,11 @@ import com.niyo.LocationUtil;
 import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 import com.niyo.ServiceCaller;
+import com.niyo.SettingsActivity;
 import com.niyo.SettingsManager;
 import com.niyo.StringUtils;
 import com.niyo.auto.map.AutoMapActivity;
+import com.niyo.auto.map.ChooseAppDialog;
 import com.niyo.auto.map.MyLocationListener;
 import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
@@ -71,12 +74,20 @@ public class AutoActivity extends NiyoAbstractActivity {
 	private static final String BOX_LON_4_KEY = "boxLon4";
 	private static final String BOX_LON_5_KEY = "boxLon5";
 	private static final String BOX_LON_6_KEY = "boxLon6";
+	
+	
 
 	private static final int GO_TO_TODO_LIST_CONTEXT_MENU_ITEM = 0;
 
 	private static final int RESTORE_DEFAULTS_CONTEXT_MENU_ITEM = 1;
 
 	public static final String SIX_PACK_CHANGED = "sixPackChangedKey";
+
+	private static final String USE_GOOGLE_MAPS = "useGoogleMaps";
+
+	private static final String GOOGLE_MAPS = "googleMaps";
+
+	private static final int SETTINGS = 4;
 	
 	private Uri mUri;
 	private JSONArray mTasks;
@@ -94,6 +105,7 @@ public class AutoActivity extends NiyoAbstractActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.where_to_layout);
+        PreferenceManager.setDefaultValues(this, R.xml.niyo_prefs, false);
         Log.d(LOG_TAG, "onCreate started");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
@@ -306,41 +318,45 @@ public class AutoActivity extends NiyoAbstractActivity {
 	}
 
 
-//	@Override
-//    public boolean onCreateOptionsMenu(Menu menu) 
-//	{
-//		ClientLog.d(LOG_TAG, "onCreateOptionsMenu started");
-//		try {
-//			MenuItem settingsMenuItem1 = menu.add(0, GO_TO_TODO_LIST_CONTEXT_MENU_ITEM, 0, "Go To List");
-//			MenuItem settingsMenuItem2 = menu.add(0, RESTORE_DEFAULTS_CONTEXT_MENU_ITEM, 0, "Restore Defaults");
-//			settingsMenuItem1.setIcon(R.drawable.ic_menu_agenda);
-//			settingsMenuItem2.setIcon(R.drawable.ic_menu_preferences);
-//		} catch (Exception e) 
-//		{
-//			ClientLog.e(LOG_TAG, "Error!", e);
-//		}
-//		return true;
-//	}
-//    
-//    @Override
-//	public boolean onOptionsItemSelected(MenuItem menuItem) 
-//	{
-//    	if (menuItem.getItemId() == GO_TO_TODO_LIST_CONTEXT_MENU_ITEM){
-//    		
-//    		Intent intent = CategoryTasksActivity.getCreationIntent(this);
-//        	startActivity(intent);
-//        	return true;
-//    	}
-//    	else if (menuItem.getItemId() == RESTORE_DEFAULTS_CONTEXT_MENU_ITEM){
-//    		
-//    		resotreDefaults();
-//        	return true;
-//    	}
-//    	else{
-//    		return false;
-//    	}
-//    	
-//	}
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) 
+	{
+		ClientLog.d(LOG_TAG, "onCreateOptionsMenu started");
+		try {
+			MenuItem settingsMenuItem1 = menu.add(0, SETTINGS, 0, "Settings");
+			settingsMenuItem1.setIcon(R.drawable.ic_menu_settings_holo_light);
+		} catch (Exception e) 
+		{
+			ClientLog.e(LOG_TAG, "Error!", e);
+		}
+		return true;
+	}
+    
+    @Override
+	public boolean onOptionsItemSelected(MenuItem menuItem) 
+	{
+    	if (menuItem.getItemId() == GO_TO_TODO_LIST_CONTEXT_MENU_ITEM){
+    		
+    		Intent intent = CategoryTasksActivity.getCreationIntent(this);
+        	startActivity(intent);
+        	return true;
+    	}
+    	else if (menuItem.getItemId() == RESTORE_DEFAULTS_CONTEXT_MENU_ITEM){
+    		
+    		resotreDefaults();
+        	return true;
+    	}
+		else if (menuItem.getItemId() == SETTINGS){
+    		
+    		Intent intent = SettingsActivity.getCreationIntent(this);
+    		startActivity(intent);
+        	return true;
+    	}
+    	else{
+    		return false;
+    	}
+    	
+	}
 
 	private void resotreDefaults() {
 		
@@ -528,7 +544,7 @@ public class AutoActivity extends NiyoAbstractActivity {
     
 	private void onWithTheNav(View view) {
 		
-		String locationStr = (String)view.getTag();
+		final String locationStr = (String)view.getTag();
 		
 		ClientLog.d(LOG_TAG, "onWithTheNav with "+locationStr);
 		
@@ -539,22 +555,84 @@ public class AutoActivity extends NiyoAbstractActivity {
 			
 //			TextView btn = (TextView)view;
 			
-	    	String[] coordinsatesStrArray = locationStr.split(",");
-	    	AutoPoint point = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]), "getItFromSM!");
-	    	String geoQuery = "geo:"+point.getLat()+","+point.getLon();
-	    	Intent intent = new Intent (Intent.ACTION_VIEW, Uri.parse(geoQuery)); 
-	    	if (isCallable(intent))
-	    	{
-	    		startActivity(intent);
-	    	}
-	    	else
-	    	{
-	    		Toast.makeText(this, "Go get yourself a map app", Toast.LENGTH_LONG).show();
-	    	}
+//			boolean storedApp = SettingsManager.getBoolean(this, USE_GOOGLE_MAPS, false);
+			String storedApp = SettingsManager.getString(this, USE_GOOGLE_MAPS);
+			final AutoActivity context = this;
+			
+			ClientLog.d(LOG_TAG, "storedApp is "+storedApp);
+			
+			if (storedApp == null || storedApp.equals(getResources().getString(R.string.noneMapSet))) {
+				//pop dialog
+				final ChooseAppDialog dialog = new ChooseAppDialog(this);
+				dialog.setGoogleMapsListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						String geoQueryPrefix = "google.navigation:q=";
+						
+						if (dialog.getNeverAsk()) {
+							SettingsManager.setString(context, USE_GOOGLE_MAPS, GOOGLE_MAPS);
+						}
+						
+						dialog.dismiss();
+						realyOnWithNav(geoQueryPrefix, locationStr);
+						
+					}
+				});
+				
+				dialog.setSysMapsListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						
+						String geoQueryPrefix = "geo:";
+						
+						if (dialog.getNeverAsk()) {
+							SettingsManager.setString(context, USE_GOOGLE_MAPS, "sysDecide");
+						}
+						
+						dialog.dismiss();
+						realyOnWithNav(geoQueryPrefix, locationStr);
+						
+					}
+				});
+				dialog.show();
+			}
+			else {
+				
+				String geoQueryPrefix = "geo:";
+				if (storedApp.equals(GOOGLE_MAPS)) {
+					geoQueryPrefix = "google.navigation:q=";
+				}
+				
+				realyOnWithNav(geoQueryPrefix, locationStr);
+			}
+			
+			
 		}
 		
 	}
 	
+	private void realyOnWithNav(String geoQueryPrefix, String locationStr) {
+		
+		
+		
+    	String[] coordinsatesStrArray = locationStr.split(",");
+    	AutoPoint point = new AutoPoint(Double.parseDouble(coordinsatesStrArray[0]), Double.parseDouble(coordinsatesStrArray[1]), "getItFromSM!");
+    	String geoQuery = geoQueryPrefix+point.getLat()+","+point.getLon();
+    	Intent intent = new Intent (Intent.ACTION_VIEW, Uri.parse(geoQuery)); 
+    	if (isCallable(intent))
+    	{
+    		startActivity(intent);
+    	}
+    	else
+    	{
+    		Toast.makeText(this, "Go get yourself a map app", Toast.LENGTH_LONG).show();
+    	}
+		
+	}
+
+
 	private boolean isCallable(Intent intent) {
         List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 
             PackageManager.MATCH_DEFAULT_ONLY);

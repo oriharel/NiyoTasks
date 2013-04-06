@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chooseMapsLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/tenDip" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/tenDip"
+        android:text="@string/chooseMapLabel"
+        android:textSize="@dimen/popupTextSize" />
+
+    <Button
+        android:id="@+id/gMapBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/tenDip"
+        android:background="@drawable/nav_btn_selector"
+        android:text="@string/useGoogleMaps"
+        android:textColor="@color/textColor" />
+
+    <Button
+        android:id="@+id/sysMapBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/tenDip"
+        android:background="@drawable/nav_btn_selector"
+        android:text="@string/letSystemDecide"
+        android:textColor="@color/textColor" />
+
+    <CheckBox
+        android:id="@+id/noAskMaps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/tenDip"
+        android:text="@string/neverAskAgain" />
+
+</LinearLayout>

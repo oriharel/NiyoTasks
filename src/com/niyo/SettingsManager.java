@@ -10,7 +10,7 @@ import android.content.SharedPreferences;
 
 public class SettingsManager {
 
-	private static final String PREFERENCES_FILE_NAME = "settings_data";
+	public static final String PREFERENCES_FILE_NAME = "settings_data";
 	private static final String LOG_TAG = SettingsManager.class.getSimpleName();
 	
 	public static void resetValues(Context context, String key) {

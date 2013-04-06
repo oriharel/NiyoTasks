@@ -98,5 +98,12 @@
     <string name="setBoxName">Set destination name...</string>
     <string name="addDest">Add New Destination</string>
     <string name="tapHere">Please tap here to add!</string>
+    <string name="chooseMapLabel">What app do you want to use?</string>
+    <string name="useGoogleMaps">Use Google Maps</string>
+    <string name="letSystemDecide">Let The System Decide</string>
+    <string name="neverAskAgain">Never Ask Again</string>
+    <string name="mapSelection">Select What Maps App To Use</string>
+    <string name="mapSelectionTitle">Map App Selection</string>
+    <string name="noneMapSet">none</string>
 
 </resources>
