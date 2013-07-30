@@ -33,6 +33,7 @@ public class NextEventFetchTaskICS extends AsyncTask<Void, Void, AutoEvent> {
 		
 		
 		Uri uri = CalendarContract.Events.CONTENT_URI;
+		Uri instancesUri = CalendarContract.Instances.CONTENT_URI;
 		String[] projection = new String[] {
 				CalendarContract.Events.TITLE,
 				CalendarContract.Events.DTSTART,
@@ -50,18 +51,22 @@ public class NextEventFetchTaskICS extends AsyncTask<Void, Void, AutoEvent> {
 		Cursor calendarCursor = mContext.getContentResolver().query(uri, projection, selection, null, null);
 		String eventTitle = "";
 		String locationString = "";
+		ClientLog.d(LOG_TAG, "events count is "+calendarCursor.getCount());
 		calendarCursor.moveToFirst();
 		
 		boolean foundEvent = false;
 		while (!calendarCursor.isAfterLast())
 		{
 			String eventTime = calendarCursor.getString(calendarCursor.getColumnIndex(CalendarContract.Events.DTSTART));
+			eventTitle = calendarCursor.getString(calendarCursor.getColumnIndex(CalendarContract.Events.TITLE));
+			
+			ClientLog.d(LOG_TAG, "event title "+eventTitle);
 			
 			Long eventTimeLong = new Long(eventTime);
 			
 			if (eventTimeLong < toTest){
 				toTest = eventTimeLong;
-				eventTitle = calendarCursor.getString(calendarCursor.getColumnIndex(CalendarContract.Events.TITLE));
+				
 				
 				if (!calendarCursor.isNull(calendarCursor.getColumnIndex(CalendarContract.Events.EVENT_LOCATION))){
 					

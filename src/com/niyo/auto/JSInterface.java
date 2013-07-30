@@ -20,7 +20,6 @@ import com.niyo.ServiceCaller;
 import com.niyo.StringUtils;
 import com.niyo.Utils;
 import com.niyo.auto.map.AutoMapActivity;
-import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
 
 public class JSInterface {
@@ -40,85 +39,85 @@ public class JSInterface {
 		ClientLog.d(LOG_TAG, "from webview "+text);
 	}
 	
-	public void setResponse(String response, String fromLat, String fromLon, String toLat, String toLon){
-		Log.d(LOG_TAG, "response is "+response);
-		try {
-			
-			JSONObject directionsJson = new JSONObject(response);
-			JSONArray routes = directionsJson.getJSONArray("routes");
-			Log.d(LOG_TAG, "num of routes is "+routes.length());
-			JSONArray legs = routes.getJSONObject(0).getJSONArray("legs");
-			Log.d(LOG_TAG, "num of legs is "+legs.length());
-			JSONArray steps = legs.getJSONObject(0).getJSONArray("steps");
-			Log.d(LOG_TAG, "num of steps is "+steps.length());
-			
-			if (mCategoriesToTaskContent != null && mCategoriesToTaskContent.size() > 0){
-				ClientLog.d(LOG_TAG, "going to populate manual locations");
-				populateFoursquareVenues(fromLat, fromLon, toLat, toLon, legs, steps);
-			}
-			else{
-				ClientLog.d(LOG_TAG, "no manual locations found");
-			}
-			
-			
-			populateLocationTasks(steps);
-			
-		} catch (JSONException e) {
-			e.printStackTrace();
-			Log.e(LOG_TAG, "Error!", e);
-		}
-	}
+//	public void setResponse(String response, String fromLat, String fromLon, String toLat, String toLon){
+//		Log.d(LOG_TAG, "response is "+response);
+//		try {
+//			
+//			JSONObject directionsJson = new JSONObject(response);
+//			JSONArray routes = directionsJson.getJSONArray("routes");
+//			Log.d(LOG_TAG, "num of routes is "+routes.length());
+//			JSONArray legs = routes.getJSONObject(0).getJSONArray("legs");
+//			Log.d(LOG_TAG, "num of legs is "+legs.length());
+//			JSONArray steps = legs.getJSONObject(0).getJSONArray("steps");
+//			Log.d(LOG_TAG, "num of steps is "+steps.length());
+//			
+//			if (mCategoriesToTaskContent != null && mCategoriesToTaskContent.size() > 0){
+//				ClientLog.d(LOG_TAG, "going to populate manual locations");
+//				populateFoursquareVenues(fromLat, fromLon, toLat, toLon, legs, steps);
+//			}
+//			else{
+//				ClientLog.d(LOG_TAG, "no manual locations found");
+//			}
+//			
+//			
+//			populateLocationTasks(steps);
+//			
+//		} catch (JSONException e) {
+//			e.printStackTrace();
+//			Log.e(LOG_TAG, "Error!", e);
+//		}
+//	}
 	
 	public void showError(String msg){
 		Toast.makeText(mActivity, "Couldn't calculate route", Toast.LENGTH_SHORT).show();
 	}
 
-	private void populateLocationTasks(final JSONArray steps) {
-		
-		ServiceCaller caller = new ServiceCaller() {
-			
-			@Override
-			public void success(Object data) {
-				
-				if (data != null){
-					
-					JSONObject tasksJson = (JSONObject)data;
-					JSONArray tasks;
-					try {
-						tasks = tasksJson.getJSONArray("tasks");
-						showVenuesIfClose(tasks, steps);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-				}
-			}
-			
-			@Override
-			public void failure(Object data, String description) {
-				// TODO Auto-generated method stub
-				
-			}
-		};
-		
-		URL url= null;
-        
-		try {
-			url = new URL("http://niyoapi.appspot.com/tasks");
-		} catch (MalformedURLException e) {
-			ClientLog.e(LOG_TAG, "Error!", e);
-			return;
-		}
-		
-		
-		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
-		
-		DBJsonFetchTask task = new DBJsonFetchTask(mActivity, caller);
-		task.execute(uri);
-		
-		
-	}
+//	private void populateLocationTasks(final JSONArray steps) {
+//		
+//		ServiceCaller caller = new ServiceCaller() {
+//			
+//			@Override
+//			public void success(Object data) {
+//				
+//				if (data != null){
+//					
+//					JSONObject tasksJson = (JSONObject)data;
+//					JSONArray tasks;
+//					try {
+//						tasks = tasksJson.getJSONArray("tasks");
+//						showVenuesIfClose(tasks, steps);
+//					} catch (JSONException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					
+//				}
+//			}
+//			
+//			@Override
+//			public void failure(Object data, String description) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		};
+//		
+//		URL url= null;
+//        
+//		try {
+//			url = new URL("http://niyoapi.appspot.com/tasks");
+//		} catch (MalformedURLException e) {
+//			ClientLog.e(LOG_TAG, "Error!", e);
+//			return;
+//		}
+//		
+//		
+//		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+url.getPath());
+//		
+//		DBJsonFetchTask task = new DBJsonFetchTask(mActivity, caller);
+//		task.execute(uri);
+//		
+//		
+//	}
 
 	protected void showVenuesIfClose(JSONArray tasks, JSONArray steps) throws JSONException {
 

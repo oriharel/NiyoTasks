@@ -1,14 +1,15 @@
 package com.niyo;
 
+import android.app.Application;
 import android.util.Log;
 
 public class ClientLog
 {
-	private NiyoApplication _app;
+	private Application _app;
 	
 	private static ClientLog _instance;
 	
-	public void init(NiyoApplication app)
+	public void init(Application app)
 	{
 		setApp(app);
 	}
@@ -39,13 +40,13 @@ public class ClientLog
 	public static int v(String logTag, String message, Exception e)
 	{
 		int result;
-		if (NiyoApplication.isLogEnabled()) 
+//		if (Application.isLogEnabled()) 
 		{
 			result = Log.v(logTag, message, e);
 		}
-		else
+//		else
 		{
-			result = -1;
+//			result = -1;
 		}
 		
 		return result;
@@ -54,13 +55,13 @@ public class ClientLog
 	public static int v(String logTag, String message)
 	{
 		int result;
-		if (NiyoApplication.isLogEnabled()) 
+//		if (Application.isLogEnabled()) 
 		{
 			result = Log.v(logTag, message);
 		}
-		else
+//		else
 		{
-			result = -1;
+//			result = -1;
 		}
 		
 		return result;
@@ -69,13 +70,13 @@ public class ClientLog
 	public static int d(String logTag, String message, Exception e)
 	{
 		int result;
-		if (NiyoApplication.isLogEnabled()) 
+//		if (Application.isLogEnabled()) 
 		{
 			result = Log.d(logTag, message, e);
 		}
-		else
+//		else
 		{
-			result = -1;
+//			result = -1;
 		}
 		
 		return result;
@@ -85,13 +86,13 @@ public class ClientLog
 	{
 		int result;
 		
-		if (NiyoApplication.isLogEnabled()) 
+//		if (Application.isLogEnabled()) 
 		{
 			result = Log.d(logTag, message);
 		}
-		else
+//		else
 		{
-			return -1;
+//			return -1;
 		}
 		
 		return result;
@@ -100,13 +101,13 @@ public class ClientLog
 	public static int i(String logTag, String message, Exception e)
 	{
 		int result;
-		if (NiyoApplication.isLogEnabled()) 
+//		if (Application.isLogEnabled()) 
 		{
 			result = Log.i(logTag, message, e);
 		}
-		else
+//		else
 		{
-			result = -1;
+//			result = -1;
 		}
 		
 		return result;
@@ -115,13 +116,13 @@ public class ClientLog
 	public static int i(String logTag, String message)
 	{
 		int result;
-		if (NiyoApplication.isLogEnabled()) 
+//		if (Application.isLogEnabled()) 
 		{
 			result = Log.i(logTag, message);
 		}
-		else
+//		else
 		{
-			result = -1;
+//			result = -1;
 		}
 		
 		return result;
@@ -130,13 +131,13 @@ public class ClientLog
 	public static int w(String logTag, String message, Exception e)
 	{
 		int result;
-		if (NiyoApplication.isLogEnabled()) 
+//		if (Application.isLogEnabled()) 
 		{
 			result = Log.w(logTag, message, e);
 		}
-		else
+//		else
 		{
-			result = -1;
+//			result = -1;
 		}
 		
 		return result;
@@ -145,13 +146,13 @@ public class ClientLog
 	public static int w(String logTag, String message)
 	{
 		int result;
-		if (NiyoApplication.isLogEnabled()) 
+//		if (Application.isLogEnabled()) 
 		{
 			result = Log.w(logTag, message);
 		}
-		else
+//		else
 		{
-			result = -1;
+//			result = -1;
 		}
 		
 		return result;
@@ -173,11 +174,11 @@ public class ClientLog
 		return result;
 	}
 
-	public NiyoApplication getApp() {
+	public Application getApp() {
 		return _app;
 	}
 
-	public void setApp(NiyoApplication app) {
+	public void setApp(Application app) {
 		_app = app;
 	}
 

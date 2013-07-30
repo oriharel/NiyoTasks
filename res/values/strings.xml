@@ -105,5 +105,15 @@
     <string name="mapSelection">Select What Maps App To Use</string>
     <string name="mapSelectionTitle">Map App Selection</string>
     <string name="noneMapSet">none</string>
+    <string name="niyoBtEnable">Enable Bluetooth Usage</string>
+    <string name="niyoBtEnableSummary">Check to enable or disable the app response to any blutooth communication</string>
+	<string name="title_clear_bt">Detach Bluetooth Devices</string>
+	<string name="summary_clear_bt">Clear the set of devices</string>
+	<string name="title_clear_bt_bl">Clear Bluetooth Blacklist</string>
+	<string name="summary_clear_bt_bl">Clear the set of devices you do not want to interact with</string>
+	<string name="launchApp">Launch a Nav App</string>
+	<string name="ok">OK</string>
+	<string name="send">Send</string>
+	<string name="clear">Clear</string>
 
 </resources>

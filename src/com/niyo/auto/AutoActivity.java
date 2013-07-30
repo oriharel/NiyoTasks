@@ -1,11 +1,11 @@
 package com.niyo.auto;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,10 +13,13 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
-import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -28,12 +31,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.niyo.ClientLog;
 import com.niyo.LocationUtil;
 import com.niyo.NiyoAbstractActivity;
@@ -42,12 +46,10 @@ import com.niyo.ServiceCaller;
 import com.niyo.SettingsActivity;
 import com.niyo.SettingsManager;
 import com.niyo.StringUtils;
-import com.niyo.auto.map.AutoMapActivity;
 import com.niyo.auto.map.ChooseAppDialog;
 import com.niyo.auto.map.MyLocationListener;
-import com.niyo.data.DBJsonFetchTask;
 import com.niyo.data.NiyoContentProvider;
-import com.niyo.tasks.CategoryTasksActivity;
+import com.niyo.radar.RadarActivity;
 
 public class AutoActivity extends NiyoAbstractActivity {
     /** Called when the activity is first created. */
@@ -75,7 +77,17 @@ public class AutoActivity extends NiyoAbstractActivity {
 	private static final String BOX_LON_5_KEY = "boxLon5";
 	private static final String BOX_LON_6_KEY = "boxLon6";
 	
+//	public static final String PROPERTY_REG_ID = "registration_id";
+//	private static final String PROPERTY_APP_VERSION = "appVersion";
+//	private static final String PROPERTY_ON_SERVER_EXPIRATION_TIME =
+//            "onServerExpirationTimeMs";
 	
+	/**
+     * Default lifespan (7 days) of a reservation until it is considered expired.
+     */
+//    public static final long REGISTRATION_EXPIRY_TIME_MS = 1000 * 3600 * 24 * 7;
+//	
+//	public static final String SENDER_ID = "663161706726";
 
 	private static final int GO_TO_TODO_LIST_CONTEXT_MENU_ITEM = 0;
 
@@ -83,11 +95,12 @@ public class AutoActivity extends NiyoAbstractActivity {
 
 	public static final String SIX_PACK_CHANGED = "sixPackChangedKey";
 
-	private static final String USE_GOOGLE_MAPS = "useGoogleMaps";
+	public static final String MAP_PREFERENCE_KEY = "mapsPrefKey";
 
 	private static final String GOOGLE_MAPS = "googleMaps";
 
 	private static final int SETTINGS = 4;
+	private static final int RADAR = 5;
 	
 	private Uri mUri;
 	private JSONArray mTasks;
@@ -96,9 +109,12 @@ public class AutoActivity extends NiyoAbstractActivity {
 //	private Map<Integer, String> mDefaultsTitles;
 //	private Map<Integer, String> mDefaultsLocations;
 	
-	private MyLocationListener mGpsListener;
-	private MyLocationListener mNetworkListener;
+//	private MyLocationListener mGpsListener;
+//	private MyLocationListener mNetworkListener;
 	private MyLocationListener mPassiveListener;
+	
+//	String mRegid;
+	GoogleCloudMessaging gcm;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -111,6 +127,12 @@ public class AutoActivity extends NiyoAbstractActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         setupBoxBtnsListeners();
+        
+//        mRegid = getRegistrationId();
+//        
+//        if (mRegid.length() == 0) {
+//            registerBackground();
+//        }
         
         
         URL url= null;
@@ -127,24 +149,120 @@ public class AutoActivity extends NiyoAbstractActivity {
 		setUri(uri);
 //        loadTasksFromDb();
         
-//        getNextCalendarEvent();
+		gcm = GoogleCloudMessaging.getInstance(this);
         
         setupOnClicksForOldSDK();
         
         initLocationListeners();
         
     }
-    
 
-    private void initLocationListeners() {
+//	private String getRegistrationId() {
+//		String registrationId = SettingsManager.getString(this, PROPERTY_REG_ID);
+//		
+//		if (registrationId == null || registrationId.length() == 0) {
+//	        Log.v(LOG_TAG, "Registration not found.");
+//	        return "";
+//	    }
+//	    // check if app was updated; if so, it must clear registration id to
+//	    // avoid a race condition if GCM sends a message
+//	    int registeredVersion = SettingsManager.getInt(this, PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+//	    int currentVersion = getAppVersion(this);
+//	    if (registeredVersion != currentVersion || isRegistrationExpired()) {
+//	        Log.v(LOG_TAG, "App version changed or registration expired.");
+//	        return "";
+//	    }
+//	    
+//	    ClientLog.d(LOG_TAG, "registration id found "+registrationId);
+//	    return registrationId;
+//	}
+	
+//	private boolean isRegistrationExpired() {
+//		
+//	    // checks if the information is not stale
+//	    long expirationTime =
+//	            SettingsManager.getLong(this, PROPERTY_ON_SERVER_EXPIRATION_TIME, -1);
+//	    return System.currentTimeMillis() > expirationTime;
+//	}
+	
+//	private static int getAppVersion(Context context) {
+//	    try {
+//	        PackageInfo packageInfo = context.getPackageManager()
+//	                .getPackageInfo(context.getPackageName(), 0);
+//	        return packageInfo.versionCode;
+//	    } catch (NameNotFoundException e) {
+//	        // should never happen
+//	        throw new RuntimeException("Could not get package name: " + e);
+//	    }
+//	}
+	
+//	private void registerBackground() {
+//		
+//		final AutoActivity context = this;
+//		
+//	    new AsyncTask<Void, Void, String>() {
+//	    	
+//	    	@Override
+//	        protected String doInBackground(Void... params) {
+//	            String msg = "";
+//	            try {
+//	                if (gcm == null) {
+//	                    gcm = GoogleCloudMessaging.getInstance(context);
+//	                }
+//	                mRegid = gcm.register(SENDER_ID);
+//	                msg = "Device registered, registration id=" + mRegid;
+//
+//	                // You should send the registration ID to your server over HTTP,
+//	                // so it can use GCM/HTTP or CCS to send messages to your app.
+//
+//	                // For this demo: we don't need to send it because the device
+//	                // will send upstream messages to a server that echo back the message
+//	                // using the 'from' address in the message.
+//
+//	                // Save the regid - no need to register again.
+//	                setRegistrationId(context, mRegid);
+//	            } catch (IOException ex) {
+//	                msg = "Error :" + ex.getMessage();
+//	            }
+//	            return msg;
+//	        }
+//
+//	    	@Override
+//	        protected void onPostExecute(String msg) {
+//	            ClientLog.d(LOG_TAG, msg + "\n");
+//	        }
+//	    }.execute(null, null, null);
+//	}
+	
+	/**
+	 * Stores the registration id, app versionCode, and expiration time in the
+	 * application's {@code SharedPreferences}.
+	 *
+	 * @param context application's context.
+	 * @param regId registration id
+	 */
+//	private void setRegistrationId(Context context, String regId) {
+//	    int appVersion = getAppVersion(context);
+//	    Log.v(LOG_TAG, "Saving regId on app version " + appVersion);
+//	    SettingsManager.setString(this, PROPERTY_REG_ID, regId);
+//	    SettingsManager.setInt(this, PROPERTY_APP_VERSION, appVersion);
+//	    long expirationTime = System.currentTimeMillis() + REGISTRATION_EXPIRY_TIME_MS;
+//
+//	    Log.v(LOG_TAG, "Setting registration expiry time to " +
+//	            new Timestamp(expirationTime));
+//	    SettingsManager.setLong(this, PROPERTY_ON_SERVER_EXPIRATION_TIME, expirationTime);
+//	}
+
+
+	private void initLocationListeners() {
     	
-    	String gps = LocationManager.GPS_PROVIDER;
-		String network = LocationManager.GPS_PROVIDER;
-		String passive = LocationManager.GPS_PROVIDER;
+//    	String gps = LocationManager.GPS_PROVIDER;
+//		String network = LocationManager.NETWORK_PROVIDER;
+//		String passive = LocationManager.PASSIVE_PROVIDER;
 		
-    	mGpsListener = new MyLocationListener(this, gps);
-    	mNetworkListener = new MyLocationListener(this, network);
-    	mPassiveListener = new MyLocationListener(this, passive);
+//    	mGpsListener = new MyLocationListener(this, gps);
+//    	mNetworkListener = new MyLocationListener(this, network);
+//    	mPassiveListener = new MyLocationListener(this, passive);
 	}
 
 
@@ -214,9 +332,12 @@ public class AutoActivity extends NiyoAbstractActivity {
 		
 		ClientLog.d(LOG_TAG, "event getLat "+event.getLat());
 		if(!TextUtils.isEmpty(event.getLat()) && !TextUtils.isEmpty(event.getLon())){
-			TextView btn6 = (TextView)findViewById(R.id.boxBtn6);
-			btn6.setText(event.getTitle());
-			btn6.setTag(event.getLat()+","+event.getLon());
+			TextView btn6Name = (TextView)findViewById(R.id.box5Name);
+			btn6Name.setText(event.getTitle());
+			View btn5 = findViewById(R.id.boxBtn5);
+			btn5.setTag(event.getLat()+","+event.getLon());
+			findViewById(R.id.addNewCross5).setVisibility(View.GONE);
+			findViewById(R.id.box5Name).setVisibility(View.VISIBLE);
 		}
 		
 		
@@ -225,7 +346,7 @@ public class AutoActivity extends NiyoAbstractActivity {
 
 	private void initializeBoxes() {
 		
-		for (int i = 1; i < 7; i++) {
+		for (int i = 1; i < 6; i++) {
 			String currBoxTitle = "boxTitle"+i;
 			String currBoxLat = "boxLat"+i;
 			String currBoxLon = "boxLon"+i;
@@ -268,13 +389,15 @@ public class AutoActivity extends NiyoAbstractActivity {
     	super.onResume();
 //    	setupBoxes();
     	initializeBoxes();
-    	LocationUtil.updateLocation(this, mGpsListener, mNetworkListener, mPassiveListener);
+    	getNextCalendarEvent();
+    	ClientLog.d(LOG_TAG, "going to update location");
+    	LocationUtil.updateLocation(this, null, null, mPassiveListener);
     }
 	
 	@Override
 	protected void onPause(){
 		super.onPause();
-		LocationUtil.removeLocationUpdates(this, mGpsListener, mNetworkListener, mPassiveListener);
+		LocationUtil.removeLocationUpdates(this, null, null, mPassiveListener);
 	}
 	
 	
@@ -323,8 +446,16 @@ public class AutoActivity extends NiyoAbstractActivity {
 	{
 		ClientLog.d(LOG_TAG, "onCreateOptionsMenu started");
 		try {
-			MenuItem settingsMenuItem1 = menu.add(0, SETTINGS, 0, "Settings");
-			settingsMenuItem1.setIcon(R.drawable.ic_menu_settings_holo_light);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				MenuItem settingsMenuItem1 = menu.add(0, SETTINGS, 0, "Settings");
+				settingsMenuItem1.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+				settingsMenuItem1.setIcon(R.drawable.ic_menu_settings_holo_light);
+				
+//				MenuItem settingsMenuItem2 = menu.add(0, RADAR, 0, "Radar");
+//				settingsMenuItem2.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+//				settingsMenuItem2.setIcon(R.drawable.ic_radar);
+		    }
+			
 		} catch (Exception e) 
 		{
 			ClientLog.e(LOG_TAG, "Error!", e);
@@ -337,8 +468,8 @@ public class AutoActivity extends NiyoAbstractActivity {
 	{
     	if (menuItem.getItemId() == GO_TO_TODO_LIST_CONTEXT_MENU_ITEM){
     		
-    		Intent intent = CategoryTasksActivity.getCreationIntent(this);
-        	startActivity(intent);
+//    		Intent intent = CategoryTasksActivity.getCreationIntent(this);
+//        	startActivity(intent);
         	return true;
     	}
     	else if (menuItem.getItemId() == RESTORE_DEFAULTS_CONTEXT_MENU_ITEM){
@@ -346,11 +477,23 @@ public class AutoActivity extends NiyoAbstractActivity {
     		resotreDefaults();
         	return true;
     	}
-		else if (menuItem.getItemId() == SETTINGS){
+    	else if (menuItem.getItemId() == RADAR){
     		
-    		Intent intent = SettingsActivity.getCreationIntent(this);
+    		Intent intent = RadarActivity.getCreationIntent(this);
     		startActivity(intent);
         	return true;
+    	}
+		else if (menuItem.getItemId() == SETTINGS){
+    		
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				Intent intent = SettingsActivity.getCreationIntent(this);
+	    		startActivity(intent);
+	        	return true;
+		    }
+			else {
+				return false;
+			}
+    		
     	}
     	else{
     		return false;
@@ -403,6 +546,7 @@ public class AutoActivity extends NiyoAbstractActivity {
 			
 		}
 		else {
+			Toast.makeText(this, "No Google Play Services", Toast.LENGTH_LONG).show();
 			GooglePlayServicesUtil.getErrorDialog(playAvailabilityCode, this, 0);
 		}
 	}
@@ -482,39 +626,39 @@ public class AutoActivity extends NiyoAbstractActivity {
 		return null;
 	}
 
-	private void loadTasksFromDb() {
-		
-		ServiceCaller caller = new ServiceCaller() {
-			
-			@Override
-			public void success(Object data) {
-				
-				if (data != null){
-					JSONObject categoriesData = (JSONObject)data;
-					try {
-						setTasks(categoriesData.getJSONArray("tasks"));
-					} catch (JSONException e) {
-						ClientLog.e(LOG_TAG, "Error!", e);
-					}
-					
-				}
-				else{
-					ClientLog.d(LOG_TAG, "categories list is empty in activity");
-					setTasks(new JSONArray());
-				}
-				
-			}
-			
-			@Override
-			public void failure(Object data, String description) {
-				ClientLog.e(LOG_TAG, "Error in service caller");
-				
-			}
-		};
-		
-		DBJsonFetchTask task = new DBJsonFetchTask(this, caller);
-		task.execute(getUri());
-	}
+//	private void loadTasksFromDb() {
+//		
+//		ServiceCaller caller = new ServiceCaller() {
+//			
+//			@Override
+//			public void success(Object data) {
+//				
+//				if (data != null){
+//					JSONObject categoriesData = (JSONObject)data;
+//					try {
+//						setTasks(categoriesData.getJSONArray("tasks"));
+//					} catch (JSONException e) {
+//						ClientLog.e(LOG_TAG, "Error!", e);
+//					}
+//					
+//				}
+//				else{
+//					ClientLog.d(LOG_TAG, "categories list is empty in activity");
+//					setTasks(new JSONArray());
+//				}
+//				
+//			}
+//			
+//			@Override
+//			public void failure(Object data, String description) {
+//				ClientLog.e(LOG_TAG, "Error in service caller");
+//				
+//			}
+//		};
+//		
+//		DBJsonFetchTask task = new DBJsonFetchTask(this, caller);
+//		task.execute(getUri());
+//	}
     
     public void navigateTo(View view) 
 	{
@@ -544,6 +688,22 @@ public class AutoActivity extends NiyoAbstractActivity {
     
 	private void onWithTheNav(View view) {
 		
+		if (view.getId() == R.id.boxBtn6) {
+			
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo://")); 
+	    	if (isCallable(intent))
+	    	{
+	    		startActivity(intent);
+	    	}
+	    	else
+	    	{
+	    		Toast.makeText(this, "Go get yourself a map app", Toast.LENGTH_LONG).show();
+	    	}
+			
+	    	return;
+	    	
+		}
+		
 		final String locationStr = (String)view.getTag();
 		
 		ClientLog.d(LOG_TAG, "onWithTheNav with "+locationStr);
@@ -553,11 +713,19 @@ public class AutoActivity extends NiyoAbstractActivity {
 		}
 		else {
 			
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+				realyOnWithNav("geo:", locationStr);
+				return;
+		    }
+			
+			
 //			TextView btn = (TextView)view;
+			final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 			
 //			boolean storedApp = SettingsManager.getBoolean(this, USE_GOOGLE_MAPS, false);
-			String storedApp = SettingsManager.getString(this, USE_GOOGLE_MAPS);
-			final AutoActivity context = this;
+//			String storedApp = SettingsManager.getString(this, USE_GOOGLE_MAPS);
+			String storedApp = sharedPref.getString(MAP_PREFERENCE_KEY, "none");
+//			final AutoActivity context = this;
 			
 			ClientLog.d(LOG_TAG, "storedApp is "+storedApp);
 			
@@ -571,7 +739,8 @@ public class AutoActivity extends NiyoAbstractActivity {
 						String geoQueryPrefix = "google.navigation:q=";
 						
 						if (dialog.getNeverAsk()) {
-							SettingsManager.setString(context, USE_GOOGLE_MAPS, GOOGLE_MAPS);
+//							SettingsManager.setString(context, USE_GOOGLE_MAPS, GOOGLE_MAPS);
+							sharedPref.edit().putString(MAP_PREFERENCE_KEY, GOOGLE_MAPS).commit();
 						}
 						
 						dialog.dismiss();
@@ -587,8 +756,12 @@ public class AutoActivity extends NiyoAbstractActivity {
 						
 						String geoQueryPrefix = "geo:";
 						
+						ClientLog.d(LOG_TAG, "sys maps clicked");
+						
 						if (dialog.getNeverAsk()) {
-							SettingsManager.setString(context, USE_GOOGLE_MAPS, "sysDecide");
+							ClientLog.d(LOG_TAG, "never ask");
+//							SettingsManager.setString(context, MAP_PREFERENCE_KEY, "sysDecide");
+							sharedPref.edit().putString(MAP_PREFERENCE_KEY, "sysDecide").commit();
 						}
 						
 						dialog.dismiss();

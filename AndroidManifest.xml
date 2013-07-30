@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.niyo"
-    android:versionCode="2"
-    android:versionName="1.1" >
+    android:versionCode="5"
+    android:versionName="1.4" >
 
-    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="17"/>
+    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="17"/>
     <uses-permission
         android:name="android.permission.INTERNET" />
     <uses-permission
@@ -15,16 +15,22 @@
 	<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 	<uses-permission android:name="com.niyo.permission.MAPS_RECEIVE"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 	<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 	<uses-feature android:glEsVersion="0x00020000" android:required="true"/>
 	<permission
         android:name="com.niyo.permission.MAPS_RECEIVE"
         android:protectionLevel="signature"/>
+	<uses-permission android:name="android.permission.READ_CALENDAR"/>
+	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="com.niyo.permission.C2D_MESSAGE" />
+	<permission android:name="com.niyo.permission.C2D_MESSAGE" 
+        android:protectionLevel="signature" />
     <application
         android:icon="@drawable/ic_launcher"
+        android:name=".NiyoApplication"
         android:label="@string/app_name" 
-        android:name="NiyoApplication" 
         android:theme="@style/AppTheme"
         android:allowBackup="true">
         <activity
@@ -36,22 +42,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <provider android:name=".data.NiyoContentProvider" android:authorities="com.niyo.provider" android:exported="false"></provider>
-        <activity
+        <!-- <provider android:name=".data.NiyoContentProvider" android:authorities="com.niyo.provider" android:exported="false"></provider> -->
+        <!-- <activity
             android:name=".authenticator.AuthenticatorActivity"
             android:label="@string/ui_activity_title"
             android:theme="@android:style/Theme.Dialog"
             android:excludeFromRecents="true"
             >
-            <!--
+            
                 No intent-filter here! This activity is only ever launched by
                 someone who explicitly knows the class name
-            -->
-        </activity>
-        <activity android:name=".tasks.AddTaskActivity"></activity>
-        <activity android:name=".tasks.CategoryTasksActivity"></activity>
-        <service android:name=".data.JsonFetchIntentService"></service>
-        <service 
+           
+        </activity> -->
+        <!-- <activity android:name=".tasks.AddTaskActivity"></activity> -->
+         <service android:name=".radar.LocationUpdaterIntentService"></service>
+        <!-- <service 
             android:name=".data.SyncService"
             android:exported="true">
             <intent-filter>
@@ -75,23 +80,29 @@
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator"/>
-        </service>
-        <service android:name=".data.SyncIntentService"></service>
-        <receiver android:name=".auto.AppLauncher">
-            <intent-filter>
-                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
-            </intent-filter>
-        </receiver>
-        <activity android:name=".categories.AddCategoryActivity"></activity>
+        </service> -->
+        <!-- <service android:name=".data.SyncIntentService"></service> -->
         <activity android:name=".auto.map.AutoMapActivity"></activity>
-        <activity android:name=".tasks.map.AdGenericTaskActivity"></activity>
         
         <!-- <uses-library android:name="com.google.android.maps" /> -->
         <activity android:name=".auto.CreateAutoBoxAcitivty"></activity>
-        <activity android:name=".auto.BtPairActivity"></activity>
         <activity android:name=".SettingsActivity"></activity>
-        <receiver android:name=".auto.map.ProximityIntentReciever"></receiver>
-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBQetBM4MDq25YXBRZp1R0j3EMXUxDokdg"/>
+        <activity android:name=".radar.RadarActivity"></activity>
+        <receiver android:name=".radar.RadarBroadcastReceiver"></receiver>
+        
+        <receiver
+            android:name=".radar.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.niyo" />
+            </intent-filter>
+        </receiver>
+        <!-- Release -->
+        <!-- <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBQetBM4MDq25YXBRZp1R0j3EMXUxDokdg"/> -->
+        
+        <!-- Debug -->
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAqXvw-k9Si7r-SlGmVCiGQzGij8s_pE2E"/>
     </application>
 
 </manifest>

@@ -1,33 +1,29 @@
 package com.niyo.auto.map;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.app.Activity;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Handler;
+
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.CancelableCallback;
-import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.LatLngBoundsCreator;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.niyo.ClientLog;
-import com.niyo.NiyoAbstractActivity;
 import com.niyo.R;
 
-public abstract class NiyoMapActivity extends NiyoAbstractActivity {
+public abstract class NiyoMapActivity extends Activity {
 	
 	private static String LOG_TAG = NiyoMapActivity.class.getSimpleName();
 	
@@ -55,6 +51,7 @@ public abstract class NiyoMapActivity extends NiyoAbstractActivity {
 			
 		} catch (IOException e) {
 			ClientLog.e(LOG_TAG, "Error!", e);
+			Toast.makeText(this, "Can't resolve address at this time. please reboot device or add it manually ("+e.getMessage()+")", Toast.LENGTH_LONG).show();
 		}
 	}
 	
@@ -73,6 +70,7 @@ public abstract class NiyoMapActivity extends NiyoAbstractActivity {
 	}
 
 	protected void showAddressResults(List<Address> addresses) {
+		
 		
 		final GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
 		LatLngBounds.Builder boundsBuilder = LatLngBounds.builder();
@@ -93,12 +91,37 @@ public abstract class NiyoMapActivity extends NiyoAbstractActivity {
 //		}
 		
 //		map.setOnMarkerClickListener(getOnMarkerClickListener());
-		map.setOnInfoWindowClickListener(getOnInfoClickListener());
+		
 //		map.setInfoWindowAdapter(getInfoWindowAdapter());
 		
-		CameraUpdate update = CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 200);
+		if (addresses.size() > 1) {
+			CameraUpdate update = CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 200);
+			map.animateCamera(update);
+		}
+		else if (addresses.size() == 1){
+			
+			Address address = addresses.get(0);
+			LatLng ltLng = new LatLng(address.getLatitude(), address.getLongitude());
+			CameraUpdate update = CameraUpdateFactory.newLatLng(ltLng);
+			map.animateCamera(update, new GoogleMap.CancelableCallback() {
+				
+				@Override
+				public void onFinish() {
+					CameraUpdate update = CameraUpdateFactory.zoomTo(15);
+					map.animateCamera(update);
+					
+				}
+				
+				@Override
+				public void onCancel() {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+		}
 		
-		map.animateCamera(update);
+		
+		
 		
 
 //		MapView mapView = (MapView)findViewById(getMapViewId());

@@ -21,8 +21,8 @@ public class JsonDbInsertTask extends AsyncTask<String, Void, Boolean> {
 		String jsonStr = params[1];
 		
 		ContentValues values = new ContentValues();
-		values.put(JSONTableColumns.ELEMENT_URL, "/"+uri.getLastPathSegment());
-		values.put(JSONTableColumns.ELEMENT_JSON, jsonStr);
+//		values.put(JSONTableColumns.ELEMENT_URL, "/"+uri.getLastPathSegment());
+//		values.put(JSONTableColumns.ELEMENT_JSON, jsonStr);
 		
 		mContext.getContentResolver().insert(uri, values);
 		

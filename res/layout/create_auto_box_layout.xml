@@ -19,6 +19,8 @@
             android:layout_weight="4"
             android:ems="10"
             android:hint="@string/searchAdress"
+            android:imeOptions="actionSearch"
+            android:inputType="textPostalAddress"
             android:textColor="@color/textColor" >
 
         </EditText>

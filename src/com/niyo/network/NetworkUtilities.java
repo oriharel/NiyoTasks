@@ -49,8 +49,10 @@ public class NetworkUtilities {
     public static final String PARAM_UPDATED = "timestamp";
     public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
-    public static final String BASE_URL =
-        "https://niyo.appspot.com";
+    public static final String BASE_URL = "http://niyoapi.appspot.com";
+//    public static final String BASE_URL = "http://10.20.5.126:6366";
+//    public static final String BASE_URL = "http://192.168.1.130:6366";
+//    public static final String BASE_URL = "http://192.168.0.110:6366";
     public static final String AUTH_URI = BASE_URL + "/auth";
     public static final String FETCH_FRIEND_UPDATES_URI =
         BASE_URL + "/fetch_friend_updates";

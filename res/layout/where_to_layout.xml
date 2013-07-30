@@ -55,7 +55,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="2dip"
                         android:layout_gravity="center"
-                        android:layout_margin="@dimen/crossMargin"
+                        android:layout_margin="@dimen/crossMarginH"
                         android:background="@color/textColor" />
 
                 </FrameLayout>
@@ -104,7 +104,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="2dip"
                         android:layout_gravity="center"
-                        android:layout_margin="@dimen/crossMargin"
+                        android:layout_margin="@dimen/crossMarginH"
                         android:background="@color/textColor" />
 
                 </FrameLayout>
@@ -161,7 +161,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="2dip"
                         android:layout_gravity="center"
-                        android:layout_margin="@dimen/crossMargin"
+                        android:layout_margin="@dimen/crossMarginH"
                         android:background="@color/textColor" />
 
                 </FrameLayout>
@@ -209,7 +209,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="2dip"
                         android:layout_gravity="center"
-                        android:layout_margin="@dimen/crossMargin"
+                        android:layout_margin="@dimen/crossMarginH"
                         android:background="@color/textColor" />
 
                 </FrameLayout>
@@ -263,7 +263,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="2dip"
                         android:layout_gravity="center"
-                        android:layout_margin="@dimen/crossMargin"
+                        android:layout_margin="@dimen/crossMarginH"
                         android:background="@color/textColor" />
 
                 </FrameLayout>
@@ -272,6 +272,9 @@
                     android:id="@+id/box5Name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/fivDip"
+                    android:layout_marginRight="@dimen/fivDip"
+                    android:gravity="center"
                     android:text="TextView"
                     android:textColor="@color/textColor"
                     android:textSize="@dimen/boxFontSize" />
@@ -297,7 +300,8 @@
                 <FrameLayout
                     android:id="@+id/addNewCross6"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" >
 
                     <View
                         android:id="@+id/view2"
@@ -312,7 +316,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="2dip"
                         android:layout_gravity="center"
-                        android:layout_margin="@dimen/crossMargin"
+                        android:layout_margin="@dimen/crossMarginH"
                         android:background="@color/textColor" />
 
                 </FrameLayout>
@@ -321,7 +325,10 @@
                     android:id="@+id/box6Name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:layout_marginLeft="@dimen/fivDip"
+                    android:layout_marginRight="@dimen/fivDip"
+                    android:gravity="center"
+                    android:text="@string/launchApp"
                     android:textColor="@color/textColor"
                     android:textSize="@dimen/boxFontSize" />
 

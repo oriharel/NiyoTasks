@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <com.niyo.radar.NiyoMarker
+        android:id="@+id/niyoMarker1"
+        android:layout_width="63dp"
+        android:layout_height="77dp"
+        android:adjustViewBounds="false"
+        android:baselineAlignBottom="false"
+        android:scaleType="fitStart"
+        android:src="@drawable/test" />
+
+</LinearLayout>

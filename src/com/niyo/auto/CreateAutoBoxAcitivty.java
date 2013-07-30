@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,17 +11,30 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
+
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.niyo.ClientLog;
 import com.niyo.R;
 import com.niyo.SettingsManager;
@@ -43,19 +55,34 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 		
 		setContentView(R.layout.create_auto_box_layout);
 		setTitle("Create A Destination");
-		final ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.DISPLAY_HOME_AS_UP);
 		
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+//			final ActionBar actionBar = getActionBar();
+//	        actionBar.setNavigationMode(ActionBar.DISPLAY_HOME_AS_UP);
+//	    }
+		
+        EditText addressInput = (EditText)findViewById(R.id.boxSearchEdit);
+		addressInput.setOnEditorActionListener(new OnEditorActionListener() {
+			
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				
+				ClientLog.d(LOG_TAG, "editoAction clicked with "+actionId);
+				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+					searchAddress(v);
+		            return true;
+		        }
+		        return false;
+			}
+		});
+        
 		findViewById(R.id.boxSearchBtn).setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
-				EditText addressEdit = (EditText)findViewById(R.id.boxSearchEdit);
-				String userAddress = addressEdit.getText().toString();
-				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-				showMarker(userAddress);
+				searchAddress(v);
+				
 				
 			}
 		});
@@ -65,6 +92,15 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 		setupMap();
 		
 //		findViewById(R.id.addBox).setOnClickListener(getSetBoxListener());
+	}
+	
+	private void searchAddress(View v) {
+		
+		EditText addressEdit = (EditText)findViewById(R.id.boxSearchEdit);
+		String userAddress = addressEdit.getText().toString();
+		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+		showMarker(userAddress);
 	}
 	
 //	@Override
@@ -197,10 +233,49 @@ public class CreateAutoBoxAcitivty extends NiyoMapActivity {
 
 	private void setupMap() {
 		
-		GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
+		
+		final GoogleMap map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
 		
 		map.getUiSettings().setZoomControlsEnabled(true);
+		
+		Location lastKnown = ((LocationManager)this.getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		if (lastKnown == null) {
+			lastKnown = ((LocationManager)this.getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+			
+			if (lastKnown == null) {
+				lastKnown = ((LocationManager)this.getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+			}
+		}
+		LatLng ltLng = new LatLng(lastKnown.getLatitude(), lastKnown.getLongitude());
+		CameraUpdate update = CameraUpdateFactory.newLatLng(ltLng);
+		map.animateCamera(update, new GoogleMap.CancelableCallback() {
+			
+			@Override
+			public void onFinish() {
+				CameraUpdate update = CameraUpdateFactory.zoomTo(15);
+				map.animateCamera(update);
+				
+			}
+			
+			@Override
+			public void onCancel() {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		map.getUiSettings().setMyLocationButtonEnabled(true);
 		map.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
+		map.setOnInfoWindowClickListener(getOnInfoClickListener());
+		
+		map.setOnMapLongClickListener(new OnMapLongClickListener() {
+			
+			@Override
+			public void onMapLongClick(LatLng point) {
+				map.addMarker(new MarkerOptions().position(point).title("Your Selection").snippet("Tap here to add!"));
+				
+			}
+		});
 		
 	}
 

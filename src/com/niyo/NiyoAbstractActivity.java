@@ -1,6 +1,7 @@
 package com.niyo;
 
 import android.app.Activity;
+import android.app.Application;
 import android.os.Handler;
 
 public class NiyoAbstractActivity extends Activity {
@@ -10,7 +11,7 @@ public class NiyoAbstractActivity extends Activity {
 		return pHandler;
 	}
 	
-	public NiyoApplication getMyApplication(){
-		return (NiyoApplication)getApplication();
-	}
+//	public Application getMyApplication(){
+//		return getApplication();
+//	}
 }

@@ -32,54 +32,54 @@ public class NiyoContentProvider extends ContentProvider {
 	public Uri insert(Uri uri, ContentValues values) {
 		
 		ClientLog.d(LOG_TAG, "insert started "+uri);
-		String insertedUrl = values.getAsString(JSONTableColumns.ELEMENT_URL);
-		String insertedJson = values.getAsString(JSONTableColumns.ELEMENT_JSON);
-		ClientLog.d(LOG_TAG, "insertedUrl is "+insertedUrl);
-		ClientLog.d(LOG_TAG, "insertedJson is "+insertedJson);
+		String id = values.getAsString(FriendsTableColumns._ID);
+//		String insertedJson = values.getAsString(JSONTableColumns.ELEMENT_JSON);
+//		ClientLog.d(LOG_TAG, "insertedUrl is "+insertedUrl);
+//		ClientLog.d(LOG_TAG, "insertedJson is "+insertedJson);
 		
-		boolean isEqual = false;
-		Cursor cursor = retrieveFromJsonTable(uri, null, null, null);
+//		boolean isEqual = false;
+//		Cursor cursor = retrieveFromJsonTable(uri, null, null, null);
 		
-		if (cursor.moveToFirst()) 
-		{
-			String storedJson = cursor.getString(JSONTableColumns.COLUMN_JSON_INDEX);
-			isEqual = storedJson == null ? false : storedJson.equals(insertedJson);
-		}
-		else
-		{
-			ClientLog.d(LOG_TAG, "uri "+uri+" cursor is empty");
-		}
-		cursor.close();
+//		if (cursor.moveToFirst()) 
+//		{
+//			String storedJson = cursor.getString(JSONTableColumns.COLUMN_JSON_INDEX);
+//			isEqual = storedJson == null ? false : storedJson.equals(insertedJson);
+//		}
+//		else
+//		{
+//			ClientLog.d(LOG_TAG, "uri "+uri+" cursor is empty");
+//		}
+//		cursor.close();
 		
-		if (!isEqual)
-		{
-			ClientLog.d(LOG_TAG, "inserting uri "+uri);
-			String table = NiyoDbHelper.JSON_TABLE;
-			getWritableDb().delete(table, JSONTableColumns.ELEMENT_URL + 
-					"='" + insertedUrl + "'", null);
-			getWritableDb().insert(table, JSONTableColumns.ELEMENT_JSON, values);
+//		if (!isEqual)
+//		{
+//			ClientLog.d(LOG_TAG, "inserting uri "+uri);
+			String table = NiyoDbHelper.FRIENDS_TABLE;
+			getWritableDb().delete(table, FriendsTableColumns._ID + 
+					"='" + id + "'", null);
+			getWritableDb().insert(table, FriendsTableColumns._ID, values);
 			getContext().getContentResolver().notifyChange(uri, null);
-		}
-		else
-		{
-			ClientLog.d(LOG_TAG, "received no change in data");
-		}
+//		}
+//		else
+//		{
+//			ClientLog.d(LOG_TAG, "received no change in data");
+//		}
 		
 		return uri;
 	}
 	
-	private Cursor retrieveFromJsonTable(Uri uri, String selection, String[] selectionArgs, String sort) 
-	{
-		ClientLog.d(LOG_TAG, "retrieve started with "+uri);
-		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-		qb.setTables(NiyoDbHelper.JSON_TABLE);
-		selection = JSONTableColumns.ELEMENT_URL + "='/" + uri.getLastPathSegment() + "'";
-		ClientLog.d(LOG_TAG, "going to query with selection "+selection);
-	    String orderBy = JSONTableColumns._ID;
-	    Cursor cursor = qb.query(getReadableDb(), null, selection, selectionArgs, null, null, orderBy);
+//	private Cursor retrieveFromJsonTable(Uri uri, String selection, String[] selectionArgs, String sort) 
+//	{
+//		ClientLog.d(LOG_TAG, "retrieve started with "+uri);
+//		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+//		qb.setTables(NiyoDbHelper.FRIENDS_TABLE);
+//		selection = JSONTableColumns.ELEMENT_URL + "='/" + uri.getLastPathSegment() + "'";
+//		ClientLog.d(LOG_TAG, "going to query with selection "+selection);
+//	    String orderBy = FriendsTableColumns._ID;
+//	    Cursor cursor = qb.query(getReadableDb(), null, selection, selectionArgs, null, null, orderBy);
 	    
-	    return cursor;
-	}
+//	    return cursor;
+//	}
 	
 	/**
 	   * ********************************************************
@@ -119,10 +119,10 @@ public class NiyoContentProvider extends ContentProvider {
 		ClientLog.d(LOG_TAG, "query started with "+uri);
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		
-		qb.setTables(NiyoDbHelper.JSON_TABLE);
+		qb.setTables(NiyoDbHelper.FRIENDS_TABLE);
 		
 		ClientLog.d(LOG_TAG, "going to query with selection "+selection);
-		String orderBy = JSONTableColumns._ID;
+		String orderBy = FriendsTableColumns._ID;
 		
 		Cursor cursor = qb.query(getReadableDb(), projection, selection, selectionArgs, null, null, orderBy);
 		

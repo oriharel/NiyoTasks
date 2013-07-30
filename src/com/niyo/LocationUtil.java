@@ -8,8 +8,11 @@ import com.niyo.auto.map.MyLocationListener;
 
 public class LocationUtil {
 	
+	private static final String LOG_TAG = LocationUtil.class.getSimpleName();
+	
 	public static void updateLocation(Context context, MyLocationListener gpsListener, MyLocationListener networkListener, MyLocationListener passiveListener){
 		
+		ClientLog.d(LOG_TAG, "updateLocation started");
 		String locationContext = Context.LOCATION_SERVICE;
 		final LocationManager locationManager = (LocationManager)context.getSystemService(locationContext);
 		
@@ -20,12 +23,27 @@ public class LocationUtil {
 		int t = 5000; // milliseconds
 		int distance = 5; // meters
 		
-		locationManager.requestLocationUpdates(gps, t, distance,
-				gpsListener);
-		locationManager.requestLocationUpdates(network, t, distance,
-				networkListener);
-		locationManager.requestLocationUpdates(passive, t, distance,
-				passiveListener);
+		
+		if (gpsListener != null) {
+			ClientLog.d(LOG_TAG, "requesting gps");
+			locationManager.requestLocationUpdates(gps, t, distance,
+					gpsListener);
+		}
+		
+		
+		if (networkListener != null) {
+			ClientLog.d(LOG_TAG, "requesting network");
+			locationManager.requestLocationUpdates(network, t, distance,
+					networkListener);
+		}
+		
+		if (passiveListener != null) {
+			ClientLog.d(LOG_TAG, "requesting passive");
+			locationManager.requestLocationUpdates(passive, t, distance,
+					passiveListener);
+		}
+		
+		
 	}
 	
 	public static Location getLocation(Context context){
@@ -55,9 +73,20 @@ public class LocationUtil {
 		String locationContext = Context.LOCATION_SERVICE;
 		final LocationManager locationManager = (LocationManager)context.getSystemService(locationContext);
 		
-		locationManager.removeUpdates(gpsListener);
-		locationManager.removeUpdates(networkListener);
-		locationManager.removeUpdates(passiveListener);
+		if (gpsListener != null) {
+			locationManager.removeUpdates(gpsListener);
+		}
+		
+		if (networkListener != null) {
+			locationManager.removeUpdates(networkListener);
+		}
+		
+		if (passiveListener != null) {
+			locationManager.removeUpdates(passiveListener);
+		}
+		
+		
+		
 		
 	}
 }

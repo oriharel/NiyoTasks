@@ -25,8 +25,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.niyo.auto.AutoPoint;
 import com.niyo.auto.AutoVenue;
-import com.niyo.auto.map.ProximityIntentReciever;
-import com.niyo.data.JSONTableColumns;
+//import com.niyo.auto.map.ProximityIntentReciever;
+//import com.niyo.data.JSONTableColumns;
 import com.niyo.data.NiyoContentProvider;
 
 public class Utils {
@@ -78,122 +78,122 @@ public class Utils {
 		return new String(baf.toByteArray());
 	}
 	
-	public static Uri setTasksInProvider(JSONObject result, Context context){
-		
-		ContentValues values = new ContentValues();
-		values.put(JSONTableColumns.ELEMENT_URL, "/tasks");
-		values.put(JSONTableColumns.ELEMENT_JSON, result.toString());
-
-		return context.getContentResolver().insert(Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks"), values);
-	}
+//	public static Uri setTasksInProvider(JSONObject result, Context context){
+//		
+//		ContentValues values = new ContentValues();
+//		values.put(JSONTableColumns.ELEMENT_URL, "/tasks");
+//		values.put(JSONTableColumns.ELEMENT_JSON, result.toString());
+//
+//		return context.getContentResolver().insert(Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks"), values);
+//	}
 	
-	public static void setupProximityAlerts(Context context){
-		
-		JSONObject tasks = getTasksFromProvider(context);
-		float radius = 250f;
-		long expiration = -1;
-		
-		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-		locationManager.removeProximityAlert(PendingIntent.getBroadcast(context, -1, new Intent(ProximityIntentReciever.TASK_PROXIMITY_ALERT), 0));
-		
-		if (tasks == null){
-			return;
-		}
-		try {
-			JSONArray tasksArray = tasks.getJSONArray("tasks");
-			
-			for (int i = 0; i < tasksArray.length(); i++){
-				
-				JSONObject task = tasksArray.getJSONObject(i);
-				
-				String lat = task.getString("lat");
-				String lon = task.getString("lon");
-				String taskId = task.getString("id");
-//				String content = task.getString("content");
-				
-				if (!(TextUtils.isEmpty(lat) || TextUtils.isEmpty(lon))){
-					
-					if (!(lat.equals("null") || lon.equals("null"))){
-						
-						Double latDbl = new Double(lat);
-						Double lonDbl = new Double(lon);
-						addTaskProximityAlert(context, radius, expiration,
-								locationManager, taskId, latDbl, lonDbl	);
-					}
-					
-				}
-				
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		
-//		testProximity(context);
-		
-		
-	}
+//	public static void setupProximityAlerts(Context context){
+//		
+//		JSONObject tasks = getTasksFromProvider(context);
+//		float radius = 250f;
+//		long expiration = -1;
+//		
+//		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+////		locationManager.removeProximityAlert(PendingIntent.getBroadcast(context, -1, new Intent(ProximityIntentReciever.TASK_PROXIMITY_ALERT), 0));
+//		
+//		if (tasks == null){
+//			return;
+//		}
+//		try {
+//			JSONArray tasksArray = tasks.getJSONArray("tasks");
+//			
+//			for (int i = 0; i < tasksArray.length(); i++){
+//				
+//				JSONObject task = tasksArray.getJSONObject(i);
+//				
+//				String lat = task.getString("lat");
+//				String lon = task.getString("lon");
+//				String taskId = task.getString("id");
+////				String content = task.getString("content");
+//				
+//				if (!(TextUtils.isEmpty(lat) || TextUtils.isEmpty(lon))){
+//					
+//					if (!(lat.equals("null") || lon.equals("null"))){
+//						
+//						Double latDbl = new Double(lat);
+//						Double lonDbl = new Double(lon);
+//						addTaskProximityAlert(context, radius, expiration,
+//								locationManager, taskId, latDbl, lonDbl	);
+//					}
+//					
+//				}
+//				
+//			}
+//		} catch (JSONException e) {
+//			e.printStackTrace();
+//		}
+//		
+////		testProximity(context);
+//		
+//		
+//	}
 	
 	private static void testProximity(Context context){
 		
-		ClientLog.d(LOG_TAG, "testProximity");
-		Intent intent = new Intent(ProximityIntentReciever.TASK_PROXIMITY_ALERT);
-		intent.putExtra(ProximityIntentReciever.TASK_ID_PROXIMITY, "5516ecd9-4ff5-4591-aa75-9370fb87cb68");
-		
-		PendingIntent proximityIntent = PendingIntent.getBroadcast(context, -1,
-				intent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
-		
-		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-		locationManager.addProximityAlert(32.182369, 34.853032, 250f, -1, proximityIntent);
+//		ClientLog.d(LOG_TAG, "testProximity");
+//		Intent intent = new Intent(ProximityIntentReciever.TASK_PROXIMITY_ALERT);
+//		intent.putExtra(ProximityIntentReciever.TASK_ID_PROXIMITY, "5516ecd9-4ff5-4591-aa75-9370fb87cb68");
+//		
+//		PendingIntent proximityIntent = PendingIntent.getBroadcast(context, -1,
+//				intent,
+//				PendingIntent.FLAG_UPDATE_CURRENT);
+//		
+//		LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+//		locationManager.addProximityAlert(32.182369, 34.853032, 250f, -1, proximityIntent);
 	}
 
 	private static void addTaskProximityAlert(Context context, float radius,
 			long expiration, LocationManager locationManager, String taskId,
 			Double latDbl, Double lonDbl) {
 		
-		Intent intent = new Intent(ProximityIntentReciever.TASK_PROXIMITY_ALERT);
-		intent.putExtra(ProximityIntentReciever.TASK_ID_PROXIMITY, taskId);
-		
-		PendingIntent proximityIntent = PendingIntent.getBroadcast(context, -1,
-				intent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
-		
-		ClientLog.d(LOG_TAG, "adding "+taskId+" to prox alerts");
+//		Intent intent = new Intent(ProximityIntentReciever.TASK_PROXIMITY_ALERT);
+//		intent.putExtra(ProximityIntentReciever.TASK_ID_PROXIMITY, taskId);
+//		
+//		PendingIntent proximityIntent = PendingIntent.getBroadcast(context, -1,
+//				intent,
+//				PendingIntent.FLAG_UPDATE_CURRENT);
+//		
+//		ClientLog.d(LOG_TAG, "adding "+taskId+" to prox alerts");
 //		locationManager.addProximityAlert(latDbl, lonDbl, radius, expiration, proximityIntent);
 	}
 	
-	public static JSONObject getTasksFromProvider(Context context){
-		
-		String[] projection = new String[] 
-	            {
-					JSONTableColumns._ID,
-					JSONTableColumns.ELEMENT_URL, 
-					JSONTableColumns.ELEMENT_JSON, 
-	            };
-		String selection = JSONTableColumns.ELEMENT_URL + "='/tasks'";
-		
-		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks");
-		Cursor cursor = context.getContentResolver().query(uri, projection, selection, null, null);
-		JSONObject result = null;
-
-		if (cursor != null)
-		{
-			if (cursor.moveToFirst())
-			{
-				String jsonStr = cursor.getString(JSONTableColumns.COLUMN_JSON_INDEX);
-				ClientLog.d(LOG_TAG, "received "+jsonStr);
-				try {
-					result = new JSONObject(jsonStr);
-				} catch (JSONException e) {
-					ClientLog.e(LOG_TAG, "Error!", e);
-				}
-			}
-
-			cursor.close();
-		}
-		
-		return result;
-	}
+//	public static JSONObject getTasksFromProvider(Context context){
+//		
+//		String[] projection = new String[] 
+//	            {
+//					JSONTableColumns._ID,
+//					JSONTableColumns.ELEMENT_URL, 
+//					JSONTableColumns.ELEMENT_JSON, 
+//	            };
+//		String selection = JSONTableColumns.ELEMENT_URL + "='/tasks'";
+//		
+//		Uri uri = Uri.parse(NiyoContentProvider.AUTHORITY+"/tasks");
+//		Cursor cursor = context.getContentResolver().query(uri, projection, selection, null, null);
+//		JSONObject result = null;
+//
+//		if (cursor != null)
+//		{
+//			if (cursor.moveToFirst())
+//			{
+//				String jsonStr = cursor.getString(JSONTableColumns.COLUMN_JSON_INDEX);
+//				ClientLog.d(LOG_TAG, "received "+jsonStr);
+//				try {
+//					result = new JSONObject(jsonStr);
+//				} catch (JSONException e) {
+//					ClientLog.e(LOG_TAG, "Error!", e);
+//				}
+//			}
+//
+//			cursor.close();
+//		}
+//		
+//		return result;
+//	}
 	
 	public static boolean isVenueClose(AutoVenue autoVenue, JSONArray stepsArray) {
 		

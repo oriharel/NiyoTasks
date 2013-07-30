@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <ListPreference
-                android:key="useGoogleMaps"
+                android:key="mapsPrefKey"
                 android:title="@string/mapSelectionTitle"
                 android:summary="@string/mapSelection"
                 android:entries="@array/entries_map_options"
                 android:entryValues="@array/entriesvalues_map_options"
                 android:dialogTitle="@string/chooseMapLabel"
                 android:defaultValue="@string/noneMapSet" />
+
     
 
 </PreferenceScreen>

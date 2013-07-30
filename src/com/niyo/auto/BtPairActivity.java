@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -57,6 +58,10 @@ public class BtPairActivity extends NiyoAbstractActivity {
 			@Override
 			public void onClick(View v) {
 				
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+					SettingsManager.addToStringSet(BtPairActivity.this, AppLauncher.BT_MAC_ADDRESS_SET_NO,
+							AppLauncher.BT_MAC_ADDRESS_SET_NO, device.getName());
+				}
 				finish();
 			}
 		});
@@ -65,8 +70,14 @@ public class BtPairActivity extends NiyoAbstractActivity {
 			
 			@Override
 			public void onClick(View v) {
-				SettingsManager.addToStringSet(BtPairActivity.this, AppLauncher.BT_MAC_ADDRESS_SET,
-						AppLauncher.BT_MAC_ADDRESS_SET, device.getName());
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+					SettingsManager.addToStringSet(BtPairActivity.this, AppLauncher.BT_MAC_ADDRESS_SET,
+							AppLauncher.BT_MAC_ADDRESS_SET, device.getName());
+				}
+				else {
+					SettingsManager.setString(BtPairActivity.this, AppLauncher.BT_MAC_ADDRESS_SET, device.getName());
+				}
+				
 				Intent intent2Launch = new Intent(BtPairActivity.this, AutoActivity.class);
 				intent2Launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				BtPairActivity.this.startActivity(intent2Launch);

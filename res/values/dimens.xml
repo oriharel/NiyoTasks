@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="crossMargin">10dip</dimen>
+    <dimen name="crossMargin">30dip</dimen>
+    <dimen name="crossMarginH">40dip</dimen>
     <dimen name="boxFontSize">20sp</dimen>
     <dimen name="landscapeMargin">5dip</dimen>
     <dimen name="popupTextSize">20sp</dimen>
     <dimen name="tenDip">10dip</dimen>
+    <dimen name="fivDip">5dip</dimen>
 </resources>
