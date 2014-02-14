@@ -7,6 +7,8 @@ import java.util.List;
 import com.niyo.ClientLog;
 import com.niyo.ServiceCaller;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.location.Address;
@@ -14,6 +16,7 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.CalendarContract;
+import android.provider.CalendarContract.Instances;
 import android.text.TextUtils;
 import android.text.format.Time;
 
@@ -32,46 +35,78 @@ public class NextEventFetchTaskICS extends AsyncTask<Void, Void, AutoEvent> {
 	protected AutoEvent doInBackground(Void... params) {
 		
 		
-		Uri uri = CalendarContract.Events.CONTENT_URI;
-		Uri instancesUri = CalendarContract.Instances.CONTENT_URI;
+//		Uri uri = CalendarContract.Instances.CONTENT_URI;
+//		Uri instancesUri = CalendarContract.Instances.CONTENT_URI;
 		String[] projection = new String[] {
-				CalendarContract.Events.TITLE,
-				CalendarContract.Events.DTSTART,
+				Instances.EVENT_ID,
+				Instances.BEGIN,
+				Instances.TITLE,
 				CalendarContract.Events.EVENT_LOCATION
+
 		};
 		
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_WEEK, 1);
-		long toTest = cal.getTimeInMillis();
+//		Calendar cal = Calendar.getInstance();
+//		cal.add(Calendar.DAY_OF_WEEK, 1);
+//		long toTest = cal.getTimeInMillis();
 		
 		Time now = new Time();
 		now.setToNow();
 		
-		String selection = CalendarContract.Events.DTSTART +"<"+toTest+" and "+CalendarContract.Events.DTSTART +">"+now.toMillis(false);
-		Cursor calendarCursor = mContext.getContentResolver().query(uri, projection, selection, null, null);
+		Calendar beginTime = Calendar.getInstance();
+		long startMillis = beginTime.getTimeInMillis();
+		
+		Calendar endTime = Calendar.getInstance();
+		endTime.add(Calendar.DAY_OF_WEEK, 1);
+		long endMillis = endTime.getTimeInMillis();
+		long toTest = endMillis;
+		
+		Cursor calendarCursor = null;
+		ContentResolver cr = mContext.getContentResolver();
+		
+		Uri.Builder builder = Instances.CONTENT_URI.buildUpon();
+		ContentUris.appendId(builder, startMillis);
+		ContentUris.appendId(builder, endMillis);
+		
+//		String selection = CalendarContract.Instances.BEGIN +"<"+toTest+" and "+CalendarContract.Instances.BEGIN +">"+now.toMillis(false);
+		calendarCursor = cr.query(builder.build(), 
+				projection, 
+			    "", 
+			    new String[0], 
+			    null);
 		String eventTitle = "";
 		String locationString = "";
 		ClientLog.d(LOG_TAG, "events count is "+calendarCursor.getCount());
-		calendarCursor.moveToFirst();
+//		calendarCursor.moveToNext();
 		
 		boolean foundEvent = false;
-		while (!calendarCursor.isAfterLast())
+		while (calendarCursor.moveToNext())
 		{
-			String eventTime = calendarCursor.getString(calendarCursor.getColumnIndex(CalendarContract.Events.DTSTART));
-			eventTitle = calendarCursor.getString(calendarCursor.getColumnIndex(CalendarContract.Events.TITLE));
+			String eventTime = calendarCursor.getString(calendarCursor.getColumnIndex(Instances.BEGIN));
+			eventTitle = calendarCursor.getString(calendarCursor.getColumnIndex(Instances.TITLE));
 			
-			ClientLog.d(LOG_TAG, "event title "+eventTitle);
+			ClientLog.d(LOG_TAG, "event title "+eventTitle+" time is "+eventTime+" toTest is: "+toTest);
 			
-			Long eventTimeLong = new Long(eventTime);
+			Long eventTimeLong = Long.valueOf(eventTime);
 			
 			if (eventTimeLong < toTest){
-				toTest = eventTimeLong;
 				
+				ClientLog.d(LOG_TAG, "event "+eventTitle+" is close enough. now checking for location");
 				
 				if (!calendarCursor.isNull(calendarCursor.getColumnIndex(CalendarContract.Events.EVENT_LOCATION))){
 					
 					locationString = calendarCursor.getString(calendarCursor.getColumnIndex(CalendarContract.Events.EVENT_LOCATION));
-					foundEvent = true;
+					ClientLog.d(LOG_TAG, "location string is: "+locationString);
+					
+					if (!TextUtils.isEmpty(locationString)) {
+						toTest = eventTimeLong;
+						foundEvent = true;
+					}
+					
+				}
+				else {
+					
+					ClientLog.e(LOG_TAG, "location column is null form cursor for "+eventTitle);
+					
 				}
 				
 			}

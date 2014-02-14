@@ -98,7 +98,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	@Override
     protected void onStart() {
         super.onStart();
-        // Connect the client.
+        
+        ClientLog.d(LOG_TAG, "onstart is called");
         mLocationClient.connect();
     }
 	
