@@ -73,8 +73,8 @@ public class NextEventFetchTaskICS extends AsyncTask<Void, Void, AutoEvent> {
 			    "", 
 			    new String[0], 
 			    null);
-		String eventTitle = "";
-		String locationString = "";
+		String selectedEventTitle = "";
+		String selectedLocationString = "";
 		ClientLog.d(LOG_TAG, "events count is "+calendarCursor.getCount());
 //		calendarCursor.moveToNext();
 		
@@ -82,7 +82,7 @@ public class NextEventFetchTaskICS extends AsyncTask<Void, Void, AutoEvent> {
 		while (calendarCursor.moveToNext())
 		{
 			String eventTime = calendarCursor.getString(calendarCursor.getColumnIndex(Instances.BEGIN));
-			eventTitle = calendarCursor.getString(calendarCursor.getColumnIndex(Instances.TITLE));
+			String eventTitle = calendarCursor.getString(calendarCursor.getColumnIndex(Instances.TITLE));
 			
 			ClientLog.d(LOG_TAG, "event title "+eventTitle+" time is "+eventTime+" toTest is: "+toTest);
 			
@@ -94,12 +94,17 @@ public class NextEventFetchTaskICS extends AsyncTask<Void, Void, AutoEvent> {
 				
 				if (!calendarCursor.isNull(calendarCursor.getColumnIndex(CalendarContract.Events.EVENT_LOCATION))){
 					
-					locationString = calendarCursor.getString(calendarCursor.getColumnIndex(CalendarContract.Events.EVENT_LOCATION));
+					String locationString = calendarCursor.getString(calendarCursor.getColumnIndex(CalendarContract.Events.EVENT_LOCATION));
 					ClientLog.d(LOG_TAG, "location string is: "+locationString);
 					
 					if (!TextUtils.isEmpty(locationString)) {
 						toTest = eventTimeLong;
 						foundEvent = true;
+						selectedEventTitle = eventTitle;
+						selectedLocationString = locationString;
+					}
+					else {
+						ClientLog.w(LOG_TAG, "event "+eventTitle+" has no valid location. should be ignored");
 					}
 					
 				}
@@ -110,25 +115,33 @@ public class NextEventFetchTaskICS extends AsyncTask<Void, Void, AutoEvent> {
 				}
 				
 			}
-			calendarCursor.moveToNext();
+//			calendarCursor.moveToNext();
 		}
 		
 		if (foundEvent){
-			
+			ClientLog.d(LOG_TAG, "found "+selectedEventTitle+" event, location string is: "+selectedLocationString);
 			AutoEvent result = new AutoEvent();
-			result.setTitle(eventTitle);
+			result.setTitle(selectedEventTitle);
 			result.setStartTime(toTest);
 			
-			if (!TextUtils.isEmpty(locationString)){
+			if (!TextUtils.isEmpty(selectedEventTitle)){
 				
 				Geocoder coder = new Geocoder(mContext);
 				try {
-					List<Address> addresses = coder.getFromLocationName(locationString, 1);
+					List<Address> addresses = coder.getFromLocationName(selectedEventTitle, 1);
 					
 					if (addresses != null && addresses.size() > 0){
 						
 						Double lat = addresses.get(0).getLatitude();
 						Double lon = addresses.get(0).getLongitude();
+						result.setLat(lat.toString());
+						result.setLon(lon.toString());
+					}
+					else {
+						ClientLog.e(LOG_TAG, "Error, cant find address from: "+selectedEventTitle+" trying parsing latlon");
+						String[] coordinates = selectedEventTitle.split(", ");
+						Double lat = Double.valueOf(coordinates[0]);
+						Double lon = Double.valueOf(coordinates[1]);
 						result.setLat(lat.toString());
 						result.setLon(lon.toString());
 					}
