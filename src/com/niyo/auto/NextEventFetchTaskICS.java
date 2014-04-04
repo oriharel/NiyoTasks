@@ -124,11 +124,11 @@ public class NextEventFetchTaskICS extends AsyncTask<Void, Void, AutoEvent> {
 			result.setTitle(selectedEventTitle);
 			result.setStartTime(toTest);
 			
-			if (!TextUtils.isEmpty(selectedEventTitle)){
+			if (!TextUtils.isEmpty(selectedLocationString)){
 				
 				Geocoder coder = new Geocoder(mContext);
 				try {
-					List<Address> addresses = coder.getFromLocationName(selectedEventTitle, 1);
+					List<Address> addresses = coder.getFromLocationName(selectedLocationString, 1);
 					
 					if (addresses != null && addresses.size() > 0){
 						
@@ -138,14 +138,14 @@ public class NextEventFetchTaskICS extends AsyncTask<Void, Void, AutoEvent> {
 						result.setLon(lon.toString());
 					}
 					else {
-						ClientLog.e(LOG_TAG, "Error, cant find address from: "+selectedEventTitle+" trying parsing latlon");
-						String[] coordinates = selectedEventTitle.split(", ");
+						ClientLog.e(LOG_TAG, "Error, cant find address from: "+selectedLocationString+" trying parsing latlon");
+						String[] coordinates = selectedLocationString.split(", ");
 						Double lat = Double.valueOf(coordinates[0]);
 						Double lon = Double.valueOf(coordinates[1]);
 						result.setLat(lat.toString());
 						result.setLon(lon.toString());
 					}
-				} catch (IOException e) {
+				} catch (Exception e) {
 					ClientLog.e(LOG_TAG, "Error!", e);
 				}
 			}
